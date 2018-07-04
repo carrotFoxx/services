@@ -1,0 +1,62 @@
+@startuml
+
+[Stream Acceptor] as sta
+
+queue Kafka as kf
+
+sta <=u= kf
+
+[App Manager] as app_mgr
+
+[Model Manager] as art_mgr
+
+[Trainer Manager] as tr_mgr
+
+[Env Manager] as env_mgr
+
+[API Gateway] as api
+
+database DB {
+    database ModelDB as mdb
+    database AppDB as appdb
+}
+
+storage FileShare as fs {
+    artifact model
+    model <.u. mdb : index points to\n file on share
+}
+
+node App <<container/vm>> {
+    agent supervisor as slv
+    agent calculator as calc
+    () model as mi
+    file input
+    file output
+
+    mi <. model
+
+    slv -l-> input
+    slv <-> sta: ask for stream\n slices as files\n and present them as\n "input" file on local fs
+    slv --> calc: run process\n using\n slice and model\n as args
+
+    calc <-u- input
+    calc <-u- mi
+    calc -> output
+}
+
+
+app_mgr <- art_mgr: get model to map\n in container
+app_mgr <-> appdb: get app's\ntype, container,\n version, etc\n to setup
+app_mgr <==> env_mgr: setup environment
+env_mgr ==> App: setup container,\n mount model
+app_mgr ==> slv: setup task
+
+art_mgr <--> mdb: find file\n location in index
+art_mgr --> tr_mgr: train model
+
+tr_mgr --> env_mgr: setup env\n for training
+
+api <-d-> app_mgr
+api <-d-> art_mgr
+
+@enduml
