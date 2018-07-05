@@ -1,10 +1,15 @@
 @startuml
 
-[Stream Acceptor] as sta
+[Stream Accessor] as sta
 
-queue Kafka as kf
+[Stream Saver] as stfs
 
-sta <=u= kf
+queue "Kafka-In" as kf_in
+queue "Kafka-Out" as kf_out
+
+sta <== kf_in
+sta ==> kf_out
+
 
 [App Manager] as app_mgr
 
@@ -19,7 +24,11 @@ sta <=u= kf
 database DB {
     database ModelDB as mdb
     database AppDB as appdb
+    database TaskResults as resdb
 }
+
+stfs <-- kf_out
+stfs -u-> resdb
 
 storage FileShare as fs {
     artifact model
@@ -36,8 +45,10 @@ node App <<container/vm>> {
     mi <. model
 
     slv -l-> input
-    slv <-> sta: ask for stream\n slices as files\n and present them as\n "input" file on local fs
+    slv <-> sta: ask for stream\n slices
     slv --> calc: run process\n using\n slice and model\n as args
+    slv --> sta: push results
+    output --> sta
 
     calc <-u- input
     calc <-u- mi
@@ -51,8 +62,8 @@ app_mgr <==> env_mgr: setup environment
 env_mgr ==> App: setup container,\n mount model
 app_mgr ==> slv: setup task
 
-art_mgr <--> mdb: find file\n location in index
-art_mgr --> tr_mgr: train model
+art_mgr <---> mdb: find file\n location in index
+art_mgr -> tr_mgr: train model
 
 tr_mgr --> env_mgr: setup env\n for training
 
