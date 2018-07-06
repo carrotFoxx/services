@@ -122,3 +122,8 @@ pip-selfcheck.json
 
 # IntelliJ
 out/
+
+# Project specific
+
+docs/_build
+docs/apidocs
