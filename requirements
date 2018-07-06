@@ -1,0 +1,14 @@
+aioamqp
+aiocache
+aiodns
+aiohttp
+aiohttp-session
+aioredis
+motor
+pytz>=2017.2
+raven
+raven-aiohttp
+marshmallow --pre
+attrs
+inject>=3.3
+# async_generator>=1.9
