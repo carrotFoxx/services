@@ -10,6 +10,7 @@ Welcome to Buldozer Platform's documentation!
     :maxdepth: 2
     :caption: Contents:
 
+    arch
 
 Indices and tables
 ==================
