@@ -9,7 +9,7 @@ from raven.handlers.logging import SentryHandler
 from raven.transport.base import Transport
 from raven_aiohttp import AioHttpTransport
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 class LogSetup:
@@ -77,41 +77,18 @@ class LogSetup:
         except FileNotFoundError:
             return 'unknown'
 
+    @staticmethod
+    def detect(env_var='LOG_LEVEL', default_level=logging.INFO):
+        """
+        detects logging level from cli args or from ENV vars (cli comes first)
+        :return: int level
+        """
+        # cli args
+        cli_parser = argparse.ArgumentParser(description="PLATFORM init")
+        cli_parser.add_argument('--debug', default=None, dest='debug')
+        cli_args, _ = cli_parser.parse_known_args()
 
-# cli args
-cli_parser = argparse.ArgumentParser(description="PLATFORM init")
-cli_parser.add_argument('--debug', type=int, default=None, dest='debug')
-cli_args, _ = cli_parser.parse_known_args()
+        level_env = LogSetup.detect_level(os.environ.get(env_var, default_level))
+        level_cli = LogSetup.detect_level(cli_args.debug) if cli_args.debug is not None else None
 
-# noinspection PyProtectedMember
-level_env = LogSetup.detect_level(os.environ.get('LOG_LEVEL', logging.INFO))
-level_cli = LogSetup.detect_level(cli_args.debug) if cli_args.debug is not None else None
-
-LOG_LEVEL = level_cli if level_cli is not None else level_env
-
-# setup logging
-LogSetup.setup_logs(LOG_LEVEL)
-
-SENTRY_DSN = os.environ.get('SENTRY_DSN', None)
-inferred_site = sys.argv[0].split('/').pop().rstrip('.py')
-SENTRY_NAME = os.environ.get('SENTRY_NAME', 'Platform')
-SENTRY_SITE = os.environ.get('SENTRY_SITE', inferred_site)
-SENTRY_ENV = os.environ.get('APP_ENV', 'staging')
-
-# initialize Sentry reporting only if SENTRY_DSN provided
-if SENTRY_DSN:
-    raven_client = LogSetup.setup_sentry(
-        dsn=SENTRY_DSN,
-        name=SENTRY_NAME,
-        site=SENTRY_SITE,
-        env=SENTRY_ENV
-    )
-
-PLATFORM_VERSION = LogSetup.get_platform_version()
-
-__all__ = (
-    'logger',
-    'LOG_LEVEL',
-    'SENTRY_ENV',
-    'PLATFORM_VERSION'
-)
+        return level_cli if level_cli is not None else level_env

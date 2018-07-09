@@ -54,10 +54,16 @@ class CommonDataManagerInterface:
 
 
 class StorageAdapter(CommonDataManagerInterface):
+    """
+    may contain driver specific logic on how to manipulate entities in storage
+    """
     pass
 
 
 class Repository(CommonDataManagerInterface):
+    """
+    may contain non-specific logic on how to manipulate entities in storage
+    """
     def __init__(self, adapter: StorageAdapter):
         super().__init__()
         self.adapter = adapter
