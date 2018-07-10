@@ -1,9 +1,11 @@
 import logging
+from typing import Union
 
 from aiohttp.web_exceptions import HTTPForbidden
 from aiohttp.web_request import Request
 from multidict import MultiDictProxy
 
+from microcore.entity.abstract import Identifiable, Owned
 from .api import ReadOnlyStorageAPI, ReadWriteStorageAPI
 
 logger = logging.getLogger(__name__)
@@ -15,8 +17,8 @@ OWNER_PROP = 'owner'
 
 class OwnedReadOnlyStorageAPI(ReadOnlyStorageAPI):
     async def _get(self, request: Request):
-        entity = await self.repository.load(request.match_info['id'])
-        if entity.owner != request[OWNER_ID]:
+        entity: Owned = await self.repository.load(request.match_info['id'])
+        if entity.get_owner() != request[OWNER_ID]:
             raise HTTPForbidden()
         return entity
 
@@ -29,14 +31,14 @@ class OwnedReadOnlyStorageAPI(ReadOnlyStorageAPI):
 
 class OwnedReadWriteStorageAPI(OwnedReadOnlyStorageAPI, ReadWriteStorageAPI):
     async def _post_transformer(self, request: Request):
-        entity = self._decode_payload(await request.json())
-        entity.owner = request[OWNER_ID]
+        entity: Owned = self._decode_payload(await request.json())
+        entity.set_owner(request[OWNER_ID])
         return entity
 
     async def _put_transformer(self, request: Request):
-        entity = self._decode_payload(await request.json())
-        entity.owner = request[OWNER_ID]
-        entity.uid = request.match_info['id']
+        entity: Union[Identifiable, Owned] = self._decode_payload(await request.json())
+        entity.set_owner(request[OWNER_ID])
+        entity.set_uid(request.match_info['id'])
         return entity
 
 

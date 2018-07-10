@@ -4,6 +4,7 @@ from typing import Union
 
 from microcore.base.datetime import parse_datetime
 from microcore.base.utils import FQN
+from microcore.entity.abstract import Identifiable, Owned
 from microcore.entity.encoders import JSONEncoderBase
 from microcore.entity.model import EntityMixin, public_attributes
 
@@ -19,10 +20,16 @@ class StringEnumEncoder(JSONEncoderBase):
             return str(o)
 
 
-class ObjectBase(EntityMixin):
+class ObjectBase(EntityMixin, Identifiable):
     def __init__(self, uid: str = None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.uid = uid
+
+    def get_uid(self):
+        return self.uid
+
+    def set_uid(self, value: str):
+        self.uid = value
 
     def __repr__(self):
         return '<%s %s>' % (
@@ -38,10 +45,16 @@ class ObjectBase(EntityMixin):
         self.uid = donor.uid
 
 
-class OwnedObject(EntityMixin):
+class OwnedObject(EntityMixin, Owned):
     def __init__(self, owner: str = None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.owner = owner
+
+    def get_owner(self):
+        return self.owner
+
+    def set_owner(self, value: str):
+        self.owner = value
 
     def preserve_from(self, donor: 'OwnedObject'):
         super().preserve_from(donor)

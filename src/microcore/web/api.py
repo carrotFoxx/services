@@ -10,9 +10,9 @@ from aiohttp.web_request import Request
 from aiohttp.web_response import Response
 from multidict import MultiDictProxy
 
-from microcore.entity.bases import ObjectBase
 from microcore.base.repository import DoesNotExist, Repository, StorageException
 from microcore.base.utils import FQN
+from microcore.entity.abstract import Identifiable
 from microcore.entity.encoders import json_response, proxy_encoder_instance
 from microcore.entity.model import JSON_TYPE_FIELD
 
@@ -63,7 +63,7 @@ class ReadOnlyStorageAPI:
 
 
 class ReadWriteStorageAPI(ReadOnlyStorageAPI):
-    entity_type = ObjectBase
+    entity_type = Identifiable
 
     def _decode_payload(self, raw: dict) -> entity_type:
         raw.pop(JSON_TYPE_FIELD, None)  # fixes issue if we query our own APIs with __type__'ed objects
@@ -73,8 +73,8 @@ class ReadWriteStorageAPI(ReadOnlyStorageAPI):
 
     async def _put_transformer(self, request: Request):
         entity = self._decode_payload(await request.json())
-        if isinstance(entity, ObjectBase):
-            entity.uid = request.match_info['id']
+        if isinstance(entity, Identifiable):
+            entity.set_uid(request.match_info['id'])
         return entity
 
     async def _post_transformer(self, request: Request):
@@ -87,14 +87,14 @@ class ReadWriteStorageAPI(ReadOnlyStorageAPI):
         except (TypeError, AssertionError) as e:
             raise HTTPBadRequest(reason='entity structure invalid') from e
 
-    def _post(self, entity: ObjectBase) -> Awaitable:
+    def _post(self, entity: Identifiable) -> Awaitable:
         return self.repository.save(entity)
 
-    def _put(self, new: ObjectBase, existing: Union[ObjectBase, None] = None) -> Awaitable:
+    def _put(self, new: Identifiable, existing: Union[Identifiable, None] = None) -> Awaitable:
         return self.repository.save(new)
 
-    def _delete(self, stored: ObjectBase) -> Awaitable:
-        return self.repository.delete(stored.uid)
+    def _delete(self, stored: Identifiable) -> Awaitable:
+        return self.repository.delete(stored.get_uid())
 
     async def post(self, request: Request):
         entity = await self._catch_input(request=request, transformer=self._post_transformer)
