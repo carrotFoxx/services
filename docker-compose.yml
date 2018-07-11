@@ -11,13 +11,13 @@ services:
       - '8080:8080'
 
   mongo:
-    image: mongo:latest
+    image: mongo:3.6
     volumes:
       - ./docker/mongodb-data:/data/db
 
 
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./docker/tyk.nginx:/etc/nginx/conf.d/tyk.conf
+#  nginx:
+#    image: nginx:latest
+#    volumes:
+#      - ./docker/tyk.nginx:/etc/nginx/conf.d/tyk.conf
 
