@@ -1,0 +1,13 @@
+version: '2'
+services:
+  app_manager:
+    ports:
+      - '8080:8080'
+
+  mongo:
+    ports:
+      - '27017:27017'
+
+  nginx:
+    ports:
+      - '80:80'

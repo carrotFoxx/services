@@ -1,7 +1,10 @@
 from appmanager.adapters import AppMongoStorageAdapter
 from appmanager.api import ApplicationManagerAPI
+from injector import configure_injector
 from microcore.base.application import WebApplication
 from microcore.base.repository import Repository
+
+configure_injector()
 
 
 class ApplicationManagerApp(WebApplication):

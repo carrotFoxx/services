@@ -28,7 +28,7 @@ class EncoderRegistry:
         if not issubclass(encoder, JSONEncoderBase):
             raise TypeError('encoder should be subclass of %s' % JSONEncoderBase.__name__)
         if typ in cls._class_encoder_map:
-            raise IndexError('encoder/decoder already registered')
+            raise IndexError('encoder/decoder already registered for [%s]' % typ)
         cls._class_encoder_map[typ] = encoder()
 
     @classmethod
@@ -98,6 +98,7 @@ class StorageEntityJSONEncoderBase(EntityJSONEncoderBase):
 
 
 class RegisteredEntityJSONEncoderBase(EntityJSONEncoderBase, metaclass=_EncoderRegistryRegistrant):
+    entity_type = 0x00
     pass
 
 

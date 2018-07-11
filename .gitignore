@@ -127,3 +127,5 @@ out/
 
 docs/_build
 docs/apidocs
+
+docker/*-data

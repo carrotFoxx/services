@@ -48,6 +48,8 @@ class TrackedObject(DateTimePropertyHelperMixin):
 
 
 class RegisteredEntityJSONEncoder(RegisteredEntityJSONEncoderBase):
+    entity_type = 0x01
+
     @staticmethod
     def pack(o) -> dict:
         if is_dataclass(o):
