@@ -1,0 +1,526 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: Application and Model Management Service
+  version: "1.0.0"
+  title: Buldozer Service API
+  contact:
+    email: roman.bulgakov@crplab.ru
+  license:
+    name: Proprietary
+
+paths:
+  /applications:
+    get:
+      summary: list/search available apps
+      responses:
+        '200':
+          $ref: '#/components/responses/ApplicationDetailsListResponse'
+    post:
+      summary: create app
+      requestBody:
+        $ref: '#/components/requestBodies/ApplicationDetailsSubmission'
+      responses:
+        '200':
+          $ref: '#/components/responses/ApplicationDetailsResponse'
+  /applications/{appId}:
+    parameters:
+      - $ref: '#/components/parameters/appId'
+    get:
+      summary: read application data
+      responses:
+        '200':
+          $ref: '#/components/responses/ApplicationDetailsResponse'
+    put:
+      summary: update application details
+      requestBody:
+        $ref: '#/components/requestBodies/ApplicationDetailsSubmission'
+      responses:
+        '200':
+          $ref: '#/components/responses/ApplicationDetailsResponse'
+  /applications/{appId}/upload:
+    parameters:
+      - $ref: '#/components/parameters/appId'
+    post:
+      requestBody:
+        $ref: '#/components/requestBodies/FileUploadSubmission'
+      responses:
+        '204':
+          description: file upload accepted
+
+  /applications/{appId}/commit:
+    parameters:
+      - $ref: '#/components/parameters/appId'
+    post:
+      description: commit app version to archive (version history)
+      responses:
+        '200':
+          $ref: '#/components/responses/VersionInfoResponse'
+  /applications/{appId}/versions:
+    parameters:
+      - $ref: '#/components/parameters/appId'
+    get:
+      description: list versions of an application (filtered list only related to that app)
+      responses:
+        '200':
+          $ref: '#/components/responses/ApplicationDetailsListResponse'
+  /applications/{appId}/versions/{versionId}:
+    parameters:
+      - $ref: '#/components/parameters/appId'
+      - $ref: '#/components/parameters/versionId'
+    get:
+      description: get specified version of an app
+      responses:
+        '200':
+          $ref: '#/components/responses/ApplicationDetailsResponse'
+
+  /applications/packages:
+    description: list package types supported
+    get:
+      responses:
+        '200':
+          description: enumeration of packages supported
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - Hysys
+                  - MatLab
+                  - TensorFlow
+
+  /datasets:
+    get:
+      description: list of datasets
+      responses:
+        '200':
+          $ref: '#/components/responses/DataSetDetailsListResponse'
+    post:
+      description: create dataset
+      requestBody:
+        $ref: '#/components/requestBodies/DataSetDetailsSubmission'
+      responses:
+        '200':
+          $ref: '#/components/responses/DataSetDetailsResponse'
+  /datasets/{datasetId}:
+    parameters:
+      - $ref: '#/components/parameters/datasetId'
+    get:
+      description: get dataset details
+      responses:
+        '200':
+          $ref: '#/components/responses/DataSetDetailsResponse'
+    put:
+      description: update dataset details
+      requestBody:
+        $ref: '#/components/requestBodies/DataSetDetailsSubmission'
+      responses:
+        '200':
+          $ref: '#/components/responses/DataSetDetailsResponse'
+  /datasets/{datasetId}/upload:
+    parameters:
+      - $ref: '#/components/parameters/datasetId'
+    post:
+      requestBody:
+        $ref: '#/components/requestBodies/FileUploadSubmission'
+      responses:
+        '204':
+          description: file upload accepted
+
+  /datasets/{datasetId}/commit:
+    parameters:
+      - $ref: '#/components/parameters/datasetId'
+    post:
+      description: commit dataset version to archive (version history)
+      responses:
+        '200':
+          $ref: '#/components/responses/VersionInfoResponse'
+  /datasets/{datasetId}/versions:
+    parameters:
+      - $ref: '#/components/parameters/datasetId'
+    get:
+      description: show dataset versions
+      responses:
+        '200':
+          $ref: '#/components/responses/DataSetDetailsListResponse'
+  /datasets/{datasetId}/versions/{versionId}:
+    parameters:
+      - $ref: '#/components/parameters/datasetId'
+      - $ref: '#/components/parameters/versionId'
+    get:
+      description: show dataset version
+      responses:
+        '200':
+          $ref: '#/components/responses/DataSetDetailsResponse'
+
+  /workspaces:
+    get:
+      description: list existing workspaces (environments)
+      responses:
+        '200':
+          $ref: '#/components/responses/WorkspaceDetailsListResponse'
+    post:
+      description: create workspace
+      requestBody:
+        $ref: '#/components/requestBodies/WorkspaceDetailsSubmission'
+      responses:
+        '200':
+          $ref: '#/components/responses/WorkspaceDetailsResponse'
+
+  /workspaces/{workspaceId}:
+    parameters:
+      - $ref: '#/components/parameters/workspaceId'
+    get:
+      description: get workspace details
+      responses:
+       '200':
+        $ref: '#/components/responses/WorkspaceDetailsResponse'
+    put:
+      description: update workspace details
+      requestBody:
+        $ref: '#/components/requestBodies/WorkspaceDetailsSubmission'
+      responses:
+        '200':
+          $ref: '#/components/responses/WorkspaceDetailsResponse'
+    delete:
+      description: delete workspace (and destroy provisioned resources)
+      responses:
+        '204':
+          description: accepted for deletion
+
+  /scheduling/operations:
+    post:
+      description: schedule operation on live workspace
+      requestBody:
+        $ref: '#/components/requestBodies/OperationDetailsSubmission'
+      responses:
+        '200':
+          $ref: '#/components/responses/OperationDetailsResponse'
+    get:
+      description: get list of operations
+      responses:
+        '200':
+          $ref: '#/components/responses/OperationDetailsListResponse'
+
+  /scheduling/operations/{operationId}:
+    parameters:
+      - name: operationId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ObjectId'
+    get:
+      description: get operation info and results
+      responses:
+        '200':
+          description: operation details and results
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Operation'
+                  - type: object
+                    properties:
+                      results:
+                        type: object
+                        items:
+                          $ref: '#/components/schemas/AnyType'
+    delete:
+      description: remove operation info and results
+      responses:
+        '204':
+          description: accepted for deletion
+
+components:
+
+  parameters:
+    appId:
+      description: application uid
+      name: appId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ObjectId'
+    versionId:
+      description: document version id
+      name: versionId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int32
+    datasetId:
+      description: dataset uid
+      name: datasetId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ObjectId'
+    workspaceId:
+      description: workspace uid
+      name: workspaceId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ObjectId'
+
+  requestBodies:
+    ApplicationDetailsSubmission:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Application'
+
+    DataSetDetailsSubmission:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DataSet'
+
+    FileUploadSubmission:
+      content:
+        '*/*':
+          schema:
+            type: string
+            format: binary
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
+        multipart/form-data:
+          schema:
+            properties:
+              file:
+                type: array
+                items:
+                  type: string
+                  format: binary
+
+    WorkspaceDetailsSubmission:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Workspace'
+
+    OperationDetailsSubmission:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Operation'
+
+  responses:
+    VersionInfoResponse:
+      description: a version id in which commit has resulted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VersionedObject'
+
+    ApplicationDetailsResponse:
+      description: app details response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Application'
+
+    ApplicationDetailsListResponse:
+      description: app details list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+
+    DataSetDetailsResponse:
+      description: dataset details response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DataSet'
+
+    DataSetDetailsListResponse:
+      description: dataset details list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataSet'
+
+    WorkspaceDetailsResponse:
+      description: workspace details response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Workspace'
+
+    WorkspaceDetailsListResponse:
+      description: workspace details list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Workspace'
+
+    OperationDetailsResponse:
+      description: operation details response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Operation'
+
+    OperationDetailsListResponse:
+      description: operation details list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Operation'
+
+  schemas:
+    ObjectId:
+      type: string
+      format: uuid
+      example: d290f1ee-6c54-4b01-90e6-d701748f0851
+
+    AnyType:
+      anyOf:
+        - type: object
+        - type: array
+        - type: string
+        - type: integer
+        - type: number
+        - type: boolean
+
+    ObjectBase:
+      type: object
+      properties:
+        uid:
+          $ref: '#/components/schemas/ObjectId'
+    OwnedObject:
+      properties:
+        owner:
+          type: string
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+          description: ref to user uid owning this object
+    TrackedObject:
+      properties:
+        created:
+          type: string
+          format: datetime
+          example: '2017-09-20T19:41:59.6001+03:00'
+        updated:
+          type: string
+          format: datetime
+          example: '2017-09-20T19:41:59.6001+03:00'
+    VersionedObject:
+      properties:
+        version:
+          type: integer
+          example: 1
+
+    AppBase:
+      type: object
+      required:
+        - name
+        - description
+        - package
+      properties:
+        name:
+          type: string
+          example: Matlab 1.0 | OpenStackVM
+        description:
+          type: string
+          example: Sample Matlab image
+        package:
+          type: string
+          example: MatLab
+
+    Application:
+      allOf:
+        - $ref: '#/components/schemas/ObjectBase'
+        - $ref: '#/components/schemas/OwnedObject'
+        - $ref: '#/components/schemas/TrackedObject'
+        - $ref: '#/components/schemas/VersionedObject'
+        - $ref: '#/components/schemas/AppBase'
+
+    DataSetBase:
+      type: object
+      properties:
+        name:
+          type: string
+        data:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AnyType'
+
+    DataSet:
+      allOf:
+        - $ref: '#/components/schemas/ObjectBase'
+        - $ref: '#/components/schemas/OwnedObject'
+        - $ref: '#/components/schemas/TrackedObject'
+        - $ref: '#/components/schemas/VersionedObject'
+        - $ref: '#/components/schemas/DataSetBase'
+
+    WorkspaceBase:
+      type: object
+      properties:
+        name:
+          type: string
+        kind:
+          type: string
+          enum:
+            - openstack-vm
+            - k8s-container
+            - dkr-container
+        config:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AnyType'
+        app_id:
+          $ref: '#/components/schemas/ObjectId'
+        dataset_id:
+          $ref: '#/components/schemas/ObjectId'
+
+    Workspace:
+      allOf:
+        - $ref: '#/components/schemas/ObjectBase'
+        - $ref: '#/components/schemas/OwnedObject'
+        - $ref: '#/components/schemas/TrackedObject'
+        - $ref: '#/components/schemas/VersionedObject'
+        - $ref: '#/components/schemas/WorkspaceBase'
+
+    OperationBase:
+      properties:
+        name:
+          type: string
+          default: 'op N'
+        query:
+          description: mongo ql expression to select feed of data from retrospective storage
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/AnyType'
+
+    Operation:
+      allOf:
+        - $ref: '#/components/schemas/ObjectBase'
+        - $ref: '#/components/schemas/OwnedObject'
+        - $ref: '#/components/schemas/TrackedObject'
+        - $ref: '#/components/schemas/OperationBase'
