@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field, is_dataclass
+from dataclasses import asdict, dataclass, field, is_dataclass
 from uuid import uuid4
 
 from microcore.entity.abstract import Identifiable, Owned
@@ -53,5 +53,5 @@ class RegisteredEntityJSONEncoder(RegisteredEntityJSONEncoderBase):
     @staticmethod
     def pack(o) -> dict:
         if is_dataclass(o):
-            return o.asdict()
+            return asdict(o)
         return public_attributes(o)

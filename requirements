@@ -11,4 +11,3 @@ raven-aiohttp
 marshmallow --pre
 attrs
 inject>=3.3
-# async_generator>=1.9

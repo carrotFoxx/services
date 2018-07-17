@@ -1,7 +1,7 @@
 import json
 import logging
 from asyncio import CancelledError
-from typing import Awaitable, Callable, Union
+from typing import Awaitable, Callable, Type, Union
 
 from aiohttp.web import HTTPCreated, HTTPException, HTTPInternalServerError, HTTPNoContent, \
     HTTPNotFound, HTTPOk, json_response as web_json_response
@@ -63,7 +63,7 @@ class ReadOnlyStorageAPI:
 
 
 class ReadWriteStorageAPI(ReadOnlyStorageAPI):
-    entity_type = Identifiable
+    entity_type: Type[Identifiable] = Identifiable
 
     def _decode_payload(self, raw: dict) -> entity_type:
         raw.pop(JSON_TYPE_FIELD, None)  # fixes issue if we query our own APIs with __type__'ed objects

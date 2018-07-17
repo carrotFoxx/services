@@ -6,7 +6,7 @@ from typing import Callable, Dict, List, Union
 from aiohttp import web
 
 from microcore.base.utils import FQN
-from microcore.entity.model import JSON_TYPE_FIELD, public_attributes
+from microcore.entity.model import JSON_TYPE_FIELD
 
 
 class JSONEncoderBase(JSONEncoder):
@@ -80,30 +80,13 @@ class EntityJSONEncoderBase(JSONEncoderBase):
         return cls(**dct)
 
 
-class StorageEntityJSONEncoderBase(EntityJSONEncoderBase):
-
-    @staticmethod
-    def unpack(dct: dict, cls: type) -> object:
-        return cls(
-            uid=dct.pop('_id'),
-            **dct
-        )
-
-    @staticmethod
-    def pack(o: object) -> dict:
-        return {
-            '_id': getattr(o, 'uid'),
-            **public_attributes(o, exclude={'uid'})
-        }
-
-
 class RegisteredEntityJSONEncoderBase(EntityJSONEncoderBase, metaclass=_EncoderRegistryRegistrant):
     entity_type = 0x00
     pass
 
 
 class _OverridableEncoder(EncoderRegistry):
-    def __init__(self, *, force_type_mapping=None, **kwargs):
+    def __init__(self, *, force_type_mapping: Dict[type, EntityJSONEncoderBase] = None, **kwargs):
         self.type_mapping = force_type_mapping or {}
         super().__init__(**kwargs)
 

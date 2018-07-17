@@ -1,14 +1,18 @@
 # setup logging
+import logging
 import os
 import sys
 
 from microcore.base.log import LogSetup
+from microcore.storage.mongo import motor
 
 PLATFORM_VERSION = LogSetup.get_platform_version()
 
 LOG_LEVEL = LogSetup.detect()
 
 LogSetup.setup_logs(LOG_LEVEL)
+
+ROOT_LOG = logging.getLogger()
 
 SENTRY_DSN = os.environ.get('SENTRY_DSN', None)
 SENTRY_NAME = os.environ.get('SENTRY_NAME', 'Buldozer Platform')
@@ -25,3 +29,6 @@ if SENTRY_DSN:
         env=APP_ENV,
         version=PLATFORM_VERSION
     )
+
+
+MONGO_DB = motor().buldozer

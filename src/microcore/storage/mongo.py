@@ -7,7 +7,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.results import DeleteResult, UpdateResult
 
 from microcore.base.repository import DoesNotExist, Filter, StorageAdapter, StorageException
-from microcore.entity.encoders import ProxyJSONEncoder, ProxyNativeEncoder
+from microcore.entity.encoders import ProxyJSONEncoder, ProxyNativeEncoder, EntityJSONEncoderBase
+from microcore.entity.model import public_attributes
 
 logger = logging.getLogger(__name__)
 MONGODB_DSN = os.getenv('MONGODB_DSN', 'mongodb://localhost:27017')
@@ -76,13 +77,10 @@ class SimpleMongoStorageAdapter(StorageAdapter):
 
     async def find(self, properties: dict = None) -> List:
         properties = properties or {}
-
         lst = []
         limit = self._extract_limit_argument(properties)
         sort = self._extract_sort_argument(properties)
-        cursor = self._collection.find(properties).limit(limit)
-        if sort:
-            cursor.sort(sort)
+        cursor = self._collection.find(properties, sort=sort, limit=limit)
         async for document in cursor:
             lst.append(self._encoder.decoder_object_hook(document))
         return lst
@@ -114,7 +112,8 @@ class SimpleMongoStorageAdapter(StorageAdapter):
     async def _load_existing(self, eid=None, **kwargs) -> Union[object, None]:
         if eid is not None:
             kwargs['_id'] = eid
-        document = await self._collection.find_one(kwargs)
+        sort = self._extract_sort_argument(kwargs)
+        document = await self._collection.find_one(kwargs, sort=sort)
         if not document:
             return None
         return self._encoder.decoder_object_hook(document)
@@ -129,3 +128,20 @@ class SimpleMongoStorageAdapter(StorageAdapter):
     async def delete_many(self, properties: dict):
         res: DeleteResult = await self._collection.delete_many(properties)
         return res.deleted_count
+
+
+class StorageEntityJSONEncoderBase(EntityJSONEncoderBase):
+
+    @staticmethod
+    def unpack(dct: dict, cls: type) -> object:
+        return cls(
+            uid=dct.pop('_id'),
+            **dct
+        )
+
+    @staticmethod
+    def pack(o: object) -> dict:
+        return {
+            '_id': getattr(o, 'uid'),
+            **public_attributes(o, exclude={'uid'})
+        }

@@ -1,6 +1,194 @@
+import asyncio
+import json
+import logging
 from dataclasses import dataclass
+from typing import Type, Union
+
+from aiohttp import hdrs
+from aiohttp.web import HTTPBadRequest, HTTPInternalServerError, HTTPNotFound, HTTPPreconditionFailed, \
+    HTTPPreconditionRequired, Request, Response
+from aiohttp.web_urldispatcher import UrlDispatcher
+
+from mco.entities import ObjectBase, OwnedObject
+from microcore.base.application import Routable
+from microcore.base.repository import DoesNotExist, Repository, StorageException, VersionMismatch
+from microcore.entity.encoders import ProxyJSONEncoder, json_response
+from microcore.web.owned_api import OwnedReadWriteStorageAPI
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
-class VersionedObject:
+class VersionedObject(ObjectBase, OwnedObject):
     version: int = 0
+
+
+E_TAG = 'X-Version'
+IF_MATCH = 'X-If-Version'
+
+
+def ensure_has_header(header: str):
+    def decorator(fn):
+        def ensure_header(self, request: Request):
+            if request.headers.get(header) is None:
+                raise HTTPPreconditionRequired(reason=f'{header} header must be set')
+            return fn(self, request)
+
+        return ensure_header
+
+    return decorator
+
+
+class VersionedAPI(OwnedReadWriteStorageAPI, Routable):
+    prefix = None
+    entity_type: Type[VersionedObject] = VersionedObject
+
+    def __init__(self, repository: Repository, archive: Repository):
+        super().__init__(repository)
+        self.archive: Repository = archive
+
+    def set_routes(self, router: UrlDispatcher):
+        resources = []
+
+        root = router.add_resource('')
+        root.add_route(hdrs.METH_GET, self.list)
+        root.add_route(hdrs.METH_POST, self.post)
+        resources.append(root)
+
+        item = router.add_resource('/{id}')
+        item.add_route(hdrs.METH_GET, self.get)
+        item.add_route(hdrs.METH_PUT, self.put)
+        item.add_route(hdrs.METH_DELETE, self.delete)
+        resources.append(item)
+
+        versions_root = router.add_resource('/{id}/versions')
+        versions_root.add_route(hdrs.METH_GET, self.list_versions)
+        resources.append(versions_root)
+
+        versions_item = router.add_resource('/{id}/versions/{vid}')
+        versions_item.add_route(hdrs.METH_GET, self.get_version)
+        resources.append(versions_item)
+
+        commit = router.add_resource('/{id}/commit')
+        commit.add_route(hdrs.METH_POST, self.commit_version)
+        resources.append(commit)
+
+        if self.prefix:
+            for r in resources:
+                r.add_prefix(self.prefix)
+
+        logger.debug('registered resources: %s',
+                     [r.canonical for r in router.resources()])
+
+    async def get(self, request: Request):
+        try:
+            entity: VersionedObject = await self._get(request)
+        except DoesNotExist:
+            raise HTTPNotFound()
+        return Response(headers={E_TAG: str(entity.version)},
+                        text=json.dumps(entity, cls=ProxyJSONEncoder))
+
+    async def post(self, request: Request):
+        entity: VersionedObject = await self._catch_input(request, self._post_transformer)
+        try:
+            await self._post(entity)
+        except StorageException as e:
+            raise HTTPInternalServerError() from e
+        return Response(status=201, headers={E_TAG: str(entity.version)},
+                        text=json.dumps(entity, cls=ProxyJSONEncoder))
+
+    async def _put_transformer(self, request: Request):
+        entity: VersionedObject = await super()._put_transformer(request)
+        entity.version = int(request.headers[IF_MATCH])
+        return entity
+
+    @json_response
+    async def _put(self, new: entity_type, existing: Union[entity_type, None] = None):
+        await super()._put(new, existing)
+        return new
+
+    @ensure_has_header(IF_MATCH)
+    async def put(self, request: Request):
+        entity: VersionedObject = await self._catch_input(request, self._put_transformer)
+
+        try:
+            stored: VersionedObject = await self._get(request)
+            if stored.version != int(request.headers[IF_MATCH]):
+                raise HTTPPreconditionFailed(reason='Version mismatch')
+        except DoesNotExist:
+            stored = None
+            pass  # just create with defined id if not exists
+
+        try:
+            response: Response = await self._put(new=entity, existing=stored)
+            response.headers[E_TAG] = str(entity.version)
+            return response
+        except VersionMismatch as e:
+            raise HTTPPreconditionFailed(reason='Version mismatch') from e
+        except StorageException as e:
+            raise HTTPInternalServerError() from e
+
+    @ensure_has_header(IF_MATCH)
+    async def delete(self, request: Request):
+        try:
+            entity: self.entity_type = await self._get(request)
+            if entity.version != int(request.headers.get(IF_MATCH)):
+                raise HTTPPreconditionFailed(reason='Version mismatch')
+            await self._delete(entity)
+        except DoesNotExist:
+            raise HTTPNotFound()
+        except StorageException as e:
+            raise HTTPInternalServerError() from e
+        return Response(status=204)
+
+    @json_response
+    async def get_version(self, request: Request):
+        try:
+            entity = await self.archive.find_one(uid=request.match_info['id'],
+                                                 version=request.match_info['vid'])
+        except DoesNotExist:
+            raise HTTPNotFound
+        return entity
+
+    @json_response
+    async def list_versions(self, request: Request):
+        try:
+            query = await self._list_query(request)
+            lst = await self.archive.find({**query, 'uid': request.match_info['id']})
+        except AttributeError as e:
+            raise HTTPBadRequest from e
+        return lst
+
+    @ensure_has_header(IF_MATCH)
+    @json_response
+    async def commit_version(self, request: Request):
+        try:
+            entity: VersionedObject = await self._get(request)
+            if entity.version != int(request.headers.get(IF_MATCH)):
+                raise HTTPPreconditionFailed(reason='Version mismatch')
+        except DoesNotExist:
+            raise HTTPNotFound
+        # wrap with shield
+        entity = await asyncio.shield(self._commit_version_write(entity))
+        return {'version': entity.version}
+
+    async def _commit_version_write(self, entity: VersionedObject):
+        try:
+            latest: VersionedObject = await self.archive.find_one(**{
+                'uid': entity.uid,
+                '_sort': {'version': -1}
+            })
+            top_version = latest.version
+        except DoesNotExist:
+            top_version = 0
+
+        entity.version = top_version + 1
+        await self.archive.save(entity)
+        entity.version += 1
+        await self.repository.save(entity)
+        return entity
+
+
+class VersionedRepository(Repository):
+    async def save(self, entity):
+        await self.adapter.save(entity)

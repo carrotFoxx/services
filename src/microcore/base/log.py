@@ -27,7 +27,7 @@ class LogSetup:
             raise ValueError('cannot determine level from [%s] type', type(level))
         if level.isdigit():
             return logging._checkLevel(int(level))
-        return logging._checkLevel(level)
+        return logging._checkLevel(level.upper())
 
     class NoOpTransport(Transport):
         scheme = ['sync+noop']
