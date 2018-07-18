@@ -1,7 +1,7 @@
 from dataclasses import asdict, dataclass, field, is_dataclass
 from uuid import uuid4
 
-from microcore.entity.abstract import Identifiable, Owned
+from microcore.entity.abstract import Identifiable, Owned, Preserver
 from microcore.entity.bases import DateTimePropertyHelperMixin
 from microcore.entity.encoders import RegisteredEntityJSONEncoderBase
 from microcore.entity.model import public_attributes
@@ -38,9 +38,13 @@ class DatedObject(DateTimePropertyHelperMixin):
 
 
 @dataclass
-class TrackedObject(DateTimePropertyHelperMixin):
+class TrackedObject(DateTimePropertyHelperMixin, Preserver):
     created: float = None
     updated: float = None
+
+    def preserve_from(self, other: 'TrackedObject'):
+        super().preserve_from(other)
+        self.created = other.created
 
     def __post_init__(self):
         self.created = self.created or self._issue_ts().timestamp()

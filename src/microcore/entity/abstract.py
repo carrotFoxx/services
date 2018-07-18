@@ -19,3 +19,9 @@ class Owned(abc.ABC):
     @abc.abstractmethod
     def set_owner(self, value: str):
         pass
+
+
+class Preserver(abc.ABC):
+    @abc.abstractmethod
+    def preserve_from(self, other):
+        pass

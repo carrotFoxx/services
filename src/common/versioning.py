@@ -12,6 +12,7 @@ from aiohttp.web_urldispatcher import UrlDispatcher
 from mco.entities import ObjectBase, OwnedObject
 from microcore.base.application import Routable
 from microcore.base.repository import DoesNotExist, Repository, StorageException, VersionMismatch
+from microcore.entity.abstract import Preserver
 from microcore.entity.encoders import ProxyJSONEncoder, json_response
 from microcore.web.owned_api import OwnedReadWriteStorageAPI
 
@@ -19,8 +20,14 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class VersionedObject(ObjectBase, OwnedObject):
+class VersionedObject(ObjectBase, OwnedObject, Preserver):
     version: int = 0
+
+    def preserve_from(self, other: 'VersionedObject'):
+        super().preserve_from(other)
+        self.uid = other.uid
+        self.owner = other.owner
+        self.version = other.version
 
 
 E_TAG = 'X-Version'
@@ -104,6 +111,8 @@ class VersionedAPI(OwnedReadWriteStorageAPI, Routable):
 
     @json_response
     async def _put(self, new: entity_type, existing: Union[entity_type, None] = None):
+        if existing is not None:
+            new.preserve_from(existing)
         await super()._put(new, existing)
         return new
 
@@ -145,7 +154,7 @@ class VersionedAPI(OwnedReadWriteStorageAPI, Routable):
     async def get_version(self, request: Request):
         try:
             entity = await self.archive.find_one(uid=request.match_info['id'],
-                                                 version=request.match_info['vid'])
+                                                 version=int(request.match_info['vid']))
         except DoesNotExist:
             raise HTTPNotFound
         return entity
@@ -184,7 +193,6 @@ class VersionedAPI(OwnedReadWriteStorageAPI, Routable):
 
         entity.version = top_version + 1
         await self.archive.save(entity)
-        entity.version += 1
         await self.repository.save(entity)
         return entity
 

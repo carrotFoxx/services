@@ -25,10 +25,17 @@ class AppArchiveStorageEncoder(StorageEntityJSONEncoderBase):
     entity_type = App
 
     @staticmethod
+    def unpack(dct: dict, cls: type) -> object:
+        dct.pop('_id', None)
+        return cls(
+            **dct
+        )
+
+    @staticmethod
     def pack(o: App) -> dict:
         return {
             '_id': f'{o.uid}/{o.version}',
-            **public_attributes(o, exclude={'uid'})
+            **public_attributes(o)
         }
 
 
