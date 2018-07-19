@@ -11,6 +11,7 @@ class App(VersionedObject, TrackedObject):
     name: str = None
     package: str = None  # indicate package used (Matlab, Hysys, TensorFlow, etc)
     description: str = None
+    attachment: str = None
 
 
 class AppJSONEncoder(RegisteredEntityJSONEncoder):

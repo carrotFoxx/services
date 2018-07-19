@@ -5,6 +5,7 @@ info:
   version: "1.0.0"
   title: Buldozer Service API
   contact:
+    name: Roman Bulgakov
     email: roman.bulgakov@crplab.ru
   license:
     name: Proprietary
@@ -463,6 +464,8 @@ components:
 
     DataSetBase:
       type: object
+      required:
+        - name
       properties:
         name:
           type: string
@@ -481,6 +484,11 @@ components:
 
     WorkspaceBase:
       type: object
+      required:
+        - name
+        - kind
+        - app_id
+        - dataset_id
       properties:
         name:
           type: string
@@ -508,6 +516,9 @@ components:
         - $ref: '#/components/schemas/WorkspaceBase'
 
     OperationBase:
+      required:
+        - name
+        - query
       properties:
         name:
           type: string

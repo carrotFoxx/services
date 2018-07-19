@@ -1,3 +1,4 @@
+---
 version: '2'
 services:
   app_manager:
@@ -9,6 +10,8 @@ services:
       - dsn.env
     ports:
       - '8080:8080'
+    volumes:
+      - ./docker/app-data:/opt/data
 
   mongo:
     image: mongo:3.6

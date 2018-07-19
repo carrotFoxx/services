@@ -53,7 +53,7 @@ class ReadOnlyStorageAPI:
             raise HTTPNoContent()
         raise HTTPOk()
 
-    async def _list_query(self, request: Request):
+    async def _list_query(self, request: Request) -> dict:
         properties: MultiDictProxy = request.rel_url.query
         properties: dict = {k: v for k, v in properties.items()}
         return properties

@@ -3,7 +3,6 @@ from typing import Union
 
 from aiohttp.web_exceptions import HTTPForbidden
 from aiohttp.web_request import Request
-from multidict import MultiDictProxy
 
 from microcore.entity.abstract import Identifiable, Owned
 from .api import ReadOnlyStorageAPI, ReadWriteStorageAPI
@@ -22,9 +21,8 @@ class OwnedReadOnlyStorageAPI(ReadOnlyStorageAPI):
             raise HTTPForbidden()
         return entity
 
-    async def _list_query(self, request: Request):
-        properties: MultiDictProxy = request.rel_url.query
-        properties: dict = {k: v for k, v in properties.items()}
+    async def _list_query(self, request: Request) -> dict:
+        properties = await super()._list_query(request)
         properties[OWNER_PROP] = request[OWNER_ID]
         return properties
 
