@@ -51,8 +51,32 @@ class PackageJSONEncoder(RegisteredEntityJSONEncoder):
 
 @dataclass
 class Model(VersionedObject, TrackedObject):
-    package: str = None
+    name: str = None
+    package: str = None  # indicate package it belongs to (Matlab, Hysys, TensorFlow, etc)
+    attachment: str = None
 
 
 class ModelJSONEncoder(RegisteredEntityJSONEncoder):
     entity_type = Model
+
+
+class ModelStorageEncoder(StorageEntityJSONEncoderBase):
+    entity_type = Model
+
+
+class ModelArchiveStorageEncoder(StorageEntityJSONEncoderBase):
+    entity_type = Model
+
+    @staticmethod
+    def unpack(dct: dict, cls: type) -> object:
+        dct.pop('_id', None)
+        return cls(
+            **dct
+        )
+
+    @staticmethod
+    def pack(o: App) -> dict:
+        return {
+            '_id': f'{o.uid}/{o.version}',
+            **public_attributes(o)
+        }
