@@ -1,0 +1,35 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+aioamqp = "*"
+aiocache = "*"
+aiodns = "*"
+aiohttp = "*"
+aioredis = "*"
+motor = "*"
+pytz = ">=2017.2"
+raven = "*"
+raven-aiohttp = "*"
+marshmallow = "==3.0.0b12"
+attrs = "*"
+docker = "*"
+aiohttp_session = "*"
+Inject = ">=3.3"
+
+[dev-packages]
+pytest = ">=3.4"
+pytest-asyncio = ">=0.8"
+pytest-aiohttp = ">=0.3"
+pytest-dependency = ">=0.3.2"
+pytest-env = ">=0.6.2"
+pytest-benchmark = ">=3.1"
+sphinxcontrib-plantuml = ">=0.10"
+Sphinx = ">=1.7"
+sphinx_rtd_theme = ">=0.2.4"
+docker-compose = "*"
+
+[requires]
+python_version = "3.7"
