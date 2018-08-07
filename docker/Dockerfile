@@ -7,8 +7,8 @@ ENTRYPOINT ["/entrypoint.sh"]
 CMD ["--help"]
 EXPOSE 8080
 
-COPY requirements constraints /opt/app/
-RUN pip install --no-cache-dir -r /opt/app/requirements -c /opt/app/constraints
+COPY requirements /opt/app/
+RUN pip install --no-cache-dir -r /opt/app/requirements
 
 COPY src /opt/app
 
