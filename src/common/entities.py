@@ -80,3 +80,27 @@ class ModelArchiveStorageEncoder(StorageEntityJSONEncoderBase):
             '_id': f'{o.uid}/{o.version}',
             **public_attributes(o)
         }
+
+
+@dataclass
+class Workspace(ObjectBase, OwnedObject, TrackedObject):
+    name: str
+
+    app_id: str
+    app_ver: int
+
+    model_id: str
+    model_ver: str
+
+    def preserve_from(self, other: 'Workspace'):
+        super().preserve_from(other)
+        self.uid = other.uid
+        self.owner = other.owner
+
+
+class WorkspaceJSONEncoder(RegisteredEntityJSONEncoder):
+    entity_type = Workspace
+
+
+class WorkspaceStorageEncoder(StorageEntityJSONEncoderBase):
+    entity_type = Workspace

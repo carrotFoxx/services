@@ -140,7 +140,7 @@ class VersionedAPI(OwnedReadWriteStorageAPI, Routable):
     @ensure_has_header(IF_MATCH)
     async def delete(self, request: Request):
         try:
-            entity: self.entity_type = await self._get(request)
+            entity: VersionedObject = await self._get(request)
             if entity.version != int(request.headers.get(IF_MATCH)):
                 raise HTTPPreconditionFailed(reason='Version mismatch')
             await self._delete(entity)

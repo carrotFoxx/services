@@ -46,6 +46,12 @@ class TrackedObject(DateTimePropertyHelperMixin, Preserver):
         super().preserve_from(other)
         self.created = other.created
 
+    def date_update(self):
+        """
+        dates the update fact, by writing current time to _update attribute
+        """
+        self.updated = self._issue_ts().timestamp()
+
     def __post_init__(self):
         self.created = self.created or self._issue_ts().timestamp()
         self.updated = self.updated or self.created

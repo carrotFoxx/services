@@ -2,6 +2,7 @@
 import logging
 import os
 import sys
+from datetime import timedelta
 
 from microcore.base.log import LogSetup
 from microcore.storage.mongo import motor
@@ -30,5 +31,7 @@ if SENTRY_DSN:
         version=PLATFORM_VERSION
     )
 
-
 MONGO_DB = motor().buldozer
+
+WSP_GC_COLLECT_DELAY = timedelta(seconds=int(os.getenv('WSP_GC_COLLECT_DELAY', 60 * 60)))
+WSP_GC_INTERVAL = int(os.getenv('WSP_GC_INTERVAL', 600))

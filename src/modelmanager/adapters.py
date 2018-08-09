@@ -5,7 +5,7 @@ from microcore.entity.encoders import ProxyNativeEncoder
 from microcore.storage.mongo import SimpleMongoStorageAdapter
 
 
-class AppMongoStorageAdapter(SimpleMongoStorageAdapter):
+class ModelMongoStorageAdapter(SimpleMongoStorageAdapter):
     _encoder = ProxyNativeEncoder(
         force_type_mapping={
             Model: ModelStorageEncoder()
@@ -15,8 +15,12 @@ class AppMongoStorageAdapter(SimpleMongoStorageAdapter):
     def __init__(self) -> None:
         super().__init__(MONGO_DB.models, self._encoder)
 
+    def save(self, entity: Model):
+        entity.date_update()
+        return super().save(entity)
 
-class AppArchiveMongoStorageAdapter(SimpleMongoStorageAdapter):
+
+class ModelArchiveMongoStorageAdapter(SimpleMongoStorageAdapter):
     _encoder = ProxyNativeEncoder(
         force_type_mapping={
             Model: ModelArchiveStorageEncoder()

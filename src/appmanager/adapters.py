@@ -15,6 +15,10 @@ class AppMongoStorageAdapter(SimpleMongoStorageAdapter):
     def __init__(self) -> None:
         super().__init__(MONGO_DB.applications, self._encoder)
 
+    def save(self, entity: App):
+        entity.date_update()
+        return super().save(entity)
+
 
 class AppArchiveMongoStorageAdapter(SimpleMongoStorageAdapter):
     _encoder = ProxyNativeEncoder(

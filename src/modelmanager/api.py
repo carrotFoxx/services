@@ -2,7 +2,7 @@ from aiohttp import hdrs
 from aiohttp.web import Request
 from aiohttp.web_urldispatcher import UrlDispatcher
 
-from common.entities import App, Model
+from common.entities import Model
 from common.upload import FIELD_FILENAME, accept_upload
 from common.versioning import VersionedAPI
 from microcore.entity.encoders import json_response
@@ -10,7 +10,7 @@ from microcore.entity.encoders import json_response
 
 class ModelManagerAPI(VersionedAPI):
     prefix = '/models'
-    entity_type = App
+    entity_type = Model
 
     def set_routes(self, router: UrlDispatcher):
         super().set_routes(router)
