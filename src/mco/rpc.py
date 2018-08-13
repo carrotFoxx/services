@@ -1,8 +1,10 @@
 import asyncio
 import functools
-from typing import Any, Awaitable
+from typing import Any, Awaitable, List
 
+import inject
 from aiohttp_json_rpc import JsonRpc, JsonRpcClient
+from aiohttp_json_rpc.communicaton import JsonRpcRequest
 
 from microcore.base.application import WebApplication
 from microcore.entity.encoders import ProxyNativeEncoder
@@ -10,6 +12,9 @@ from microcore.entity.encoders import ProxyNativeEncoder
 
 class RPCRoutable:
     def set_routes(self, router: JsonRpc):
+        raise NotImplementedError
+
+    def set_methods(self) -> List[callable]:
         raise NotImplementedError
 
 
@@ -21,6 +26,15 @@ class RPCServerApplication(WebApplication):
 
     def add_routes_from(self, routable: RPCRoutable):
         routable.set_routes(self.rpc_setup)
+
+    def add_methods_from(self, routable: RPCRoutable):
+        self.add_methods(routable.set_methods())
+
+    def add_methods(self, methods: List[callable]):
+        methods = [
+            ('', rpc_expose(method)) for method in methods
+        ]
+        self.rpc_setup.add_methods(*methods)
 
 
 class RPCClient:
@@ -42,3 +56,14 @@ class RPCClient:
 
     def close(self) -> Awaitable:
         return self._client.disconnect()
+
+
+@inject.params(encoder=ProxyNativeEncoder)
+def rpc_expose(method: callable, encoder: ProxyNativeEncoder):
+    async def _dispatch(request: JsonRpcRequest):
+        params = encoder.load(request.params)
+        return await method(**params)
+
+    _dispatch.__name__ = method.__name__
+
+    return _dispatch

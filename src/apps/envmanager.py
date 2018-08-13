@@ -14,7 +14,7 @@ class EnvironmentManagerApp(RPCServerApplication):
         self.controller = ContainerManagerRPCAPI(
             ContainerManager(DockerProvider())
         )
-        self.controller.set_routes(self.rpc_setup)
+        self.add_methods_from(self.controller)
 
 
 if __name__ == '__main__':
