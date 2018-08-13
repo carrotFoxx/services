@@ -84,13 +84,13 @@ class ModelArchiveStorageEncoder(StorageEntityJSONEncoderBase):
 
 @dataclass
 class Workspace(ObjectBase, OwnedObject, TrackedObject):
-    name: str
+    name: str = None
 
-    app_id: str
-    app_ver: int
+    app_id: str = None
+    app_ver: int = None
 
-    model_id: str
-    model_ver: str
+    model_id: str = None
+    model_ver: str = None
 
     def preserve_from(self, other: 'Workspace'):
         super().preserve_from(other)

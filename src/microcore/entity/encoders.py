@@ -175,6 +175,8 @@ class ProxyNativeEncoder(ProxyJSONEncoder):
         return self._walk_structure(data, _method=self.default)
 
     def load(self, data: Union[Dict, List]):
+        if not isinstance(data, (dict, list)):
+            return data
         return self._walk_structure(data, _method=self.decoder_object_hook)
 
 

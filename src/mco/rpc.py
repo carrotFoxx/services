@@ -1,5 +1,6 @@
+import asyncio
 import functools
-from typing import Any
+from typing import Any, Awaitable
 
 from aiohttp_json_rpc import JsonRpc, JsonRpcClient
 
@@ -23,13 +24,14 @@ class RPCServerApplication(WebApplication):
 
 
 class RPCClient:
-    def __init__(self, server_url: str, encoder: ProxyNativeEncoder) -> None:
+    def __init__(self, server_url: str, encoder: ProxyNativeEncoder, *, loop=None) -> None:
         super().__init__()
         self._encoder = encoder
-        self._client = JsonRpcClient(server_url)
+        self._loop = loop or asyncio.get_event_loop()
+        self._client = JsonRpcClient(url=server_url, loop=self._loop)
 
     def __getattribute__(self, name: str) -> Any:
-        if name.startswith('_'):
+        if name.startswith('_') or name == 'close':
             return super().__getattribute__(name)
         return functools.partial(self._request, method=name)
 
@@ -37,3 +39,6 @@ class RPCClient:
         kwargs = self._encoder.dump(kwargs)
         response = await self._client.call(method=method, params=kwargs, timeout=rpc_timeout)
         return self._encoder.load(response)
+
+    def close(self) -> Awaitable:
+        return self._client.disconnect()

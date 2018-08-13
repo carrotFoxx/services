@@ -29,8 +29,8 @@ class DockerProvider:
     @staticmethod
     def _normalize_labels(dct: dict):
         return {
-            **{LABEL_PREFIX + key: value for key, value in dct.items() if not key.startswith(LABEL_PREFIX)},
-            **{key: value for key, value in dct.items() if key.startswith(LABEL_PREFIX)},
+            **{LABEL_PREFIX + key: str(value) for key, value in dct.items() if not key.startswith(LABEL_PREFIX)},
+            **{key: str(value) for key, value in dct.items() if key.startswith(LABEL_PREFIX)},
             LABEL_PREFIX + 'project': 'buldozer',
             LABEL_PREFIX + 'provider': ORCHESTRATOR_ID
         }

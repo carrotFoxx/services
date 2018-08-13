@@ -13,20 +13,22 @@ class ContainerManager:
     def _get_hashed_id(*args) -> str:
         hash_func = hashlib.sha1()
         for x in args:
-            hash_func.update(x)
+            hash_func.update(bytes(str(x), encoding='utf-8'))
         return hash_func.hexdigest()
 
     def create_app_instance_definition(self, app: App, model: Model):
         image = app.package
-        volume_data = model.attachment
+        attachments = {}
+        if model and model.attachment is not None:
+            attachments = {
+                '/var/model': model.attachment
+            }
         instance_id = self._get_hashed_id(app.uid, app.version, model.uid, model.version)
 
         return InstanceDefinition(
             uid=instance_id,
             image=image,
-            attachments={
-                '/var/model': volume_data
-            },
+            attachments=attachments,
             labels={
                 'app_id': app.uid,
                 'app_name': app.name,
@@ -41,4 +43,4 @@ class ContainerManager:
         await self.provider.launch_instance(self.create_app_instance_definition(app, model))
 
     async def remove_app_instance(self, app: App, model: Model):
-        await self.provider.stop_instance(self.create_app_instance_definition(app, model))
+        await self.provider.remove_instance(self.create_app_instance_definition(app, model))
