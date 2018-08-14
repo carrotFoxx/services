@@ -1,19 +1,21 @@
 import asyncio
 import functools
+import inspect
+import logging
 from typing import Any, Awaitable, List
 
 import inject
-from aiohttp_json_rpc import JsonRpc, JsonRpcClient
+from aiohttp_json_rpc import JsonRpc, JsonRpcClient, RpcGenericServerDefinedError, RpcInvalidParamsError, \
+    RpcInvalidRequestError
 from aiohttp_json_rpc.communicaton import JsonRpcRequest
 
 from microcore.base.application import WebApplication
 from microcore.entity.encoders import ProxyNativeEncoder
 
+logger = logging.getLogger(__name__)
+
 
 class RPCRoutable:
-    def set_routes(self, router: JsonRpc):
-        raise NotImplementedError
-
     def set_methods(self) -> List[callable]:
         raise NotImplementedError
 
@@ -23,9 +25,6 @@ class RPCServerApplication(WebApplication):
         await super()._setup()
         self.rpc_setup = JsonRpc()
         self.server.router.add_route('*', '/', self.rpc_setup)
-
-    def add_routes_from(self, routable: RPCRoutable):
-        routable.set_routes(self.rpc_setup)
 
     def add_methods_from(self, routable: RPCRoutable):
         self.add_methods(routable.set_methods())
@@ -49,9 +48,12 @@ class RPCClient:
             return super().__getattribute__(name)
         return functools.partial(self._request, method=name)
 
-    async def _request(self, method, *, rpc_timeout=-1, **kwargs) -> Any:
-        kwargs = self._encoder.dump(kwargs)
-        response = await self._client.call(method=method, params=kwargs, timeout=rpc_timeout)
+    async def _request(self, *args, method: str, rpc_timeout=1, **kwargs) -> Any:
+        if len(args) > 0 and len(kwargs) > 0:
+            raise RpcInvalidParamsError('params should be either positional or key-value, but not both')
+        params = list(args) or kwargs
+        params = self._encoder.dump(params)
+        response = await self._client.call(method=method, params=params, timeout=rpc_timeout)
         return self._encoder.load(response)
 
     def close(self) -> Awaitable:
@@ -59,11 +61,34 @@ class RPCClient:
 
 
 @inject.params(encoder=ProxyNativeEncoder)
-def rpc_expose(method: callable, encoder: ProxyNativeEncoder):
-    async def _dispatch(request: JsonRpcRequest):
-        params = encoder.load(request.params)
-        return await method(**params)
+def rpc_expose(method: callable, encoder: ProxyNativeEncoder, name=None):
+    if getattr(method, '_is_rpc_exposed', False):
+        return method
 
-    _dispatch.__name__ = method.__name__
+    signature = inspect.Signature.from_callable(method, follow_wrapped=False)
+
+    async def _dispatch(request: JsonRpcRequest):
+        try:
+            params = encoder.load(request.params)
+            if isinstance(params, dict):
+                matched: inspect.BoundArguments = signature.bind(**params)
+            else:
+                matched: inspect.BoundArguments = signature.bind(*params)
+        except TypeError as e:
+            raise RpcInvalidParamsError from e
+        except Exception as e:
+            raise RpcInvalidRequestError from e
+        try:
+            return await method(*matched.args, **matched.kwargs)
+        except Exception as e:
+            logger.exception('rpc method generic exception')
+            raise RpcGenericServerDefinedError(
+                data=str(e),
+                error_code=-32005,
+                message='Server failed to fulfill request'
+            ) from e
+
+    _dispatch.__name__ = name or method.__name__
+    _dispatch._is_rpc_exposed = True
 
     return _dispatch

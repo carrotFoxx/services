@@ -136,10 +136,10 @@ class ProxyNativeEncoder(ProxyJSONEncoder):
     def _walk_list(self, lst: list, _method: Callable):
         ret = []
         for val in lst:
-            if hasattr(val, '__dict__'):
+            if hasattr(val, '__dict__') or (isinstance(val, dict) and val.get(JSON_TYPE_FIELD) is not None):
                 ret.append(_method(val))
             elif isinstance(val, dict):
-                ret.append(_method(val))
+                ret.append(self._walk_dict(val, _method=_method))
             elif isinstance(val, list):
                 ret.append(self._walk_list(val, _method=_method))
             else:
