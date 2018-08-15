@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from typing import Awaitable
 
 import docker
 import docker.errors
@@ -7,7 +8,7 @@ from docker.models.containers import Container
 from docker.models.networks import Network
 
 from container_manager import InstanceNotFound, ProviderError
-from container_manager.definition import InstanceDefinition
+from container_manager.definition import Instance, InstanceDefinition
 from mco.utils import convert_exceptions
 from microcore.base.sync import run_in_executor
 
@@ -71,7 +72,7 @@ class DockerProvider:
         return container
 
     @raise_provider_exception
-    def _create_container(self, definition):
+    def _create_container(self, definition) -> Container:
         if not self._image_exists(definition):
             log.info('pulling Instance image [%s]', definition.image)
             self._client.images.pull(*definition.image.split(':'))
@@ -88,6 +89,7 @@ class DockerProvider:
             restart_policy={'Name': definition.restart_policy},
             volumes={vol: {'bind': mount, 'mode': 'ro'}
                      for vol, mount in definition.attachments.items()},
+            environment=definition.environment,
             labels=self._normalize_labels(
                 {**definition.labels,
                  'com.buldozer.instance_id': definition.uid}
@@ -129,13 +131,27 @@ class DockerProvider:
             log.info('instance [%s] not found')
         return True
 
+    @staticmethod
+    def _c2i(container: Container) -> Instance:
+        """
+        converts docker.Container object to Instance object
+        :param container:
+        :return:
+        """
+        return Instance(
+            uid=container.short_id,
+            name=container.name,
+            state=container.status
+        )
+
     @run_in_executor
-    def create_instance(self, definition: InstanceDefinition):
-        return self._create_container(definition)
+    def create_instance(self, definition: InstanceDefinition) -> Awaitable[Instance]:
+        # noinspection PyTypeChecker
+        return self._c2i(self._create_container(definition))
 
     @run_in_executor
     def launch_instance(self, definition: InstanceDefinition):
-        return self._launch_instance(definition)
+        return self._c2i(self._launch_instance(definition))
 
     @run_in_executor
     def stop_instance(self, definition: InstanceDefinition):

@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from common.versioning import VersionedObject
 from mco.entities import ObjectBase, OwnedObject, RegisteredEntityJSONEncoder, TrackedObject
@@ -12,6 +12,7 @@ class App(VersionedObject, TrackedObject):
     package: str = None  # indicate package used (Matlab, Hysys, TensorFlow, etc)
     description: str = None
     attachment: str = None
+    environment: dict = field(default_factory=dict)
 
 
 class AppJSONEncoder(RegisteredEntityJSONEncoder):
@@ -91,6 +92,8 @@ class Workspace(ObjectBase, OwnedObject, TrackedObject):
 
     model_id: str = None
     model_ver: str = None
+
+    instance_id: str = None
 
     def preserve_from(self, other: 'Workspace'):
         super().preserve_from(other)

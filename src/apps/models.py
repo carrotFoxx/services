@@ -1,6 +1,7 @@
+from common.versioning import VersionedRPCAPI
 from config import ROOT_LOG
 from injector import configure_injector
-from microcore.base.application import WebApplication
+from mco.rpc import RPCServerApplication
 from microcore.base.repository import Repository
 from microcore.web.api import JsonMiddlewareSet
 from microcore.web.owned_api import OwnedMiddlewareSet
@@ -10,14 +11,22 @@ from modelmanager.api import ModelManagerAPI
 configure_injector()
 
 
-class ModelManagerApp(WebApplication):
+class ModelManagerApp(RPCServerApplication):
     async def _setup(self):
         await super()._setup()
 
+        repository = Repository(ModelMongoStorageAdapter())
+        archive = Repository(ModelArchiveMongoStorageAdapter())
         self.add_routes_from(
             ModelManagerAPI(
-                repository=Repository(ModelMongoStorageAdapter()),
-                archive=Repository(ModelArchiveMongoStorageAdapter())
+                repository=repository,
+                archive=archive
+            )
+        )
+        self.add_methods_from(
+            VersionedRPCAPI(
+                repository=repository,
+                archive=archive
             )
         )
 

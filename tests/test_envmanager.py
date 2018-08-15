@@ -51,7 +51,7 @@ async def test_rpc_call_success(rpc_client: RPCClient, run_server):
     app = App(name='pytest_app', package='busybox:latest')
     model = Model(name='pytest_model')
     data = await rpc_client.create_app_instance(app=app, model=model, rpc_timeout=30)
-    logger.info('returned:%s', data)
+    logger.info('returned: %s', data)
 
     data = await rpc_client.remove_app_instance(app, model, rpc_timeout=30)
-    logger.info('returned:%s', data)
+    logger.info('returned: %s', data)

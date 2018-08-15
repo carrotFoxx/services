@@ -2,14 +2,16 @@ import asyncio
 import json
 import logging
 from dataclasses import dataclass
-from typing import Type, Union
+from typing import List, Type, Union
 
 from aiohttp import hdrs
 from aiohttp.web import HTTPBadRequest, HTTPInternalServerError, HTTPNotFound, HTTPPreconditionFailed, \
     HTTPPreconditionRequired, Request, Response
 from aiohttp.web_urldispatcher import UrlDispatcher
+from aiohttp_json_rpc import RpcInvalidParamsError, RpcGenericServerDefinedError
 
 from mco.entities import ObjectBase, OwnedObject
+from mco.rpc import RPCRoutable, rpc_expose
 from microcore.base.application import Routable
 from microcore.base.repository import DoesNotExist, Repository, StorageException, VersionMismatch
 from microcore.entity.abstract import Preserver
@@ -200,3 +202,43 @@ class VersionedAPI(OwnedReadWriteStorageAPI, Routable):
 class VersionedRepository(Repository):
     async def save(self, entity):
         await self.adapter.save(entity)
+
+
+class VersionedRPCAPI(RPCRoutable):
+    entity_type: Type[VersionedObject] = VersionedObject
+
+    def __init__(self, repository: Repository, archive: Repository) -> None:
+        super().__init__()
+        self.repository: Repository = repository
+        self.archive: Repository = archive
+
+    def set_methods(self) -> List[callable]:
+        return [
+            rpc_expose(self.repository.load, name='get'),
+            rpc_expose(self.repository.save, name='create'),
+            self.update,
+            rpc_expose(self.repository.delete, name='delete'),
+            rpc_expose(self.repository.find, name='list'),
+            self.list_versions,
+            self.get_version
+        ]
+
+    async def update(self, obj: VersionedObject) -> VersionedObject:
+        existing: VersionedObject = await self.repository.load(obj.uid)
+        obj.preserve_from(existing)
+        await self.repository.save(existing)
+        return existing
+
+    async def list_versions(self, uid: str, query: dict = None) -> List[VersionedObject]:
+        try:
+            lst = await self.archive.find({**query, 'uid': uid})
+        except AttributeError as e:
+            raise RpcInvalidParamsError(message=str(e)) from e
+        return lst
+
+    async def get_version(self, uid: str, version: int) -> VersionedObject:
+        try:
+            entity = await self.archive.find_one(uid=uid, version=int(version))
+        except DoesNotExist:
+            raise RpcGenericServerDefinedError(error_code=-32044, message='not found')
+        return entity

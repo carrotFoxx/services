@@ -1,5 +1,6 @@
 from aiohttp import hdrs
 from aiohttp.web import UrlDispatcher
+from aiohttp.web_request import Request
 
 from common.entities import Workspace
 from microcore.base.application import Routable
@@ -28,3 +29,9 @@ class WorkspaceAPI(Routable, OwnedReadWriteStorageAPI):
     async def _delete(self, stored: entity_type):
         await self.repository.delete(stored.uid)
         await self.manager.schedule_gc(stored)
+
+    async def provision(self, request: Request):
+        pass
+
+    async def decommission(self, request: Request):
+        pass

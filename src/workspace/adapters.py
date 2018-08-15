@@ -17,3 +17,7 @@ class WorkspaceMongoStorageAdapter(SimpleMongoStorageAdapter):
     def save(self, entity: Workspace):
         entity.date_update()
         return super().save(entity)
+
+    def patch(self, entity: Workspace, *args, **kwargs):
+        entity.date_update()
+        return super().patch(entity, *args, **kwargs)

@@ -79,7 +79,8 @@ def rpc_expose(method: callable, encoder: ProxyNativeEncoder, name=None):
         except Exception as e:
             raise RpcInvalidRequestError from e
         try:
-            return await method(*matched.args, **matched.kwargs)
+            result = await method(*matched.args, **matched.kwargs)
+            return encoder.dump(result)
         except Exception as e:
             logger.exception('rpc method generic exception')
             raise RpcGenericServerDefinedError(

@@ -1,7 +1,7 @@
 import hashlib
 
 from common.entities import App, Model
-from container_manager.definition import InstanceDefinition
+from container_manager.definition import Instance, InstanceDefinition
 from container_manager.docker import DockerProvider
 
 
@@ -29,6 +29,7 @@ class ContainerManager:
             uid=instance_id,
             image=image,
             attachments=attachments,
+            environment=app.environment,
             labels={
                 'app_id': app.uid,
                 'app_name': app.name,
@@ -39,8 +40,8 @@ class ContainerManager:
             }
         )
 
-    async def create_app_instance(self, app: App, model: Model):
-        await self.provider.launch_instance(self.create_app_instance_definition(app, model))
+    async def create_app_instance(self, app: App, model: Model) -> Instance:
+        return await self.provider.launch_instance(self.create_app_instance_definition(app, model))
 
-    async def remove_app_instance(self, app: App, model: Model):
-        await self.provider.remove_instance(self.create_app_instance_definition(app, model))
+    async def remove_app_instance(self, app: App, model: Model) -> bool:
+        return await self.provider.remove_instance(self.create_app_instance_definition(app, model))

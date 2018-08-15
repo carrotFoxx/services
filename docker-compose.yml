@@ -7,16 +7,40 @@ services:
       context: .
     command: applications
     env_file:
-      - dsn.env
-    ports:
-      - '8080:8080'
+    - dsn.env
     volumes:
-      - ./docker/app-data:/opt/data
+    - ./docker/app-data:/opt/data
+
+  model_manager:
+    build:
+      dockerfile: docker/Dockerfile
+      context: .
+    command: models
+    env_file:
+    - dsn.env
+    volumes:
+    - ./docker/app-data:/opt/data
+
+  env_manager:
+    build:
+      dockerfile: docker/Dockerfile
+      context: .
+    command: envmanager
+    env_file:
+    - dsn.env
+
+  wsp_manager:
+    build:
+      dockerfile: docker/Dockerfile
+      context: .
+    command: workspaces
+    env_file:
+    - dsn.env
 
   mongo:
     image: mongo:3.6
     volumes:
-      - ./docker/mongodb-data:/data/db
+    - ./docker/mongodb-data:/data/db
 
 
 #  nginx:

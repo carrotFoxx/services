@@ -1,8 +1,9 @@
 from appmanager.adapters import AppArchiveMongoStorageAdapter, AppMongoStorageAdapter
 from appmanager.api import ApplicationManagerAPI
+from common.versioning import VersionedRPCAPI
 from config import ROOT_LOG
 from injector import configure_injector
-from microcore.base.application import WebApplication
+from mco.rpc import RPCServerApplication
 from microcore.base.repository import Repository
 from microcore.web.api import JsonMiddlewareSet
 from microcore.web.owned_api import OwnedMiddlewareSet
@@ -10,14 +11,22 @@ from microcore.web.owned_api import OwnedMiddlewareSet
 configure_injector()
 
 
-class ApplicationManagerApp(WebApplication):
+class ApplicationManagerApp(RPCServerApplication):
     async def _setup(self):
         await super()._setup()
 
+        repository = Repository(AppMongoStorageAdapter())
+        archive = Repository(AppArchiveMongoStorageAdapter())
         self.add_routes_from(
             ApplicationManagerAPI(
-                repository=Repository(AppMongoStorageAdapter()),
-                archive=Repository(AppArchiveMongoStorageAdapter())
+                repository=repository,
+                archive=archive
+            )
+        )
+        self.add_methods_from(
+            VersionedRPCAPI(
+                repository=repository,
+                archive=archive
             )
         )
 
