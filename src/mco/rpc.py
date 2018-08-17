@@ -36,6 +36,9 @@ class RPCServerApplication(WebApplication):
         self.rpc_setup.add_methods(*methods)
 
 
+RPC_DEFAULT_TIMEOUT = 5
+
+
 class RPCClient:
     def __init__(self, server_url: str, encoder: ProxyNativeEncoder, *, loop=None) -> None:
         super().__init__()
@@ -48,7 +51,7 @@ class RPCClient:
             return super().__getattribute__(name)
         return functools.partial(self._request, method=name)
 
-    async def _request(self, *args, method: str, rpc_timeout=1, **kwargs) -> Any:
+    async def _request(self, *args, method: str, rpc_timeout=RPC_DEFAULT_TIMEOUT, **kwargs) -> Any:
         if len(args) > 0 and len(kwargs) > 0:
             raise RpcInvalidParamsError('params should be either positional or key-value, but not both')
         params = list(args) or kwargs

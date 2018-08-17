@@ -126,7 +126,7 @@ class DockerProvider:
             if container.status == 'running':
                 container.stop()
                 container.wait()
-            container.remove()
+            container.remove(force=True)
         except InstanceNotFound:
             log.info('instance [%s] not found')
         return True

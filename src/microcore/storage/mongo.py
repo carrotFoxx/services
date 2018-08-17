@@ -120,7 +120,7 @@ class SimpleMongoStorageAdapter(StorageAdapter):
 
     async def delete(self, eid):
         await self.load(eid)
-        res: DeleteResult = await self._collection.delete_one({'_id': eid})  # type: DeleteResult
+        res: DeleteResult = await self._collection.delete_one({'_id': eid})
         if res.deleted_count == 1:
             return True
         raise StorageException('failed to delete')

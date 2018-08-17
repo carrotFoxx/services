@@ -46,7 +46,8 @@ class WorkspaceManager(DateTimePropertyHelperMixin):
     async def decommission(self, workspace: Workspace):
         if workspace.instance_id is None:
             raise ValueError('not provisioned')
-        app, model = self._get_wsp_meta(workspace)
+        app, model = await self._get_wsp_meta(workspace)
+        logger.info('decommissioning workspace: %s', workspace)
         return await self.rpc_environments.remove_app_instance(app=app, model=model)
 
     async def schedule_gc(self, workspace: Workspace):

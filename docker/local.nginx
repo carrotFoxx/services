@@ -1,0 +1,28 @@
+
+upstream app_manager {
+    server app_manager:8080;
+}
+
+upstream model_manager {
+    server model_manager:8080;
+}
+
+upstream wsp_manager {
+    server wsp_manager:8080;
+}
+
+server {
+    listen 80 default;
+
+    root /usr/share/nginx/html;
+
+    location /applications {
+        proxy_pass http://app_manager;
+    }
+    location /models {
+        proxy_pass http://model_manager;
+    }
+    location /workspaces {
+        proxy_pass http://wsp_manager;
+    }
+}

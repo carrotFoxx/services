@@ -43,8 +43,8 @@ services:
     - ./docker/mongodb-data:/data/db
 
 
-#  nginx:
-#    image: nginx:latest
-#    volumes:
-#      - ./docker/tyk.nginx:/etc/nginx/conf.d/tyk.conf
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./docker/local.nginx:/etc/nginx/conf.d/default.conf
 
