@@ -1,7 +1,8 @@
 import inject
 
+from common.healthcheck import HealthCheckAPI
 from config import ROOT_LOG
-from injector import closable, configure_injector, async_close_registered
+from injector import async_close_registered, closable, configure_injector
 from mco.rpc import RPCClient, RPCServerApplication
 from microcore.base.repository import Repository
 from microcore.entity.encoders import ProxyNativeEncoder
@@ -40,6 +41,9 @@ class WorkspaceManagerApp(RPCServerApplication):
                 repository=repository,
                 manager=WorkspaceManager(workspaces=repository)
             )
+        )
+        self.add_routes_from(
+            HealthCheckAPI()
         )
 
         self.server.middlewares.append(JsonMiddlewareSet.error)

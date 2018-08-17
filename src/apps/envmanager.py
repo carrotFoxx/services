@@ -1,3 +1,4 @@
+from common.healthcheck import HealthCheckAPI
 from config import ROOT_LOG
 from container_manager.api import ContainerManagerRPCAPI
 from container_manager.docker import DockerProvider
@@ -15,6 +16,10 @@ class EnvironmentManagerApp(RPCServerApplication):
             ContainerManager(DockerProvider())
         )
         self.add_methods_from(self.controller)
+        self.add_routes_from(
+            HealthCheckAPI()
+        )
+
 
 
 if __name__ == '__main__':

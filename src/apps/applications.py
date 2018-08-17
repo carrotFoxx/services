@@ -1,5 +1,6 @@
 from appmanager.adapters import AppArchiveMongoStorageAdapter, AppMongoStorageAdapter
 from appmanager.api import ApplicationManagerAPI
+from common.healthcheck import HealthCheckAPI
 from common.versioning import VersionedRPCAPI
 from config import ROOT_LOG
 from injector import configure_injector
@@ -28,6 +29,9 @@ class ApplicationManagerApp(RPCServerApplication):
                 repository=repository,
                 archive=archive
             )
+        )
+        self.add_routes_from(
+            HealthCheckAPI()
         )
 
         self.server.middlewares.append(JsonMiddlewareSet.error)

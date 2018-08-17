@@ -1,3 +1,4 @@
+from common.healthcheck import HealthCheckAPI
 from common.versioning import VersionedRPCAPI
 from config import ROOT_LOG
 from injector import configure_injector
@@ -29,6 +30,10 @@ class ModelManagerApp(RPCServerApplication):
                 archive=archive
             )
         )
+        self.add_routes_from(
+            HealthCheckAPI()
+        )
+
 
         self.server.middlewares.append(JsonMiddlewareSet.error)
         self.server.middlewares.append(JsonMiddlewareSet.content_type)

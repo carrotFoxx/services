@@ -5,7 +5,9 @@ services:
     build:
       dockerfile: docker/Dockerfile
       context: .
-    command: applications
+    environment:
+    - CONSUL=consul_agent
+    - SERVICE_NAME=applications
     env_file:
     - dsn.env
     volumes:
@@ -46,5 +48,19 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - ./docker/local.nginx:/etc/nginx/conf.d/default.conf
+    - ./docker/local.nginx:/etc/nginx/conf.d/default.conf
+
+  consul_lead:
+    image: consul:1.2.2
+    command: agent -server -bootstrap-expect=2
+
+  consul_slave:
+    image: consul:1.2.2
+    command: agent -server -retry-join=consul_lead
+
+  consul_agent:
+    image: consul:1.2.2
+    environment:
+    - CONSUL_CLIENT_INTERFACE=eth0
+    command: agent -retry-join=consul_lead
 
