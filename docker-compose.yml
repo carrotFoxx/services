@@ -6,7 +6,6 @@ services:
       dockerfile: docker/Dockerfile
       context: .
     environment:
-    - CONSUL=consul_agent
     - SERVICE_NAME=applications
     env_file:
     - dsn.env
@@ -17,7 +16,8 @@ services:
     build:
       dockerfile: docker/Dockerfile
       context: .
-    command: models
+    environment:
+    - SERVICE_NAME=models
     env_file:
     - dsn.env
     volumes:
@@ -27,7 +27,8 @@ services:
     build:
       dockerfile: docker/Dockerfile
       context: .
-    command: envmanager
+    environment:
+    - SERVICE_NAME=envmanager
     env_file:
     - dsn.env
 
@@ -35,7 +36,8 @@ services:
     build:
       dockerfile: docker/Dockerfile
       context: .
-    command: workspaces
+    environment:
+    - SERVICE_NAME=workspaces
     env_file:
     - dsn.env
 
@@ -50,17 +52,11 @@ services:
     volumes:
     - ./docker/local.nginx:/etc/nginx/conf.d/default.conf
 
-  consul_lead:
+  consul:
     image: consul:1.2.2
-    command: agent -server -bootstrap-expect=2
-
-  consul_slave:
-    image: consul:1.2.2
-    command: agent -server -retry-join=consul_lead
-
-  consul_agent:
-    image: consul:1.2.2
+    command: agent -dev -bootstrap -ui
     environment:
     - CONSUL_CLIENT_INTERFACE=eth0
-    command: agent -retry-join=consul_lead
-
+    - CONSUL_BIND_INTERFACE=eth0
+    ports:
+    - '8500:8500'

@@ -10,13 +10,12 @@ RUN curl -Lso /tmp/containerpilot.tar.gz \
 # py env setup
 ENV PYTHONPATH "/opt/app:${PYTHONPATH}"
 EXPOSE 8080
+
+CMD ["/usr/local/bin/containerpilot", "-config", "/etc/containerpilot.json5"]
 # dependencies
 COPY requirements /opt/app/
 RUN pip install --no-cache-dir -r /opt/app/requirements
-
-CMD ["/usr/local/bin/containerpilot", "-config", "/etc/containerpilot.json5"]
 # containerpilot config file
 COPY docker/containerpilot.json5 /etc/containerpilot.json5
 # sources
 COPY src /opt/app
-
