@@ -14,8 +14,12 @@ logger = logging.getLogger(__name__)
 
 class LogSetup:
     @staticmethod
-    def setup_logs(level=logging.INFO):
-        logging.basicConfig(stream=sys.stdout, format="[%(asctime)s]:" + logging.BASIC_FORMAT, level=level)
+    def setup_logs(level=logging.INFO, timed_logs=True):
+        log_fmt = logging.BASIC_FORMAT
+        if timed_logs:
+            log_fmt = "[%(asctime)s]:" + log_fmt
+        logging.basicConfig(stream=sys.stdout, format=log_fmt, level=level)
+        # noinspection PyProtectedMember
         logger.info('logger set up with level: %s', logging._levelToName.get(level, level))
 
     # noinspection PyProtectedMember

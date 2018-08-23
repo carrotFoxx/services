@@ -8,14 +8,17 @@
   jobs: [
     {
       name: "{{.SERVICE_NAME}}",
-      exec: "python3 /opt/app/apps/{{.SERVICE_NAME}}.py",
+      exec: [
+        "python3",
+        "/opt/app/apps/{{.SERVICE_NAME}}.py"
+      ],
       restarts: "never",
       port: '{{ .SERVICE_PORT | default 8080 }}',
       health: {
         exec: "/usr/bin/curl --fail -s -o /dev/null http://localhost:{{ .SERVICE_PORT | default 8080 }}/health",
-        interval: 5,
-        ttl: 10,
-        timeout: "5s",
+        interval: 10,
+        ttl: 20,
+        timeout: "3s",
       },
       tags: [
         "python",
@@ -30,16 +33,7 @@
       ]
     },
   ],
-  watches: [
-//    {
-//      name: "app",
-//      interval: 10
-//    },
-//    {
-//      name: "nginx",
-//      interval: 30
-//    }
-  ],
+  watches: [],
   control: {
     socket: "/var/run/containerpilot.sock"
   },

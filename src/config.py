@@ -11,7 +11,10 @@ PLATFORM_VERSION = LogSetup.get_platform_version()
 
 LOG_LEVEL = LogSetup.detect()
 
-LogSetup.setup_logs(LOG_LEVEL)
+# if CONTAINERPILOT_PID env var present we disable timestamps in log
+# (ContainerPilot adds them then translating logs to stdout)
+enable_timed_logs = not bool(os.environ.get('CONTAINERPILOT_PID', False))
+LogSetup.setup_logs(LOG_LEVEL, timed_logs=enable_timed_logs)
 
 ROOT_LOG = logging.getLogger()
 

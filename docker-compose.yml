@@ -54,9 +54,6 @@ services:
 
   consul:
     image: consul:1.2.2
-    command: agent -dev -bootstrap -ui
-    environment:
-    - CONSUL_CLIENT_INTERFACE=eth0
-    - CONSUL_BIND_INTERFACE=eth0
+    command: agent -dev -bootstrap -ui -bind=0.0.0.0 -client=0.0.0.0
     ports:
     - '8500:8500'
