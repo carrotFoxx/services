@@ -20,6 +20,7 @@ aiohttp_session = "*"
 Inject = ">=3.3"
 aiohttp-json-rpc = "*"
 python-dateutil = "*"
+aiokafka = "*"
 
 [dev-packages]
 pytest = ">=3.4"
