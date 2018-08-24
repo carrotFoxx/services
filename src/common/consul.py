@@ -58,15 +58,17 @@ class KVStoreClient(HTTPClient):
 
     @error_handler
     async def get(self, key: str, raw: bool = False, _decode=True, **opts) -> Union[KVData, str]:
+        if raw:
+            opts['raw'] = int(raw)
         async with self._client.get(
-                **self._req('/kv/%s' % key, params={'raw': int(raw), **opts})
+                **self._req('/kv/%s' % key, params=opts)
         ) as response:
             await self._status(response)
             text = await response.text()
         if not raw:
             text = json.loads(text)
         if not raw and _decode:
-            return self._schema.loads(text[0], many=False)
+            return self._schema.load(text[0], many=False)
         return text
 
     @error_handler
@@ -140,7 +142,7 @@ class CatalogServiceNode:
 
 
 class CatalogClient(HTTPClient):
-    _schema = ...
+    _schema = CatalogServiceNode.Schema(many=True)
 
     @error_handler
     async def service_nodes(self, service: str) -> List[CatalogServiceNode]:
