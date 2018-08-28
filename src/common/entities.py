@@ -84,6 +84,19 @@ class ModelArchiveStorageEncoder(StorageEntityJSONEncoderBase):
 
 
 @dataclass
+class RouteConfig:
+    desired_version: int = 0
+    adopted_version: int = 0
+
+    incoming_stream: str = 'kafka://correlations'
+    outgoing_stream: str = 'kafka://results'
+
+
+class RouteConfigJSONEncoder(RegisteredEntityJSONEncoder):
+    entity_type = RouteConfig
+
+
+@dataclass
 class Workspace(ObjectBase, OwnedObject, TrackedObject):
     name: str = None
 
@@ -94,6 +107,8 @@ class Workspace(ObjectBase, OwnedObject, TrackedObject):
     model_ver: str = None
 
     instance_id: str = None
+
+    route_conf: RouteConfig = field(default_factory=RouteConfig)
 
     def preserve_from(self, other: 'Workspace'):
         super().preserve_from(other)

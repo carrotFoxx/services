@@ -1,13 +1,13 @@
-version: '2'
+version: '3.7'
 services:
   mongo:
     ports:
-      - '27017:27017'
+    - '27017:27017'
 
   nginx:
     ports:
-      - '8080:80'
+    - '8080:80'
 
   env_manager:
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+    - /var/run/docker.sock:/var/run/docker.sock

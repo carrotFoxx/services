@@ -11,3 +11,4 @@ COPY requirements /opt/app/
 RUN pip install --no-cache-dir -r /opt/app/requirements
 # sources
 COPY src /opt/app
+ENV SERVICE_NAME "../supervisor/__init__"

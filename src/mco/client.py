@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 import logging
 from copy import copy
-from typing import Awaitable
+from typing import Any, Awaitable
 
 from aiohttp import ClientError, ClientResponse, ClientSession, hdrs
 from marshmallow import ValidationError
@@ -30,12 +30,23 @@ class HTTPClient:
         base = base or self._base
         return base.rstrip('/') + '/' + path.lstrip('/')
 
+    @staticmethod
+    def _escape(val: Any):
+        if isinstance(val, bool):
+            return int(val)
+        if isinstance(val, (int, str)):
+            return val
+        return str(val)
+
+    def _escape_params(self, params: dict):
+        return {key: self._escape(val) for key, val in params.items()}
+
     def _req(self, path, params: dict = None, headers: dict = None, base: str = None) -> dict:
         params = params or {}
         headers = headers or {}
         client_args = {
             'url': self._url(path, base=base),
-            'params': {**self.default_params, **params},
+            'params': self._escape_params({**self.default_params, **params}),
             'headers': {**self.default_headers, **headers}
         }
         logger.debug('request args:\n%s', client_args)

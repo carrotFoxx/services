@@ -1,5 +1,5 @@
 ---
-version: '2'
+version: '3.7'
 services:
   app_manager:
     build:
@@ -54,43 +54,53 @@ services:
 
   consul:
     image: consul:1.2.2
-    command: agent -dev -bootstrap -ui -bind=0.0.0.0 -client=0.0.0.0
+    command: agent -dev -bootstrap -ui -client=0.0.0.0
+    environment:
+    - CONSUL_BIND_INTERFACE=eth0
     ports:
     - '8500:8500'
+    networks:
+      - default
+      - buldozer_usp_net
 
   zookeeper:
     image: zookeeper:3.4
-#    ports:
-#    - "2181:2181"
+    #    ports:
+    #    - "2181:2181"
     volumes:
-      - ./docker/zk-data/data:/data
-      - ./docker/zk-data/datalog:/datalog
+    - ./docker/zk-data/data:/data
+    - ./docker/zk-data/datalog:/datalog
 
   kafka:
     image: wurstmeister/kafka:2.11-2.0.0
     ports:
     - "9092:9092"
     volumes:
-      - ./docker/kafka-data:/kafka
+    - ./docker/kafka-data:/kafka
     environment:
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_BROKER_ID=1
+    - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+    - KAFKA_LISTENERS=PLAINTEXT://:9092
+    - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://:9092
+    - KAFKA_BROKER_ID=1
 
-      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
-      - KAFKA_CREATE_TOPICS=correlations:5:1,events:5:1"
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
-      - KAFKA_DELETE_TOPIC_ENABLE=true
+    - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+    - KAFKA_CREATE_TOPICS=correlations:5:1,events:5:1
+    - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    - KAFKA_DELETE_TOPIC_ENABLE=true
 
-      - KAFKA_LOG_RETENTION_BYTES=200000000
-      - KAFKA_LOG_SEGMENT_BYTES=20000000
-#      - KAFKA_LOG_ROLL_MS=6000
-#      - KAFKA_LOG_SEGMENT_DELETE_DELAY_MS=1000
+    - KAFKA_LOG_RETENTION_BYTES=200000000
+    - KAFKA_LOG_SEGMENT_BYTES=20000000
+  #      - KAFKA_LOG_ROLL_MS=6000
+  #      - KAFKA_LOG_SEGMENT_DELETE_DELAY_MS=1000
 
   subordinate:
     build:
       context: .
       dockerfile: docker/Subordinate.Dockerfile
     environment:
-      - SERVICE_NAME=../supervisor/__init__
+    - SERVICE_NAME=../supervisor/__init__
+
+networks:
+  default:
+  buldozer_usp_net:
+    name: buldozer_usp_net

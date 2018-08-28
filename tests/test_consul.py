@@ -1,6 +1,11 @@
+import logging
+from pprint import pformat
+
 import pytest
 
 from common.consul import CatalogServiceNode, ConsulClient, KVData
+
+logger = logging.getLogger()
 
 
 @pytest.fixture(scope='module')
@@ -40,10 +45,16 @@ async def test_kv_store(client: ConsulClient):
     # get list
     values = await kv.get_all('custom-data/')
     assert isinstance(values, list)
+    assert len(values) == 3
     for x in values:
         assert isinstance(x, KVData)
         assert x.key.startswith('custom-data/')
 
     values = await kv.get_all('custom-data/', raw=True)
+    assert isinstance(values, dict)
+    assert len(values) == 3
+    logging.info('get_all:\n%s', pformat(values))
     for x in values:
         assert isinstance(x, str)
+
+    await kv.rem('custom-data', recurse=True)

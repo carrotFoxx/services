@@ -1,9 +1,10 @@
 import asyncio
 import logging
+from asyncio import CancelledError
 from copy import copy
 from typing import Callable
 
-from common.consul import ConsulClient
+from common.consul import ConsulClient, consul_key
 from config import CONSUL_SUBORDINATE_DIR
 from microcore.base.control import AsyncIOTaskManager
 
@@ -33,7 +34,7 @@ class StateMonitor:
         self._tm = AsyncIOTaskManager(op_callback=self._adoption)
 
     def _consul_key(self, key: str = '') -> str:
-        return CONSUL_SUBORDINATE_DIR + self.node_id + '/' + key.lstrip('/')
+        return consul_key(CONSUL_SUBORDINATE_DIR, self.node_id, key)
 
     async def _adoption(self, version: int, data: dict):
         try:
@@ -45,31 +46,33 @@ class StateMonitor:
 
     async def _pull_state(self):
         logger.debug('checking version, base=%s', self.version)
-        if self.version > 0:
-            remote_version = int(await self._consul_kv.get(self._consul_key(DESIRED_VERSION), raw=True))
-        else:
-            remote_version = -1
-
-        if self.version >= remote_version:
-            logger.debug('skip refresh, base=%s', self.version)
-            return
-        logger.info('refreshing, base=%s, remote=%s', self.version, remote_version)
-        state = await self._consul_kv.get_all(self._consul_key())
-        self.state.update(state)
+        remote_version = int(await self._consul_kv.get(self._consul_key(DESIRED_VERSION), raw=True, default=1))
+        if self.version < remote_version:
+            logger.info('refreshing, base=%s, remote=%s', self.version, remote_version)
+            state = await self._consul_kv.get_all(self._consul_key(), raw=True)
+            self.state.update(state)
+        return remote_version
 
     async def _signal_adoption(self, version: int):
         if self.version > version:
             logger.warning('adoption is lagging behind: adopting=%s, desired=%s', version, self.version)
+        self.version = version
         await self._consul_kv.put(self._consul_key(ADOPTED_VERSION), version)
+        logger.info('adopted version=%s', version)
 
     async def task(self):
         logger.debug('launched state monitor bg task')
         while True:
-            logger.debug('performing state synchronization...')
-            current_version = self.version
-            await self._pull_state()
-            # todo: ensure linear processing
-            if current_version < self.version:
-                logger.info('start adoption from=%s to=%s', current_version, self.version)
-                self._tm.add(str(self.version), self.state)
+            try:
+                logger.debug('performing state synchronization...')
+                remote_version = await self._pull_state()
+                # todo: ensure linear processing
+                if remote_version > self.version:
+                    logger.info('start adoption from=%s to=%s', self.version, remote_version)
+                    self._tm.add(str(remote_version), remote_version, self.state)
+            except (CancelledError, GeneratorExit):
+                logger.info('stopping state monitor bg task')
+                raise
+            except:
+                logger.exception('resync state task resulted in error')
             await asyncio.sleep(RESYNC_INTERVAL)

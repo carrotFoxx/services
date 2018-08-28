@@ -1,6 +1,6 @@
 import asyncio
 import json
-from typing import Any, List, Union
+from typing import Any, Dict, List, Union
 
 import attr
 import marshmallow as ma
@@ -8,6 +8,7 @@ from aiohttp import ClientResponse
 from more_itertools import flatten
 
 from mco.client import HTTPClient, error_handler
+from mco.utils import default_on_error
 
 
 @attr.s(auto_attribs=True)
@@ -38,6 +39,10 @@ class KVData:
             return KVData(**dct)
 
 
+def consul_key(*args: str) -> str:
+    return '/'.join([x.strip('/') for x in args])
+
+
 class KVStoreClient(HTTPClient):
     _schema = KVData.Schema(many=True)
 
@@ -56,6 +61,7 @@ class KVStoreClient(HTTPClient):
         ) as response:
             return await self._status(response)
 
+    @default_on_error(exc=HTTPClient.InteractionError)
     @error_handler
     async def get(self, key: str, raw: bool = False, _decode=True, **opts) -> Union[KVData, str]:
         if raw:
@@ -79,17 +85,22 @@ class KVStoreClient(HTTPClient):
             return await self._data(response)
 
     @error_handler
-    async def get_all(self, prefix: str, raw: bool = False):
+    async def get_all(self, prefix: str, raw: bool = False) -> Union[List[KVData], Dict[str, str]]:
         key_list = await self.list(prefix)
-        key_list = filter(lambda x: prefix != x, key_list)
+        key_list = list(filter(lambda x: prefix != x, key_list))
         results = await asyncio.gather(
             *[self.get(key, raw=raw, _decode=False) for key in key_list],
             return_exceptions=True
         )
-        results = filter(lambda x: not isinstance(x, Exception), results)
+
         if not raw:
+            results = filter(lambda x: not isinstance(x, Exception), results)
             results = flatten(results)
             return self._schema.load(results, many=True)
+        else:
+            results = {key[len(prefix):]: value
+                       for key, value in zip(key_list, results)
+                       if not isinstance(value, Exception)}
         return results
 
 
@@ -154,41 +165,53 @@ class CatalogClient(HTTPClient):
 
 
 class ConsulClient(HTTPClient):
+
+    def _get_or_init(self, key, init: callable):
+        if key not in self.__dict__:
+            self.__dict__[key] = init()
+        return self.__dict__[key]
+
     def kv(self) -> KVStoreClient:
         """
 
         :return: accessor for KVStore Consul APIs
         """
-        return KVStoreClient(
-            base=self._base,
-            default_headers=self.default_headers,
-            default_params=self.default_params,
-            client=self._client,
-            loop=self._loop
-        )
+        return self._get_or_init(
+            KVStoreClient,
+            lambda: KVStoreClient(
+                base=self._base,
+                default_headers=self.default_headers,
+                default_params=self.default_params,
+                client=self._client,
+                loop=self._loop
+            ))
 
     def agent(self):
         """
 
         :return: accessor for Agent Consul APIs
         """
-        return AgentClient(
-            base=self._base,
-            default_headers=self.default_headers,
-            default_params=self.default_params,
-            client=self._client,
-            loop=self._loop
-        )
+        return self._get_or_init(
+            AgentClient,
+            lambda: AgentClient(
+                base=self._base,
+                default_headers=self.default_headers,
+                default_params=self.default_params,
+                client=self._client,
+                loop=self._loop
+            ))
 
     def catalog(self):
         """
 
         :return: accessor for Agent Consul APIs
         """
-        return CatalogClient(
-            base=self._base,
-            default_headers=self.default_headers,
-            default_params=self.default_params,
-            client=self._client,
-            loop=self._loop
-        )
+        return self._get_or_init(
+            CatalogClient,
+            lambda: CatalogClient(
+                base=self._base,
+                default_headers=self.default_headers,
+                default_params=self.default_params,
+                client=self._client,
+                loop=self._loop
+            ))
