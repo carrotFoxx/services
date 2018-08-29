@@ -4,9 +4,9 @@ services:
     ports:
     - '27017:27017'
 
-  nginx:
+  kafka:
     ports:
-    - '8080:80'
+    - "9092:9092"
 
   env_manager:
     volumes:

@@ -1,0 +1,95 @@
+################################################################
+# Global configuration
+################################################################
+
+# Enable debug mode
+# debug = true
+
+# Log level
+# Default: "ERROR"
+logLevel = "INFO"
+
+# Traefik logs
+# Enabled by default and log to stdout
+[traefikLog]
+
+# Format is either "json" or "common".
+# format = "common"
+
+# Enable access logs
+# By default it will write to stdout and produce logs in the textual
+# Common Log Format (CLF), extended with additional fields.
+[accessLog]
+# Format is either "json" or "common".
+# format = "common"
+
+# Enable API and dashboard
+[api]
+  # Name of the related entry point
+  # entryPoint = "traefik"
+
+  # Enabled Dashboard
+  dashboard = true
+
+# Enable ping
+[ping]
+  # Name of the related entry point
+  # entryPoint = "traefik"
+
+# Entrypoints to be used by frontends that do not specify any entrypoint.
+# Each frontend can specify its own entrypoints.
+defaultEntryPoints = ["http"]
+
+# Entrypoints definition
+[entryPoints]
+    [entryPoints.http]
+    address = ":80"
+
+#####################
+# Service Discovery
+#####################
+constraints = ["tag==api"]
+
+################################################################
+# Consul KV Provider
+################################################################
+# Enable Consul KV Provider.
+[consul]
+# Consul server endpoint.
+endpoint = "consul:8500"
+# Enable watch Consul changes.
+watch = true
+# Prefix used for KV store.
+prefix = "traefik"
+## Override default configuration template.
+## For advanced users :)
+# filename = "consul.tmpl"
+## Use Consul user/pass authentication.
+# username = foo
+# password = bar
+
+################################################################
+# Consul Catalog Provider
+################################################################
+## Enable Consul Catalog Provider.
+[consulCatalog]
+## Consul server endpoint.
+endpoint = "consul:8500"
+## Expose Consul catalog services by default in Traefik.
+# exposedByDefault = false
+
+# Default domain used.
+domain = "localhost"
+# Prefix for Consul catalog tags.
+prefix = "traefik"
+# Default frontEnd Rule for Consul services.
+#
+# The format is a Go Template with:
+# - ".ServiceName", ".Domain" and ".Attributes" available
+# - "getTag(name, tags, defaultValue)", "hasTag(name, tags)" and "getAttribute(name, tags, defaultValue)" functions are available
+# - "getAttribute(...)" function uses prefixed tag names based on "prefix" value
+#
+# Optional
+# Default: "Host:{{.ServiceName}}.{{.Domain}}"
+#
+frontEndRule = "Host:{{.ServiceName}}.api.{{.Domain}}"

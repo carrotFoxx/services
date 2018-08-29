@@ -21,10 +21,12 @@
         timeout: "3s",
       },
       tags: [
-        "python",
-        "buldozer-core",
-        "buldozer-{{.SERVICE_NAME}}",
-        "{{.SERVICE_NAME}}"
+        'python',
+        'buldozer.core',
+        'buldozer.{{.SERVICE_NAME}}',
+        'traefik.enable={{.TRAEFIK_ENABLE | default "true"}}',
+        'traefik.tags={{.TRAEFIK_TAG | default "api"}}',
+        'traefik.frontend.rule=PathPrefix: /{{.SERVICE_NAME}}'
       ],
       interfaces: [
         "eth0",
