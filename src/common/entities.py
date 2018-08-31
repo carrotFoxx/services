@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+import attr
 
 from common.versioning import VersionedObject
 from mco.entities import ObjectBase, OwnedObject, RegisteredEntityJSONEncoder, TrackedObject
@@ -6,13 +6,13 @@ from microcore.entity.model import public_attributes
 from microcore.storage.mongo import StorageEntityJSONEncoderBase
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class App(VersionedObject, TrackedObject):
     name: str = None
     package: str = None  # indicate package used (Matlab, Hysys, TensorFlow, etc)
     description: str = None
     attachment: str = None
-    environment: dict = field(default_factory=dict)
+    environment: dict = attr.Factory(dict)
 
 
 class AppJSONEncoder(RegisteredEntityJSONEncoder):
@@ -41,7 +41,7 @@ class AppArchiveStorageEncoder(StorageEntityJSONEncoderBase):
         }
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Package(ObjectBase, OwnedObject, TrackedObject):
     name: str = None
 
@@ -50,7 +50,7 @@ class PackageJSONEncoder(RegisteredEntityJSONEncoder):
     entity_type = Package
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Model(VersionedObject, TrackedObject):
     name: str = None
     package: str = None  # indicate package it belongs to (Matlab, Hysys, TensorFlow, etc)
@@ -83,20 +83,20 @@ class ModelArchiveStorageEncoder(StorageEntityJSONEncoderBase):
         }
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class RouteConfig:
     desired_version: int = 0
     adopted_version: int = 0
 
-    incoming_stream: str = 'kafka://correlations'
-    outgoing_stream: str = 'kafka://results'
+    incoming_stream: str = 'correlations'
+    outgoing_stream: str = 'results'
 
 
 class RouteConfigJSONEncoder(RegisteredEntityJSONEncoder):
     entity_type = RouteConfig
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Workspace(ObjectBase, OwnedObject, TrackedObject):
     name: str = None
 
@@ -108,7 +108,7 @@ class Workspace(ObjectBase, OwnedObject, TrackedObject):
 
     instance_id: str = None
 
-    route_conf: RouteConfig = field(default_factory=RouteConfig)
+    route_conf: RouteConfig = attr.Factory(RouteConfig)
 
     def preserve_from(self, other: 'Workspace'):
         super().preserve_from(other)

@@ -1,8 +1,8 @@
 import asyncio
-import dataclasses
 import hashlib
 import logging
 
+import attr
 import inject
 from aiohttp_json_rpc import RpcGenericServerDefinedError
 
@@ -87,7 +87,7 @@ class WorkspaceManager:
         ))
         desired_version += 1  # increment to signal rerouting
         workspace.route_conf.desired_version = desired_version
-        props = dataclasses.asdict(workspace.route_conf)
+        props = attr.asdict(workspace.route_conf)
         await asyncio.gather(*[
             kv.put(key=consul_key(CONSUL_SUBORDINATE_DIR, workspace.uid, key), value=value)
             for key, value in props.items()

@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.6
 
 # py env setup
 ENV PYTHONPATH "/opt/app:${PYTHONPATH}"
