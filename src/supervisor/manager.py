@@ -39,26 +39,22 @@ class Supervisor:
     _KAFKA_WRITER = 'kafka_writer'
 
     async def _adopt(self, data: dict):
-        logger.info('adopted config...\b%s', pformat(data))
+        logger.info('adopting config...\b%s', pformat(data))
         read_topic = data.get('incoming_stream')
         write_topic = data.get('outgoing_stream')
-        # close previous
-        engine = self._tm.get(self._ENGINE)
-        if engine is not None:
-            self._tm.remove(self._KAFKA_READER)
-            await asyncio.sleep(1)
-            self._tm.remove(self._PIPE_WRITER)
-            await asyncio.sleep(1)
-            self._tm.remove(self._PIPE_READER)
-            await asyncio.sleep(1)
+        # engine adoption/init
+        if self._tm.get(self._ENGINE) is None:
+            self._tm.add(self._ENGINE, self._engine_controller())
+        # read/write stream adoption
+        if self._tm.remove(self._KAFKA_READER):  # if we had active reader we wait and shutdown writer
+            await asyncio.sleep(2)  # wait 2 sec for remaining buffer to clean todo: rewrite with q.join()
             self._tm.remove(self._KAFKA_WRITER)
-            await asyncio.sleep(1)
-            self._process.send_signal(signal.SIGTERM)
-            await engine
-
-        self._tm.add(self._ENGINE, self._engine_controller())
+            await asyncio.sleep(2)
+        # add reconfigured reader/writer
         self._tm.add(self._KAFKA_READER, self._kafka_consumer(read_topic))
         self._tm.add(self._KAFKA_WRITER, self._kafka_producer(write_topic))
+        await asyncio.sleep(1)
+        logger.info('adoption complete')
 
     _STATE_MONITOR = 'state_monitor'
 
@@ -99,7 +95,7 @@ class Supervisor:
             logger.info('started consumer->rq')
             async for record in consumer:  # type: ConsumerRecord
                 await self._rq.put(record.value)
-                logger.info('received record: %s', record.value.decode())
+                logger.debug('received record: %s', record.value.decode())
         except (aiokafka.errors.KafkaError,
                 aiokafka.errors.TopicAuthorizationFailedError,
                 aiokafka.errors.OffsetOutOfRangeError) as e:
@@ -121,7 +117,7 @@ class Supervisor:
             while True:
                 record = await self._wq.get()
                 await producer.send(topic=topic, value=record)
-                logger.info('sent record: %s', record)
+                logger.debug('sent record: %s', record)
         except (aiokafka.errors.KafkaError,
                 aiokafka.errors.TopicAuthorizationFailedError,
                 aiokafka.errors.RecordTooLargeError) as e:
@@ -135,6 +131,7 @@ class Supervisor:
 
     async def _engine_controller(self):
         try:
+            logger.info('init engine/subprocess')
             process: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(
                 self.program, *self.program_args,
                 stdin=asyncio.subprocess.PIPE,
@@ -142,6 +139,7 @@ class Supervisor:
                 stderr=asyncio.subprocess.PIPE,
                 limit=2 ** 20  # 1MiB
             )
+            logger.info('started engine/subprocess')
         except:
             logger.exception('failed to start process [%s]%s', self.program, self.program_args)
             raise
@@ -149,14 +147,16 @@ class Supervisor:
         self._tm.add(self._PIPE_WRITER, self._engine_writer(process.stdin))
         self._tm.add(self._PIPE_READER, self._engine_reader(process.stdout))
         await process.wait()
+        self._process = None
+        logger.info('stopped engine/subprocess')
 
     async def _engine_writer(self, stream_writer: asyncio.StreamWriter):
         logger.info('starting PIPE writer')
         while True:
             try:
                 record: bytes = await self._rq.get()
-                stream_writer.write(record+'\n'.encode())
-                logger.info('pushed to PIPE')
+                stream_writer.write(record + '\n'.encode())
+                logger.debug('pushed to PIPE')
                 await stream_writer.drain()
             except (CancelledError, GeneratorExit):
                 logger.info('closing PIPE writer')
@@ -171,7 +171,7 @@ class Supervisor:
         while True:
             try:
                 record: str = await stream_reader.readline()
-                logger.info('received from PIPE: %s', record)
+                logger.debug('received from PIPE')
                 await self._wq.put(record)
             except (CancelledError, GeneratorExit):
                 logger.info('closing PIPE reader')
