@@ -22,6 +22,7 @@ aiohttp-json-rpc = "*"
 python-dateutil = "*"
 aiokafka = "*"
 more-itertools = "*"
+python-consul = "*"
 
 [dev-packages]
 pytest = ">=3.4"
@@ -32,7 +33,6 @@ pytest-benchmark = ">=3.1"
 sphinxcontrib-plantuml = ">=0.10"
 Sphinx = ">=1.7"
 sphinx_rtd_theme = ">=0.2.4"
-docker-compose = "*"
 
 [requires]
 python_version = "3.7"
