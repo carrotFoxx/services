@@ -134,13 +134,17 @@ class Supervisor:
     _PIPE_READER = 'pipe_reader'
 
     async def _engine_controller(self):
-        process: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(
-            program=self.program, *self.program_args,
-            stdin=asyncio.subprocess.PIPE,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            limit=2 ** 20  # 1MiB
-        )
+        try:
+            process: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(
+                self.program, *self.program_args,
+                stdin=asyncio.subprocess.PIPE,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                limit=2 ** 20  # 1MiB
+            )
+        except:
+            logger.exception('failed to start process [%s]%s', self.program, self.program_args)
+            raise
         self._process = process
         self._tm.add(self._PIPE_WRITER, self._engine_writer(process.stdin))
         self._tm.add(self._PIPE_READER, self._engine_reader(process.stdout))

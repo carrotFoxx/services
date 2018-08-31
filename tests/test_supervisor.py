@@ -18,7 +18,7 @@ KAFKA_DSN = 'kafka:9092'
 @pytest.fixture(scope='module')
 async def supervisor(event_loop: asyncio.AbstractEventLoop) -> Supervisor:
     s = Supervisor(
-        'cat',
+        'sed', '-u', 's/id/processed/',
         state_monitor=StateMonitor(
             node_id='1',
             consul=ConsulClient(base=CONSUL_DSN, loop=event_loop),
@@ -60,22 +60,22 @@ async def test_supervisor(supervisor: Supervisor, event_loop: asyncio.AbstractEv
         c.subscribe(topics=[outgoing_topic])
         try:
             c.start()
-            logger.info('started producer')
+            logger.info('started consumer')
             async for record in c:
                 logger.info('received: %s', record.value.decode())
         except (CancelledError, GeneratorExit):
             raise
         finally:
             await c.stop()
-            logger.info('stopped producer')
+            logger.info('stopped consumer')
 
     await supervisor._adopt({
         'incoming_stream': incoming_topic,
         'outgoing_stream': outgoing_topic
     })
     await asyncio.sleep(1)
-    event_loop.create_task(produce())
     ct: asyncio.Task = event_loop.create_task(consume())
+    event_loop.create_task(produce())
     await asyncio.sleep(10)
     ct.cancel()
     await asyncio.sleep(1)

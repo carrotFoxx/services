@@ -14,6 +14,7 @@ class SupervisorApp(Application):
         node_id = os.environ.get('BDZ_NODE_ID')
         ROOT_LOG.info('node_id is [%s]', node_id)
         self.manager = Supervisor(
+            program=os.environ.get('BDZ_PROGRAM'),
             state_monitor=StateMonitor(
                 node_id=node_id,
                 consul=ConsulClient(
@@ -21,7 +22,8 @@ class SupervisorApp(Application):
                     loop=self._loop
                 ),
                 loop=self._loop
-            )
+            ),
+            loop=self._loop
         )
         await self.manager.start()
 
