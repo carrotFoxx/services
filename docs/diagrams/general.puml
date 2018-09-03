@@ -1,21 +1,18 @@
 @startuml
 
-[Stream Accessor] as sta
-
 [Stream Saver] as stfs
 
 queue "Kafka-In" as kf_in
 queue "Kafka-Out" as kf_out
 
-sta <== kf_in
-sta ==> kf_out
-
-
 [App Manager] as app_mgr
 
 [Model Manager] as art_mgr
 
-[Trainer Manager] as tr_mgr
+[Workspace Manager] as wsp_mgr
+[Consul] as consul
+
+'[Trainer Manager] as tr_mgr
 
 [Env Manager] as env_mgr
 
@@ -39,34 +36,40 @@ node App <<container/vm>> {
     agent supervisor as slv
     agent calculator as calc
     () model as mi
-    file input
-    file output
+    file stdin
+    file stdout
 
-    mi <. model
+    mi <.u. model
 
-    slv -l-> input
-    slv <-> sta: ask for stream\n slices
-    slv --> calc: run process\n using\n slice and model\n as args
-    slv --> sta: push results
-    output --> sta
+    slv -d-> stdin: push events
+    slv <-d- stdout: read results
 
-    calc <-u- input
+    slv ..> calc: run process\n using\n model\n as arg
+
+    slv <-u- kf_in: ask for stream\n slices
+    slv -u-> kf_out: push results
+
+    calc <-u- stdin
     calc <-u- mi
-    calc -> output
+    calc -u-> stdout
 }
 
 
-app_mgr <- art_mgr: get model to map\n in container
-app_mgr <-> appdb: get app's\ntype, container,\n version, etc\n to setup
-app_mgr <==> env_mgr: setup environment
+wsp_mgr <-> art_mgr: get model to map\n in container
+wsp_mgr ==> consul: setup routing
+consul <=- slv: adopt routing
+wsp_mgr <-> app_mgr: get app's\ntype, version, etc
+app_mgr <--> appdb
+wsp_mgr <==> env_mgr: setup environment
 env_mgr ==> App: setup container,\n mount model
-app_mgr ==> slv: setup task
 
-art_mgr <---> mdb: find file\n location in index
-art_mgr -> tr_mgr: train model
+art_mgr --> mdb: put/find file\n location in/to index
+art_mgr ---> fs: put file on disk
 
-tr_mgr --> env_mgr: setup env\n for training
+'art_mgr ---> tr_mgr: train model
+'tr_mgr --> env_mgr: setup env\n for training
 
+api <-d-> wsp_mgr
 api <-d-> app_mgr
 api <-d-> art_mgr
 
