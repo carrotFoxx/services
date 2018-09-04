@@ -8,7 +8,7 @@ from aiohttp_json_rpc import RpcGenericServerDefinedError
 
 from common.consul import ConsulClient, consul_key
 from common.entities import App, Model, RouteConfig, Workspace
-from config import CONSUL_SUBORDINATE_DIR, SPV_STATE_KEY_DESIRED_VERSION, SPV_STATE_KEY_ADOPTED_VERSION
+from config import CONSUL_SUBORDINATE_DIR, SPV_STATE_KEY_ADOPTED_VERSION, SPV_STATE_KEY_DESIRED_VERSION
 from container_manager.definition import Instance, InstanceDefinition
 from mco.rpc import RPCClient
 from microcore.base.repository import Repository
@@ -78,6 +78,13 @@ class WorkspaceManager:
             raw=True,
             default=0
         ))
+
+    async def get_route_config(self, workspace: Workspace) -> RouteConfig:
+        data: dict = await self.consul.kv.get_all(
+            prefix=consul_key(CONSUL_SUBORDINATE_DIR, workspace.uid, ''),
+            raw=True
+        )
+        return RouteConfig(**data)
 
     async def reroute(self, workspace: Workspace, route: RouteConfig):
         """

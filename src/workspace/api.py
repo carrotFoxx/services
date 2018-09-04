@@ -2,13 +2,12 @@ import asyncio
 
 from aiohttp import hdrs
 from aiohttp.web import UrlDispatcher
+from aiohttp.web_exceptions import HTTPNoContent
 from aiohttp.web_request import Request
 
-from common.consul import consul_key
 from common.entities import RouteConfig, Workspace
-from config import CONSUL_SUBORDINATE_DIR
 from microcore.base.application import Routable
-from microcore.entity.encoders import proxy_encoder_instance
+from microcore.entity.encoders import json_response
 from microcore.web.owned_api import OwnedReadWriteStorageAPI
 from workspace.manager import WorkspaceManager
 
@@ -32,7 +31,7 @@ class WorkspaceAPI(Routable, OwnedReadWriteStorageAPI):
         item.add_route(hdrs.METH_DELETE, self.delete)
 
         config = router.add_resource('/workspaces/{id}/route')
-        config.add_route(hdrs.METH_PUT, self.reroute)
+        config.add_route(hdrs.METH_PUT, self.set_route)
         config.add_route(hdrs.METH_GET, self.get_route)
 
     async def _delete(self, stored: entity_type):
@@ -46,21 +45,17 @@ class WorkspaceAPI(Routable, OwnedReadWriteStorageAPI):
         await super()._post(entity)
         asyncio.create_task(self._provision_task(entity))
 
-    async def reroute(self, request: Request):
+    async def set_route(self, request: Request):
         entity: Workspace = await self._get(request)
-        data: RouteConfig = proxy_encoder_instance.get_encoder_for_type(RouteConfig).decoder_object_hook(
-            await request.json()
-        )
+        data = RouteConfig(**await request.json())
         await self.manager.reroute(workspace=entity, route=data)
+        raise HTTPNoContent()
 
+    @json_response
     async def get_route(self, request: Request):
         entity: Workspace = await self._get(request)
         try:
-            data: dict = await self.manager.consul.kv.get_all(
-                prefix=consul_key(CONSUL_SUBORDINATE_DIR, entity.uid, ''),
-                raw=True
-            )
-            data: RouteConfig = proxy_encoder_instance.get_encoder_for_type(RouteConfig).decoder_object_hook(data)
+            data: RouteConfig = await self.manager.get_route_config(entity)
         except self.manager.consul.InteractionError:
             data = RouteConfig()
         return data
