@@ -8,7 +8,7 @@ from microcore.entity.encoders import RegisteredEntityJSONEncoderBase
 from microcore.entity.model import public_attributes
 
 
-@attr.s
+@attr.s(auto_attribs=True)
 class ObjectBase(Identifiable):
     uid: str = attr.Factory(lambda: uuid4().hex)
 

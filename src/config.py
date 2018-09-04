@@ -39,5 +39,12 @@ MONGO_DB = motor().buldozer
 WSP_GC_COLLECT_DELAY = timedelta(seconds=int(os.getenv('WSP_GC_COLLECT_DELAY', 60 * 60)))
 WSP_GC_INTERVAL = int(os.getenv('WSP_GC_INTERVAL', 600))
 
-CONSUL_DSN = os.environ.get('CONSUL_DSN', 'http://consul:8500/v1/')
+CONSUL_DSN = os.environ.get('CONSUL_DSN', 'http://consul:8500')
 CONSUL_SUBORDINATE_DIR = '/buldozer/subordinate/'
+
+KAFKA_DSN = os.environ.get('KAFKA_DSN', 'kafka:9092')
+# supervisor settings
+
+SPV_STATE_RESYNC_INTERVAL = 60
+SPV_STATE_KEY_DESIRED_VERSION = 'desired_version'
+SPV_STATE_KEY_ADOPTED_VERSION = 'adopted_version'

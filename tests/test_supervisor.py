@@ -28,7 +28,6 @@ async def supervisor(event_loop: asyncio.AbstractEventLoop) -> Supervisor:
         ),
         loop=event_loop
     )
-    s._kafka_address = KAFKA_DSN
     yield s
     await s.stop()
     await s.state_monitor.consul.close()

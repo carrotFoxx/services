@@ -5,8 +5,10 @@ from typing import Any, Dict, List, Union
 import attr
 import marshmallow as ma
 from aiohttp import ClientResponse
+from consul.aio import Consul
 from more_itertools import flatten
 
+from config import CONSUL_DSN
 from mco.client import HTTPClient, error_handler
 from mco.utils import default_on_error
 
@@ -49,7 +51,7 @@ class KVStoreClient(HTTPClient):
     @error_handler
     async def put(self, key: str, value: Any, **opts) -> bool:
         async with self._client.put(
-                **self._req('/kv/%s' % key, params=opts),
+                **self._req('/v1/kv/%s' % key, params=opts),
                 data=str(value)
         ) as response:  # type: ClientResponse
             return await self._status(response)
@@ -57,7 +59,7 @@ class KVStoreClient(HTTPClient):
     @error_handler
     async def rem(self, key: str, **opts) -> bool:
         async with self._client.delete(
-                **self._req('/kv/%s' % key, params=opts)
+                **self._req('/v1/kv/%s' % key, params=opts)
         ) as response:
             return await self._status(response)
 
@@ -67,7 +69,7 @@ class KVStoreClient(HTTPClient):
         if raw:
             opts['raw'] = int(raw)
         async with self._client.get(
-                **self._req('/kv/%s' % key, params=opts)
+                **self._req('/v1/kv/%s' % key, params=opts)
         ) as response:
             await self._status(response)
             text = await response.text()
@@ -80,7 +82,7 @@ class KVStoreClient(HTTPClient):
     @error_handler
     async def list(self, prefix: str):
         async with self._client.get(
-                **self._req('/kv/%s' % prefix, params={'keys': 1})
+                **self._req('/v1/kv/%s' % prefix, params={'keys': 1})
         ) as response:
             return await self._data(response)
 
@@ -103,9 +105,12 @@ class KVStoreClient(HTTPClient):
                        if not isinstance(value, Exception)}
         return results
 
-
-class AgentClient(HTTPClient):
-    pass
+    @error_handler
+    def put_all(self, prefix: str, data: dict):
+        return asyncio.gather(*[
+            self.put(key=consul_key(prefix, key), value=value)
+            for key, value in data.items()
+        ])
 
 
 @attr.s(auto_attribs=True)
@@ -158,7 +163,7 @@ class CatalogClient(HTTPClient):
     @error_handler
     async def service_nodes(self, service: str) -> List[CatalogServiceNode]:
         async with self._client.get(
-                **self._req('/catalog/service/%s' % service)
+                **self._req('/v1/catalog/service/%s' % service)
         ) as response:
             data = await self._data(response)
             return self._schema.load(data, many=True)
@@ -171,6 +176,7 @@ class ConsulClient(HTTPClient):
             self.__dict__[key] = init()
         return self.__dict__[key]
 
+    @property
     def kv(self) -> KVStoreClient:
         """
 
@@ -186,21 +192,7 @@ class ConsulClient(HTTPClient):
                 loop=self._loop
             ))
 
-    def agent(self):
-        """
-
-        :return: accessor for Agent Consul APIs
-        """
-        return self._get_or_init(
-            AgentClient,
-            lambda: AgentClient(
-                base=self._base,
-                default_headers=self.default_headers,
-                default_params=self.default_params,
-                client=self._client,
-                loop=self._loop
-            ))
-
+    @property
     def catalog(self):
         """
 
@@ -215,3 +207,28 @@ class ConsulClient(HTTPClient):
                 client=self._client,
                 loop=self._loop
             ))
+
+    @property
+    def official(self) -> Consul:
+        return self._get_or_init(
+            Consul,
+            self._init_official
+        )
+
+    def _init_official(self):
+        schema, rest = CONSUL_DSN.split('://', 2)
+        host, port = rest.split(':', 2)
+
+        return Consul(
+            host=host,
+            port=int(port),
+            scheme=schema,
+            loop=self._loop
+        )
+
+    async def close(self):
+        await super().close()
+        if Consul in self.__dict__:
+            # fixme: this is a temp fix, see https://github.com/cablehead/python-consul/issues/226
+            # noinspection PyProtectedMember
+            await self.official.http._session.close()

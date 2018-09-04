@@ -7,12 +7,11 @@ import inject
 from aiohttp_json_rpc import RpcGenericServerDefinedError
 
 from common.consul import ConsulClient, consul_key
-from common.entities import App, Model, Workspace
-from config import CONSUL_SUBORDINATE_DIR
+from common.entities import App, Model, RouteConfig, Workspace
+from config import CONSUL_SUBORDINATE_DIR, SPV_STATE_KEY_DESIRED_VERSION, SPV_STATE_KEY_ADOPTED_VERSION
 from container_manager.definition import Instance, InstanceDefinition
 from mco.rpc import RPCClient
 from microcore.base.repository import Repository
-from supervisor.state import ADOPTED_VERSION, DESIRED_VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -49,8 +48,8 @@ class WorkspaceManager:
             image=image,
             attachments=attachments,
             environment={
-                'BDZ_NODE_ID': workspace.uid,
-                **app.environment
+                **app.environment,
+                'BDZ_NODE_ID': workspace.uid
             },
             labels={
                 'wsp_id': workspace.uid,
@@ -67,31 +66,30 @@ class WorkspaceManager:
         return definition
 
     async def get_adopted_version(self, workspace: Workspace) -> int:
-        return int(await self.consul.kv().get(
-            consul_key(CONSUL_SUBORDINATE_DIR, workspace.uid, ADOPTED_VERSION),
+        return int(await self.consul.kv.get(
+            consul_key(CONSUL_SUBORDINATE_DIR, workspace.uid, SPV_STATE_KEY_ADOPTED_VERSION),
             raw=True,
             default=0
         ))
 
-    async def reroute(self, workspace: Workspace):
+    async def get_desired_version(self, workspace: Workspace):
+        return int(await self.consul.kv.get(
+            key=consul_key(CONSUL_SUBORDINATE_DIR, workspace.uid, SPV_STATE_KEY_DESIRED_VERSION),
+            raw=True,
+            default=0
+        ))
+
+    async def reroute(self, workspace: Workspace, route: RouteConfig):
         """
         this is client part of supervisor.state.StateMonitor
 
         updates/creates node config in consul KV-store so supervisor could read it and configure itself
         """
-        kv = self.consul.kv()
-        desired_version: int = int(await kv.get(
-            key=consul_key(CONSUL_SUBORDINATE_DIR, workspace.uid, DESIRED_VERSION),
-            raw=True,
-            default=0
-        ))
+        desired_version = await self.get_desired_version(workspace)
         desired_version += 1  # increment to signal rerouting
-        workspace.route_conf.desired_version = desired_version
-        props = attr.asdict(workspace.route_conf)
-        await asyncio.gather(*[
-            kv.put(key=consul_key(CONSUL_SUBORDINATE_DIR, workspace.uid, key), value=value)
-            for key, value in props.items()
-        ])
+        route.desired_version = desired_version
+        props = attr.asdict(route)
+        await self.consul.kv.put_all(prefix=consul_key(CONSUL_SUBORDINATE_DIR, workspace.uid), data=props)
 
     async def provision(self, workspace: Workspace):
         logger.info('scheduling a provision on %s', workspace)
@@ -120,7 +118,7 @@ class WorkspaceManager:
         logger.info('decommissioning workspace: %s', workspace)
         await self.rpc_environments.remove_app_instance(definition)
         # drop routing config from consul kv-store
-        await self.consul.kv().rem(consul_key(CONSUL_SUBORDINATE_DIR, workspace.uid), recurse=True)
+        await self.consul.kv.rem(consul_key(CONSUL_SUBORDINATE_DIR, workspace.uid), recurse=True)
 
     async def schedule_gc(self, workspace: Workspace):
         # todo: schedule GC

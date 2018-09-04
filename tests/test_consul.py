@@ -22,7 +22,7 @@ async def client(event_loop) -> ConsulClient:
 
 @pytest.mark.asyncio
 async def test_get_service(client: ConsulClient):
-    nodes = await client.catalog().service_nodes('consul')
+    nodes = await client.catalog.service_nodes('consul')
     for x in nodes:
         assert isinstance(x, CatalogServiceNode)
         assert x.service_name == 'consul'
@@ -31,7 +31,7 @@ async def test_get_service(client: ConsulClient):
 @pytest.mark.asyncio
 async def test_kv_store(client: ConsulClient):
     # put some values
-    kv = client.kv()
+    kv = client.kv
     await kv.put('custom-data/prop1', 123)
     await kv.put('custom-data/prop2', 'abstract string value')
     await kv.put('custom-data/prop3', [1, 2, 3])

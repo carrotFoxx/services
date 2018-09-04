@@ -21,7 +21,6 @@ class EnvironmentManagerApp(RPCServerApplication):
         )
 
 
-
 if __name__ == '__main__':
     ROOT_LOG.info('starting [%s]', EnvironmentManagerApp.__name__)
     EnvironmentManagerApp().run()

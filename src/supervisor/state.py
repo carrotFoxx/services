@@ -5,13 +5,9 @@ from copy import copy
 from typing import Callable
 
 from common.consul import ConsulClient, consul_key
-from config import CONSUL_SUBORDINATE_DIR
+from config import CONSUL_SUBORDINATE_DIR, SPV_STATE_KEY_ADOPTED_VERSION, SPV_STATE_KEY_DESIRED_VERSION, \
+    SPV_STATE_RESYNC_INTERVAL
 from microcore.base.control import AsyncIOTaskManager
-
-RESYNC_INTERVAL = 60
-
-DESIRED_VERSION = 'desired_version'
-ADOPTED_VERSION = 'adopted_version'
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +21,7 @@ class StateMonitor:
         self.node_id = node_id
 
         self.consul = consul
-        self._consul_kv = consul.kv()
+        self._consul_kv = consul.kv
 
         self.state = {}
         self.version = 0
@@ -46,7 +42,8 @@ class StateMonitor:
 
     async def _pull_state(self):
         logger.debug('checking version, base=%s', self.version)
-        remote_version = int(await self._consul_kv.get(self._consul_key(DESIRED_VERSION), raw=True, default=1))
+        remote_version = int(
+            await self._consul_kv.get(self._consul_key(SPV_STATE_KEY_DESIRED_VERSION), raw=True, default=1))
         if self.version < remote_version:
             logger.info('refreshing, base=%s, remote=%s', self.version, remote_version)
             state = await self._consul_kv.get_all(self._consul_key(), raw=True)
@@ -57,7 +54,7 @@ class StateMonitor:
         if self.version > version:
             logger.warning('adoption is lagging behind: adopting=%s, desired=%s', version, self.version)
         self.version = version
-        await self._consul_kv.put(self._consul_key(ADOPTED_VERSION), version)
+        await self._consul_kv.put(self._consul_key(SPV_STATE_KEY_ADOPTED_VERSION), version)
         logger.info('adopted version=%s', version)
 
     async def task(self):
@@ -75,4 +72,4 @@ class StateMonitor:
                 raise
             except:
                 logger.exception('resync state task resulted in error')
-            await asyncio.sleep(RESYNC_INTERVAL)
+            await asyncio.sleep(SPV_STATE_RESYNC_INTERVAL)

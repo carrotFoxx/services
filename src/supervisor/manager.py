@@ -8,6 +8,7 @@ import aiokafka.errors
 import inject
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer, ConsumerRecord
 
+from config import KAFKA_DSN
 from microcore.base.control import AsyncIOBackgroundManager
 from supervisor.state import StateMonitor
 
@@ -78,7 +79,7 @@ class Supervisor:
     async def _get_kafka_address(self) -> str:
         if not self._kafka_address:
             # todo: resolve via consul
-            self._kafka_address = 'localhost:9092'
+            self._kafka_address = KAFKA_DSN
         return self._kafka_address
 
     async def _kafka_consumer(self, topic: str):
