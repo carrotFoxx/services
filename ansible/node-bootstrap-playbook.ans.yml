@@ -1,0 +1,19 @@
+---
+- hosts: openstack
+  remote_user: ubuntu
+  become: yes
+  become_user: root
+  vars:
+    docker_compose_version: 1.22.0
+  tasks:
+    - import_tasks: tasks/bootstrap.yml
+    - import_tasks: tasks/docker.yml
+    - name: add devops user
+      user:
+        name: devops
+        groups:
+          - docker
+        append: yes
+        shell: /bin/bash
+
+

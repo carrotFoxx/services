@@ -1,0 +1,35 @@
+---
+- name: Install python 2.7 on xenial
+  raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+  args:
+    creates: /usr/bin/python
+
+- name: install pip
+  apt:
+    package:
+      - python-pip
+
+- name: setup apt http support
+  apt:
+    update_cache: yes
+    autoclean: yes
+    autoremove: yes
+    package:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+
+- name: install python 3
+  apt:
+    package:
+      - python3
+      - python3-pip
+
+- name: install certbot repo
+  apt_repository:
+    repo: ppa:certbot/certbot
+- name: install certbot
+  apt:
+    update_cache: yes
+    package: certbot

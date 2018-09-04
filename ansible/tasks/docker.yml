@@ -1,0 +1,20 @@
+---
+- name: Add docker key
+  apt_key:
+    url: "https://download.docker.com/linux/ubuntu/gpg"
+    id: 0EBFCD88
+
+- name: Add docker repo
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+
+- name: Install docker
+  apt:
+    package: docker-ce
+    update_cache: yes
+
+- name: install docker[py] and docker-compose
+  pip:
+    name:
+      - docker
+      - docker-compose
