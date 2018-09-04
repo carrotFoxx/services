@@ -1,0 +1,62 @@
+version: '3.7'
+services:
+
+  app_manager:
+    volumes:
+    - app-data:/opt/data
+
+  model_manager:
+    volumes:
+    - app-data:/opt/data
+
+  zookeeper:
+    volumes:
+    - zk-data:/data
+    - zk-datalog:/datalog
+
+  mongo:
+    volumes:
+    - mongodb-data:/data/db
+    ports:
+    - '27017:27017'
+
+  kafka:
+    volumes:
+    - kafka-data:/kafka
+    ports:
+    - "9092:9092"
+
+  traefik:
+    ports:
+    - '80:80'
+    - '8080:8080'
+
+  weave_scope:
+    image: weaveworks/scope
+    privileged: true
+    network_mode: host
+    pid: host
+    labels:
+    - works.weave.role=system
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:rw
+    command: --probe.docker=true --weave=false
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+        max-file: '2'
+
+volumes:
+  app-data:
+  mongodb-data:
+  zk-data:
+  zk-datalog:
+  kafka-data:
+
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1454

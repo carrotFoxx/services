@@ -1,13 +1,31 @@
 version: '3.7'
 services:
+  app_manager:
+    volumes:
+    - ./docker/app-data:/opt/data
+
+  model_manager:
+    volumes:
+    - ./docker/app-data:/opt/data
+
+  zookeeper:
+    volumes:
+    - ./docker/zk-data/data:/data
+    - ./docker/zk-data/datalog:/datalog
+
   mongo:
+    volumes:
+    - ./docker/mongodb-data:/data/db
     ports:
     - '27017:27017'
 
   kafka:
+    volumes:
+    - ./docker/kafka-data:/kafka
     ports:
     - "9092:9092"
 
-  env_manager:
-    volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
+  traefik:
+    ports:
+    - '80:80'
+    - '8080:8080'
