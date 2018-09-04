@@ -120,6 +120,9 @@ services:
 
     - KAFKA_LOG_RETENTION_BYTES=200000000
     - KAFKA_LOG_SEGMENT_BYTES=20000000
+    networks:
+    - default
+    - buldozer_usp_net
     logging:
       driver: json-file
       options:
