@@ -1,5 +1,6 @@
-from dataclasses import asdict, dataclass, field, is_dataclass
 from uuid import uuid4
+
+import attr
 
 from microcore.entity.abstract import Identifiable, Owned, Preserver
 from microcore.entity.bases import DateTimePropertyHelperMixin
@@ -7,9 +8,9 @@ from microcore.entity.encoders import RegisteredEntityJSONEncoderBase
 from microcore.entity.model import public_attributes
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class ObjectBase(Identifiable):
-    uid: str = field(default_factory=lambda: uuid4().hex)
+    uid: str = attr.Factory(lambda: uuid4().hex)
 
     def get_uid(self):
         return self.uid
@@ -18,7 +19,7 @@ class ObjectBase(Identifiable):
         self.uid = value
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class OwnedObject(Owned):
     owner: str = None
 
@@ -29,15 +30,12 @@ class OwnedObject(Owned):
         self.owner = value
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class DatedObject(DateTimePropertyHelperMixin):
-    timestamp: float = None
-
-    def __post_init__(self):
-        self.timestamp = self.timestamp or self._issue_ts().timestamp()
+    timestamp: float = attr.Factory(lambda self: self._issue_ts().timestamp(), takes_self=True)
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class TrackedObject(DateTimePropertyHelperMixin, Preserver):
     created: float = None
     updated: float = None
@@ -52,7 +50,7 @@ class TrackedObject(DateTimePropertyHelperMixin, Preserver):
         """
         self.updated = self._issue_ts().timestamp()
 
-    def __post_init__(self):
+    def __attrs_post_init__(self):
         self.created = self.created or self._issue_ts().timestamp()
         self.updated = self.updated or self.created
 
@@ -62,6 +60,6 @@ class RegisteredEntityJSONEncoder(RegisteredEntityJSONEncoderBase):
 
     @staticmethod
     def pack(o) -> dict:
-        if is_dataclass(o):
-            return asdict(o)
+        if attr.has(o):
+            return attr.asdict(o)
         return public_attributes(o)

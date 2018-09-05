@@ -1,14 +1,14 @@
 import asyncio
 import json
 import logging
-from dataclasses import dataclass
 from typing import List, Type, Union
 
+import attr
 from aiohttp import hdrs
 from aiohttp.web import HTTPBadRequest, HTTPInternalServerError, HTTPNotFound, HTTPPreconditionFailed, \
     HTTPPreconditionRequired, Request, Response
 from aiohttp.web_urldispatcher import UrlDispatcher
-from aiohttp_json_rpc import RpcInvalidParamsError, RpcGenericServerDefinedError
+from aiohttp_json_rpc import RpcGenericServerDefinedError, RpcInvalidParamsError
 
 from mco.entities import ObjectBase, OwnedObject
 from mco.rpc import RPCRoutable, rpc_expose
@@ -21,7 +21,7 @@ from microcore.web.owned_api import OwnedReadWriteStorageAPI
 logger = logging.getLogger(__name__)
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class VersionedObject(ObjectBase, OwnedObject, Preserver):
     version: int = 0
 
@@ -197,11 +197,6 @@ class VersionedAPI(OwnedReadWriteStorageAPI, Routable):
         await self.archive.save(entity)
         await self.repository.save(entity)
         return entity
-
-
-class VersionedRepository(Repository):
-    async def save(self, entity):
-        await self.adapter.save(entity)
 
 
 class VersionedRPCAPI(RPCRoutable):

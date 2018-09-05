@@ -5,7 +5,7 @@ import pytest
 
 
 @pytest.fixture(scope='module')
-def event_loop():
+def event_loop() -> asyncio.AbstractEventLoop:
     loop = asyncio.get_event_loop()
     yield loop
     loop.close()

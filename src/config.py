@@ -11,7 +11,10 @@ PLATFORM_VERSION = LogSetup.get_platform_version()
 
 LOG_LEVEL = LogSetup.detect()
 
-LogSetup.setup_logs(LOG_LEVEL)
+# if CONTAINERPILOT_PID env var present we disable timestamps in log
+# (ContainerPilot adds them then translating logs to stdout)
+enable_timed_logs = not bool(os.environ.get('CONTAINERPILOT_PID', False))
+LogSetup.setup_logs(LOG_LEVEL, timed_logs=enable_timed_logs)
 
 ROOT_LOG = logging.getLogger()
 
@@ -35,3 +38,13 @@ MONGO_DB = motor().buldozer
 
 WSP_GC_COLLECT_DELAY = timedelta(seconds=int(os.getenv('WSP_GC_COLLECT_DELAY', 60 * 60)))
 WSP_GC_INTERVAL = int(os.getenv('WSP_GC_INTERVAL', 600))
+
+CONSUL_DSN = os.environ.get('CONSUL_DSN', 'http://consul:8500')
+CONSUL_SUBORDINATE_DIR = '/buldozer/subordinate/'
+
+KAFKA_DSN = os.environ.get('KAFKA_DSN', 'kafka:9092')
+# supervisor settings
+
+SPV_STATE_RESYNC_INTERVAL = 60
+SPV_STATE_KEY_DESIRED_VERSION = 'desired_version'
+SPV_STATE_KEY_ADOPTED_VERSION = 'adopted_version'

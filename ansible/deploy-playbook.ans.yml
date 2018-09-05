@@ -1,0 +1,35 @@
+---
+- hosts: openstack
+  remote_user: ubuntu
+  become: yes
+  vars:
+    upload_dir: ../../
+    base_dir: /home/devops/buldozer
+
+  tasks:
+    - import_tasks: tasks/upload_source.yml
+    - name: load config vars
+      include_vars:
+        file: vars.yml
+
+    - name: clear main .env
+      file:
+        path: "{{ base_dir }}/.env"
+        state: absent
+    - name: assemble main .env
+      template:
+        src: templates/main.env.j2
+        dest: "{{ base_dir }}/.env"
+        owner: devops
+        group: devops
+
+    - name: launch platform
+      become_user: devops
+      docker_service:
+        project_src: "{{ base_dir }}"
+        files:
+          - docker-compose.yml
+          - docker-compose.{{ app_env }}.yml
+        build: yes
+        recreate: smart
+#        recreate: always

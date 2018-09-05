@@ -11,13 +11,11 @@ logger = logging.getLogger(__name__)
 
 
 class Application:
-    """
-    :type _loop : asyncio.AbstractEventLoop
-    """
+    SHUTDOWN_TIMEOUT = 10
 
-    def __init__(self, loop=None):
+    def __init__(self, loop: asyncio.AbstractEventLoop = None):
         super().__init__()
-        self._loop = loop or asyncio.get_event_loop()
+        self._loop: asyncio.AbstractEventLoop = loop or asyncio.get_event_loop()
         self._loop.set_exception_handler(self._exception_handler)
 
     @staticmethod
@@ -74,7 +72,7 @@ class Application:
                 self._loop.run_until_complete(
                     asyncio.wait_for(
                         asyncio.gather(*asyncio.Task.all_tasks(loop=self._loop)),
-                        10
+                        self.SHUTDOWN_TIMEOUT
                     )
                 )
             except TimeoutError:

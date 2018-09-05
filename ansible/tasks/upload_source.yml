@@ -1,0 +1,27 @@
+---
+- name: copy sources
+  synchronize:
+    recursive: yes
+    src: "{{ upload_dir }}"
+    dest: "{{ base_dir }}"
+    owner: no
+    rsync_opts:
+      - "--exclude=tests"
+      - "--exclude=docs"
+      - "--exclude=ansible"
+      - "--exclude=aws"
+      - "--exclude=.env"
+      - "--exclude=venv"
+      - "--exclude=*.pyc"
+      - "--exclude=__pycache__"
+      - "--exclude=.pytest_cache"
+- name: change ownership for sources
+  become: yes
+  file:
+    path: "{{ base_dir }}"
+    owner: devops
+    group: devops
+    recurse: yes
+
+- name: version-sign
+  command: python {{ base_dir }}/version.py -d {{ base_dir }}/src

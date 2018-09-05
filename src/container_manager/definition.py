@@ -13,6 +13,10 @@ class InstanceDefinition:
     restart_policy: str = 'always'
 
 
+class InstanceDefinitionJSONEncoder(RegisteredEntityJSONEncoder):
+    entity_type = InstanceDefinition
+
+
 @attr.s(auto_attribs=True)
 class Instance:
     uid: str

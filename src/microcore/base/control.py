@@ -1,7 +1,7 @@
 import asyncio
 import functools
 import logging
-from typing import Dict, Union
+from typing import Coroutine, Dict, Union
 
 logger = logging.getLogger(__name__)
 
@@ -40,16 +40,52 @@ class AsyncIODelayedCallManager:
         return fn(hid, *args)
 
 
-class AsyncIOTaskManager:
-    def __init__(self, op_callback: callable, loop: asyncio.AbstractEventLoop = None) -> None:
+class _BaseTaskManager:
+    def __init__(self, loop: asyncio.AbstractEventLoop = None) -> None:
         super().__init__()
         self._loop = loop or asyncio.get_event_loop()
-        self._callable: callable = op_callback
         self._handles: Dict[str, asyncio.Task] = {}
+
+    def _attach(self, hid: str, coro: Coroutine):
+        task: asyncio.Task = self._loop.create_task(coro)
+        task.add_done_callback(lambda fut: self._detach(hid))
+        self._handles[hid] = task
+        logger.debug('task-manager: add handle %s', hid)
+
+    def _detach(self, hid: str):
+        handle = self._handles.pop(hid, None)
+        if handle is not None:
+            handle.cancel()
+            logger.debug('task-manager: remove handle [%s]', hid)
+            return True
+        return False
+
+
+class AsyncIOBackgroundManager(_BaseTaskManager):
+    def add(self, hid: str, coro: Coroutine):
+        if hid not in self._handles:
+            self._attach(hid, coro)
+        else:
+            logger.debug('task-manager: handle [%s] already exists', hid)
+        return self._handles[hid]
+
+    def remove(self, hid: str):
+        return self._detach(hid)
+
+    def get(self, hid: str) -> Union[asyncio.Task, None]:
+        return self._handles.get(hid, None)
+
+
+class AsyncIOTaskManager(_BaseTaskManager):
+    def __init__(self, op_callback: callable, loop: asyncio.AbstractEventLoop = None) -> None:
+        super().__init__(loop=loop)
+        self._callable: callable = op_callback
 
     def add(self, hid: str, *args, **kwargs):
         if hid not in self._handles:
-            self._attach(hid, self._callable, *args, **kwargs)
+            self._attach(hid, self._callable(*args, **kwargs))
+            logger.debug('task-manager: add handle for %s(%s) args: %s kwargs: %s',
+                         repr(self._callable), hid, args, kwargs)
         else:
             logger.debug('task-manager: handle already exists for %s(%s)', repr(self._callable), hid)
         return self._handles[hid]
@@ -59,17 +95,3 @@ class AsyncIOTaskManager:
 
     def get(self, hid) -> Union[asyncio.Task, None]:
         return self._handles.get(hid, None)
-
-    def _attach(self, hid: str, callback: callable, *args, **kwargs):
-        task: asyncio.Task = self._loop.create_task(callback(hid, *args, **kwargs))
-        task.add_done_callback(lambda fut: self._detach(hid))
-        self._handles[hid] = task
-        logger.debug('task-manager: add handle for %s(%s) args: %s kwargs: %s', repr(self._callable), hid, args, kwargs)
-
-    def _detach(self, hid: str):
-        handle = self._handles.pop(hid, None)
-        if handle is not None:
-            handle.cancel()
-            logger.debug('task-manager: remove handle for %s(%s)', repr(self._callable), hid)
-            return True
-        return False

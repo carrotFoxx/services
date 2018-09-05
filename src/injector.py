@@ -3,6 +3,9 @@ from typing import Any, Callable
 
 import inject
 
+from common.consul import ConsulClient
+from config import CONSUL_DSN
+
 logger = logging.getLogger(__name__)
 
 _CLOSABLE = []
@@ -27,7 +30,7 @@ async def async_close_registered(closer: callable):
 
 
 def global_configuration(binder: inject.Binder):
-    pass
+    binder.bind_to_constructor(closable('consul'), lambda: ConsulClient(base=CONSUL_DSN))
 
 
 def configure_injector(configuration: Callable[[inject.Binder], None] = None):
