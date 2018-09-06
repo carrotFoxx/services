@@ -93,6 +93,7 @@ stages:
       version: !int '{last_committed_version}'
 
 - name: remove model
+  skip: True
   request:
     method: DELETE
     url: '{tavern.env_vars.API_HOST}/models/{last_created_uid}'

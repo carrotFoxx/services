@@ -1,0 +1,58 @@
+test_name: wsp manager test
+
+stages:
+- name: list apps and get first
+  request:
+    url: '{tavern.env_vars.API_HOST}/applications'
+    headers: &auth_headers
+      x-user-id: '1'
+    method: GET
+  response:
+    save:
+      body:
+        app_id: 0.uid
+        app_ver: 0.version
+
+- name: list models and get first
+  request:
+    url: '{tavern.env_vars.API_HOST}/models'
+    headers: *auth_headers
+    method: GET
+  response:
+    save:
+      body:
+        model_id: 0.uid
+        model_ver: 0.version
+
+- name: create workspace
+  request:
+    url: '{tavern.env_vars.API_HOST}/workspaces'
+    headers: *auth_headers
+    method: POST
+    json:
+      name: tavern test
+
+      app_id: '{app_id}'
+      app_ver: !int '{app_ver}'
+
+      model_id: '{model_id}'
+      model_ver: !int '{model_ver}'
+  response:
+    status_code: 201
+    body:
+      uid: !anystr
+    save:
+      body:
+        last_created_uid: uid
+  delay_after: 5
+
+- name: setup workspace routing
+  request:
+    url: '{tavern.env_vars.API_HOST}/workspaces/{last_created_uid}/route'
+    method: PUT
+    headers: *auth_headers
+    json:
+      incoming_stream: events
+      outgoing_stream: correlations
+  response:
+    status_code: 204

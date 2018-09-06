@@ -88,6 +88,7 @@ stages:
       version: !int '{last_committed_version}'
 
 - name: remove application
+  skip: True
   request:
     method: DELETE
     url: '{tavern.env_vars.API_HOST}/applications/{last_created_uid}'

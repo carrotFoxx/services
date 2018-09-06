@@ -51,24 +51,6 @@ defaultEntryPoints = ["http"]
 constraints = ["tag==api"]
 
 ################################################################
-# Consul KV Provider
-################################################################
-# Enable Consul KV Provider.
-[consul]
-# Consul server endpoint.
-endpoint = "consul:8500"
-# Enable watch Consul changes.
-watch = true
-# Prefix used for KV store.
-prefix = "traefik"
-## Override default configuration template.
-## For advanced users :)
-# filename = "consul.tmpl"
-## Use Consul user/pass authentication.
-# username = foo
-# password = bar
-
-################################################################
 # Consul Catalog Provider
 ################################################################
 ## Enable Consul Catalog Provider.
@@ -76,7 +58,7 @@ prefix = "traefik"
 ## Consul server endpoint.
 endpoint = "consul:8500"
 ## Expose Consul catalog services by default in Traefik.
-# exposedByDefault = false
+exposedByDefault = false
 
 # Default domain used.
 domain = "localhost"

@@ -1,7 +1,10 @@
 import os
 
+import inject
+
 from common.consul import ConsulClient
-from config import CONSUL_DSN, ROOT_LOG
+from config import ROOT_LOG
+from injector import configure_injector
 from mco.utils import get_own_ip
 from microcore.base.application import Application
 from supervisor.manager import Supervisor
@@ -9,6 +12,7 @@ from supervisor.state import StateMonitor
 
 
 class SupervisorApp(Application):
+    consul: ConsulClient = inject.attr('consul')
 
     async def _setup(self):
         await super()._setup()
@@ -16,7 +20,6 @@ class SupervisorApp(Application):
         if not self.node_id:
             raise RuntimeError('no BDZ_NODE_ID provided')
         ROOT_LOG.info('node_id is [%s]', self.node_id)
-        self.consul = ConsulClient(base=CONSUL_DSN, loop=self._loop)
         await self.consul.official.agent.service.register(
             'wsp_worker_%s' % self.node_id,
             address=get_own_ip()
@@ -44,4 +47,5 @@ class SupervisorApp(Application):
 
 if __name__ == '__main__':
     ROOT_LOG.info('starting...')
+    configure_injector()
     SupervisorApp().run()
