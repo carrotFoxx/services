@@ -4,6 +4,8 @@ from asyncio import CancelledError
 from copy import copy
 from typing import Callable
 
+import inject
+
 from common.consul import ConsulClient, consul_key
 from config import CONSUL_SUBORDINATE_DIR, SPV_STATE_KEY_ADOPTED_VERSION, SPV_STATE_KEY_DESIRED_VERSION, \
     SPV_STATE_RESYNC_INTERVAL
@@ -13,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class StateMonitor:
+    @inject.params(consul='consul')
     def __init__(self, node_id: str, consul: ConsulClient,
                  adoption_cb: Callable[[dict], None] = None,
                  loop: asyncio.AbstractEventLoop = None) -> None:

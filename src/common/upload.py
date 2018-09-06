@@ -14,11 +14,11 @@ async def accept_upload(request: Request):
     if request.content_type.startswith('multipart/'):
         reader = await request.multipart()
         async for part in reader:  # type: Union[BodyPartReader,MultipartReader]
-            if part.headers[hdrs.CONTENT_TYPE] == 'application/json':
+            if part.headers.get(hdrs.CONTENT_TYPE) == 'application/json':
                 metadata = await part.json()
                 continue
             if part.filename is not None:
-                metadata[hdrs.CONTENT_TYPE] = part.headers[hdrs.CONTENT_TYPE]
+                metadata[hdrs.CONTENT_TYPE] = part.headers.get(hdrs.CONTENT_TYPE) or 'application/binary'
                 metadata[FIELD_FILENAME] = filename = '/opt/data/%s' % str(uuid4()) + part.filename
 
                 length = 0

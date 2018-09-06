@@ -1,0 +1,103 @@
+test_name: app manager test
+
+stages:
+- name: list apps
+  request:
+    url: '{tavern.env_vars.API_HOST}/models'
+    headers: &auth_headers
+      x-user-id: '1'
+    method: GET
+  response:
+    status_code: 200
+    body:
+      $ext:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            sequence:
+            - type: map
+              allowempty: True
+              mapping:
+                uid:
+                  type: str
+                  required: True
+
+- name: create model
+  request:
+    method: POST
+    url: '{tavern.env_vars.API_HOST}/models'
+    headers: *auth_headers
+    json: &basic_app
+      name: tavern test model
+  response:
+    status_code: 201
+    body:
+      uid: !anything
+    save:
+      body:
+        last_created_uid: uid
+      headers:
+        last_etag: x-version
+
+- name: alter model
+  request:
+    method: PUT
+    url: '{tavern.env_vars.API_HOST}/models/{last_created_uid}'
+    headers: &access_headers
+      <<: *auth_headers
+      x-if-version: '{last_etag}'
+    json:
+      <<: *basic_app
+      package: 'simple.file'
+  response:
+    body:
+      uid: '{last_created_uid}'
+      name: '{tavern.request_vars.json.name}'
+      package: '{tavern.request_vars.json.package}'
+
+- name: upload model file
+  request:
+    method: POST
+    url: '{tavern.env_vars.API_HOST}/models/{last_created_uid}/upload'
+    headers: *auth_headers
+    files:
+      file: 'test_model_mgr.tavern.yaml'
+  response:
+    body:
+      Content-Type: !anystr
+      _filename: !anystr
+      _length: !anyint
+
+- name: commit model version
+  request:
+    method: POST
+    url: '{tavern.env_vars.API_HOST}/models/{last_created_uid}/commit'
+    headers: *access_headers
+  response:
+    body:
+      version: !anyint
+    save:
+      body:
+        last_committed_version: version
+
+- name: get just committed version (validate it exists in archive)
+  request:
+    method: GET
+    url: '{tavern.env_vars.API_HOST}/models/{last_created_uid}/versions/{last_committed_version}'
+    headers: *auth_headers
+  response:
+    body:
+      uid: '{last_created_uid}'
+      version: !int '{last_committed_version}'
+
+- name: remove model
+  request:
+    method: DELETE
+    url: '{tavern.env_vars.API_HOST}/models/{last_created_uid}'
+    headers:
+      <<: *auth_headers
+      x-if-version: '{last_committed_version}'
+  response:
+    status_code: 204

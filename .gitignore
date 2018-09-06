@@ -130,3 +130,8 @@ docs/_build
 docs/apidocs
 
 docker/*-data
+
+# pytest benchmark files
+.benchmarks
+# ansible
+ansible/*.retry

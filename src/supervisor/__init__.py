@@ -26,7 +26,6 @@ class SupervisorApp(Application):
             program=os.environ.get('BDZ_PROGRAM'),
             state_monitor=StateMonitor(
                 node_id=self.node_id,
-                consul=self.consul,
                 loop=self._loop
             ),
             loop=self._loop
