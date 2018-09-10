@@ -108,8 +108,6 @@ class Workspace(ObjectBase, OwnedObject, TrackedObject):
 
     instance_id: str = None
 
-    route_conf: RouteConfig = attr.Factory(RouteConfig)
-
     def preserve_from(self, other: 'Workspace'):
         super().preserve_from(other)
         self.uid = other.uid
