@@ -1,36 +1,17 @@
-import logging
-from typing import Any, Callable
+from typing import Callable
 
 import inject
 
 from common.consul import ConsulClient
 from config import CONSUL_DSN
+from mco.injector import ClosableResourceManager
 
-logger = logging.getLogger(__name__)
-
-_CLOSABLE = []
-
-
-def closable(cls: Any):
-    _CLOSABLE.append(cls)
-    logger.debug('register closable: %s', cls)
-    return cls
-
-
-def close_registered(closer: callable):
-    for x in _CLOSABLE:
-        closer(inject.instance(x))
-        logger.debug('closed: %s', x)
-
-
-async def async_close_registered(closer: callable):
-    for x in _CLOSABLE:
-        await closer(inject.instance(x))
-        logger.debug('closed: %s', x)
+# singleton instance of resource manager to refer
+CRM = ClosableResourceManager()
 
 
 def global_configuration(binder: inject.Binder):
-    binder.bind_to_constructor(closable('consul'), lambda: ConsulClient(base=CONSUL_DSN))
+    binder.bind_to_constructor(*CRM.provider(ConsulClient, lambda: ConsulClient(base=CONSUL_DSN), is_async=True))
 
 
 def configure_injector(configuration: Callable[[inject.Binder], None] = None):

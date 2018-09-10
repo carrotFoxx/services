@@ -7,15 +7,18 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.results import DeleteResult, UpdateResult
 
 from microcore.base.repository import DoesNotExist, Filter, StorageAdapter, StorageException
-from microcore.entity.encoders import ProxyJSONEncoder, ProxyNativeEncoder, EntityJSONEncoderBase
+from microcore.entity.encoders import EntityJSONEncoderBase, ProxyJSONEncoder, ProxyNativeEncoder
 from microcore.entity.model import public_attributes
 
 logger = logging.getLogger(__name__)
 MONGODB_DSN = os.getenv('MONGODB_DSN', 'mongodb://localhost:27017')
-_client = AsyncIOMotorClient(MONGODB_DSN)
+_client = None
 
 
 def motor() -> AsyncIOMotorClient:
+    global _client
+    if _client is None:
+        _client = AsyncIOMotorClient(MONGODB_DSN)
     return _client
 
 

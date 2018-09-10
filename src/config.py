@@ -1,11 +1,16 @@
 # setup logging
+import asyncio
 import logging
 import os
 import sys
 from datetime import timedelta
 
+from uvloop import EventLoopPolicy
+
 from microcore.base.log import LogSetup
 from microcore.storage.mongo import motor
+
+asyncio.set_event_loop_policy(EventLoopPolicy())
 
 PLATFORM_VERSION = LogSetup.get_platform_version()
 

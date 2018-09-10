@@ -2,7 +2,7 @@ import asyncio
 
 from aiohttp import hdrs
 from aiohttp.web import UrlDispatcher
-from aiohttp.web_exceptions import HTTPNoContent
+from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent
 from aiohttp.web_request import Request
 
 from common.entities import RouteConfig, Workspace
@@ -47,7 +47,10 @@ class WorkspaceAPI(Routable, OwnedReadWriteStorageAPI):
 
     async def set_route(self, request: Request):
         entity: Workspace = await self._get(request)
-        data = RouteConfig(**await request.json())
+        try:
+            data = RouteConfig(**await request.json())
+        except (TypeError, ValueError) as e:
+            raise HTTPBadRequest() from e
         await self.manager.reroute(workspace=entity, route=data)
         raise HTTPNoContent()
 

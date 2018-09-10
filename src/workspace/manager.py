@@ -20,7 +20,7 @@ class WorkspaceManager:
     rpc_applications: RPCClient = inject.attr('rpc_app_manager')
     rpc_models: RPCClient = inject.attr('rpc_model_manager')
     rpc_environments: RPCClient = inject.attr('rpc_env_manager')
-    consul: ConsulClient = inject.attr('consul')
+    consul: ConsulClient = inject.attr(ConsulClient)
 
     def __init__(self, workspaces: Repository, loop=None) -> None:
         super().__init__()

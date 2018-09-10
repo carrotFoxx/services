@@ -8,6 +8,7 @@ import aiokafka.errors
 import inject
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer, ConsumerRecord
 
+from common.consul import ConsulClient
 from config import KAFKA_DSN
 from microcore.base.control import AsyncIOBackgroundManager
 from supervisor.state import StateMonitor
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class Supervisor:
-    consul = inject.attr('consul')
+    consul: ConsulClient = inject.attr(ConsulClient)
 
     def __init__(self,
                  program: str, *args,

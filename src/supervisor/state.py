@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class StateMonitor:
-    @inject.params(consul='consul')
+    @inject.params(consul=ConsulClient)
     def __init__(self, node_id: str, consul: ConsulClient,
                  adoption_cb: Callable[[dict], None] = None,
                  loop: asyncio.AbstractEventLoop = None) -> None:

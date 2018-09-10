@@ -4,7 +4,7 @@ import inject
 
 from common.consul import ConsulClient
 from config import ROOT_LOG
-from injector import configure_injector
+from injector import configure_injector, CRM
 from mco.utils import get_own_ip
 from microcore.base.application import Application
 from supervisor.manager import Supervisor
@@ -12,7 +12,7 @@ from supervisor.state import StateMonitor
 
 
 class SupervisorApp(Application):
-    consul: ConsulClient = inject.attr('consul')
+    consul: ConsulClient = inject.attr(ConsulClient)
 
     async def _setup(self):
         await super()._setup()
@@ -41,7 +41,7 @@ class SupervisorApp(Application):
         )
 
         await self.manager.stop()
-        await self.consul.close()
+        await CRM.close_all()
         await super()._shutdown()
 
 

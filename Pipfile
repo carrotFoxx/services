@@ -23,6 +23,7 @@ python-dateutil = "*"
 aiokafka = "*"
 more-itertools = "*"
 python-consul = "*"
+uvloop = "*"
 
 [dev-packages]
 pytest = ">=3.4"
