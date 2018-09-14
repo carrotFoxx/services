@@ -7,6 +7,8 @@ services:
       context: .
     environment:
     - SERVICE_NAME=applications
+    labels:
+    - SERVICE_IGNORE=true
     env_file:
     - dsn.env
     logging:
@@ -21,6 +23,8 @@ services:
       context: .
     environment:
     - SERVICE_NAME=models
+    labels:
+    - SERVICE_IGNORE=true
     env_file:
     - dsn.env
     logging:
@@ -36,6 +40,8 @@ services:
     environment:
     - SERVICE_NAME=envmanager
     - TRAEFIK_ENABLE=false
+    labels:
+    - SERVICE_IGNORE=true
     env_file:
     - dsn.env
     volumes:
@@ -52,6 +58,8 @@ services:
       context: .
     environment:
     - SERVICE_NAME=workspaces
+    labels:
+    - SERVICE_IGNORE=true
     env_file:
     - dsn.env
     logging:
@@ -73,6 +81,8 @@ services:
     command: agent -dev -bootstrap -ui -client=0.0.0.0
     environment:
     - CONSUL_BIND_INTERFACE=eth0
+    labels:
+    - SERVICE_IGNORE=true
     ports:
     - '8500:8500'
     networks:
@@ -84,10 +94,23 @@ services:
         max-size: 100m
         max-file: '2'
 
+  registrator:
+    image: gliderlabs/registrator:latest
+    command:
+    - '-internal'
+    - '-resync=30'
+    - '-ttl=60'
+    - '-ttl-refresh=30'
+    - 'consul://consul:8500'
+    volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+
   traefik:
     image: traefik:1.6
     volumes:
     - ./docker/traefik.toml:/traefik.toml
+    labels:
+    - SERVICE_IGNORE=true
     ports:
     - '80:80'
     - '8080:8080'
@@ -99,6 +122,10 @@ services:
 
   zookeeper:
     image: zookeeper:3.4
+    labels:
+    - SERVICE_2181_NAME=zookeeper
+    - SERVICE_2888_IGNORE=true
+    - SERVICE_3888_IGNORE=true
     logging:
       driver: json-file
       options:
@@ -113,13 +140,15 @@ services:
     - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://:9092
     - KAFKA_BROKER_ID=1
 
-    - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+    - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
     - KAFKA_CREATE_TOPICS=correlations:5:1,events:5:1
     - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
     - KAFKA_DELETE_TOPIC_ENABLE=true
 
     - KAFKA_LOG_RETENTION_BYTES=200000000
     - KAFKA_LOG_SEGMENT_BYTES=20000000
+    expose:
+    - 9092
     networks:
     - default
     - buldozer_usp_net

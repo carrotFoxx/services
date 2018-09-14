@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.7
 # py env setup
 ENV PYTHONPATH "/opt/app:${PYTHONPATH}"
 EXPOSE 8080

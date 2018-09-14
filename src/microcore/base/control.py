@@ -46,6 +46,9 @@ class _BaseTaskManager:
         self._loop = loop or asyncio.get_event_loop()
         self._handles: Dict[str, asyncio.Task] = {}
 
+    def __iter__(self):
+        return iter(self._handles.values())
+
     def _attach(self, hid: str, coro: Coroutine):
         task: asyncio.Task = self._loop.create_task(coro)
         task.add_done_callback(lambda fut: self._detach(hid))
