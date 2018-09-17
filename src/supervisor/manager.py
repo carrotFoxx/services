@@ -1,7 +1,9 @@
 import asyncio
+import json
 import logging
 import signal
 from asyncio import CancelledError
+from datetime import datetime
 from pprint import pformat
 
 import aiokafka.errors
@@ -174,9 +176,17 @@ class Supervisor:
             try:
                 record: str = await stream_reader.readline()
                 logger.debug('received from PIPE')
-                await self._wq.put(record)
+                # attach ts and meta upon receival from supervised process
+                await self._wq.put(self._format_record(record))
             except (CancelledError, GeneratorExit):
                 logger.info('closing PIPE reader')
                 raise
             except:
                 logger.exception('unexpected exception while reading from PIPE')
+
+    def _format_record(self, record: str):
+        return json.dumps({
+            'wsp': str(self.state_monitor.node_id),
+            'raw': str(record),
+            'ts': int(datetime.now().timestamp() * 1000)
+        })

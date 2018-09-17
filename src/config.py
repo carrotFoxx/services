@@ -48,8 +48,11 @@ CONSUL_DSN = os.environ.get('CONSUL_DSN', 'http://consul:8500')
 CONSUL_SUBORDINATE_DIR = '/buldozer/subordinate/'
 
 KAFKA_DSN = os.environ.get('KAFKA_DSN', 'kafka:9092')
-# supervisor settings
 
+KAFKA_DEFAULT_INCOMING_TOPIC = 'events'
+KAFKA_DEFAULT_OUTGOING_TOPIC = 'bdz_wsp_results'
+
+# supervisor settings
 SPV_STATE_RESYNC_INTERVAL = 60
 SPV_STATE_KEY_DESIRED_VERSION = 'desired_version'
 SPV_STATE_KEY_ADOPTED_VERSION = 'adopted_version'

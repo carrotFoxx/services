@@ -68,6 +68,21 @@ services:
         max-size: 100m
         max-file: '2'
 
+  pst_manager:
+    build:
+      dockerfile: docker/Dockerfile
+      context: .
+    environment:
+    - SERVICE_NAME=persist_manager
+    - TRAEFIK_ENABLE=false
+    labels:
+    - SERVICE_IGNORE=true
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+        max-file: '2'
+
   mongo:
     image: mongo:3.6
     logging:

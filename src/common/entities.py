@@ -1,6 +1,7 @@
 import attr
 
 from common.versioning import VersionedObject
+from config import KAFKA_DEFAULT_INCOMING_TOPIC, KAFKA_DEFAULT_OUTGOING_TOPIC
 from mco.entities import ObjectBase, OwnedObject, RegisteredEntityJSONEncoder, TrackedObject
 from microcore.entity.model import public_attributes
 from microcore.storage.mongo import StorageEntityJSONEncoderBase
@@ -88,8 +89,8 @@ class RouteConfig:
     desired_version: int = 0
     adopted_version: int = 0
 
-    incoming_stream: str = 'correlations'
-    outgoing_stream: str = 'results'
+    incoming_stream: str = KAFKA_DEFAULT_INCOMING_TOPIC
+    outgoing_stream: str = KAFKA_DEFAULT_OUTGOING_TOPIC
 
 
 class RouteConfigJSONEncoder(RegisteredEntityJSONEncoder):
