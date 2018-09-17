@@ -1,15 +1,30 @@
 import asyncio
 import json
 import logging
+import uuid
+from datetime import datetime
 from typing import List
 
 import pytest
 from aiokafka import AIOKafkaProducer
+from motor.core import AgnosticCollection
 
 from config import KAFKA_DSN
+from microcore.storage.mongo import motor
 from persistence.consumer import PersistenceConsumerManager, RecordBatchContainer
+from persistence.writer import MongoWriter
+
+WSP_ID = str(uuid.uuid4().hex)
 
 logger = logging.getLogger()
+
+
+def create_entry(x: int):
+    return {
+        'wsp': WSP_ID,
+        'raw': str(x),
+        'ts': int(datetime.now().timestamp() * 1000)
+    }
 
 
 async def produce(incoming_topic: str, amount: int, event_loop: asyncio.AbstractEventLoop):
@@ -19,7 +34,7 @@ async def produce(incoming_topic: str, amount: int, event_loop: asyncio.Abstract
     logger.info('stated producer')
     for x in range(0, amount):
         await p.send(topic=incoming_topic,
-                     value=json.dumps({'id': x}).encode())
+                     value=json.dumps(create_entry(x)).encode())
         logger.info('send data: %s', x)
         if x % 10 == 0:
             await p.flush()
@@ -62,3 +77,32 @@ async def test_consumer(event_loop, persistence_manager: PersistenceConsumerMana
     for b in received:
         total_received += sum([len(records) for records in b.records.values()])
     assert total_received == 100
+
+
+@pytest.fixture
+async def mongo_writer(event_loop: asyncio.AbstractEventLoop) -> MongoWriter:
+    w = MongoWriter(
+        db=motor().test_db
+    )
+    yield w
+
+    await motor().drop_database(w.db)
+
+
+@pytest.mark.asyncio
+async def test_mongo_writer(event_loop: asyncio.AbstractEventLoop,
+                            persistence_manager: PersistenceConsumerManager,
+                            mongo_writer: MongoWriter):
+    persistence_manager.add_consumer(
+        topic='persisted_events',
+        group_id='test_1',
+        persist_func=mongo_writer.process
+    )
+
+    await asyncio.sleep(2)
+    await produce('persisted_events', amount=100, event_loop=event_loop)
+    await asyncio.sleep(5)
+
+    collection: AgnosticCollection = mongo_writer.db.get_collection('wsp_out_%s' % WSP_ID)
+    count = await collection.count_documents({})
+    assert count == 100

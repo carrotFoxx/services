@@ -38,13 +38,14 @@ class MongoWriter:
         last_offset = None
         for _ in range(size):
             try:
-                record = self._decode_record(next(iterator))
+                c_record: ConsumerRecord = next(iterator)
+                record = self._decode_record(c_record)
                 batch.setdefault(record.workspace, [])
                 batch[record.workspace].append({
                     'data': record.raw_data,
                     'ts': record.timestamp
                 })
-                last_offset = next(iterator).offset
+                last_offset = c_record.offset
             except StopIteration:
                 break
         return batch, last_offset
@@ -65,11 +66,13 @@ class MongoWriter:
             iterator = iter(records)
             while True:
                 batch, last_offset = self._create_batch(iterator, size=100)
+                logger.info('persisting batch, offset: %s', last_offset)
                 if last_offset is None:
                     break
                 try:
                     await self._persist_batch(batch)
                     record_batch.report_offset(tp, last_offset)
+                    logger.info('persisted offset: %s', last_offset)
                 except:
                     # todo: add retry
                     logger.exception('persistence failure')

@@ -2,7 +2,7 @@ import logging
 import os
 from typing import List, Tuple, Union
 
-from motor.core import AgnosticCollection
+from motor.core import AgnosticCollection, AgnosticClient
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.results import DeleteResult, UpdateResult
 
@@ -15,7 +15,7 @@ MONGODB_DSN = os.getenv('MONGODB_DSN', 'mongodb://localhost:27017')
 _client = None
 
 
-def motor() -> AsyncIOMotorClient:
+def motor() -> Union[AsyncIOMotorClient, AgnosticClient]:
     global _client
     if _client is None:
         _client = AsyncIOMotorClient(MONGODB_DSN)

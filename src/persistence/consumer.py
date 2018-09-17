@@ -90,6 +90,9 @@ class PersistenceConsumerManager:
             bootstrap_servers=self.servers,
             group_id=group_id,
             enable_auto_commit=False,
+            fetch_min_bytes=64,
+            max_partition_fetch_bytes=1024 * 1024 * 5,
+            max_poll_records=1000,
             loop=self._loop
         )
         rebalance_listener = OffsetReporter(consumer=consumer)
