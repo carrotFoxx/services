@@ -1,0 +1,892 @@
+{
+	"info": {
+		"_postman_id": "dee17946-9359-4fba-a8fe-f6feaf453a62",
+		"name": "Buldozer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "applications",
+			"item": [
+				{
+					"name": "list apps",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{http-api}}/applications",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"applications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create app",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e99c49de-9e84-417a-9bef-94bff8c933c6",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'app-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"tests[\"ETag is present\"] = postman.getResponseHeader(ETAG);",
+									"tests[\"ETag is numeric\"] = /^\\d+$/.test(postman.getResponseHeader(ETAG));",
+									"",
+									"scn_version = parseInt(postman.getResponseHeader(ETAG))",
+									"",
+									"tests[\"Etag is greater then 0\"] = scn_version > 0;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"ver\", scn_version);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"busybox:latest\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/applications",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"applications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get app",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "31252779-e882-4675-9127-ef9c1f968da9",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'app-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"tests[\"ETag is present\"] = postman.getResponseHeader(ETAG);",
+									"tests[\"ETag is numeric\"] = /^\\d+$/.test(postman.getResponseHeader(ETAG));",
+									"",
+									"scn_version = parseInt(postman.getResponseHeader(ETAG))",
+									"",
+									"tests[\"Etag is greater then 0\"] = scn_version > 0;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"TensorFlow\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/applications/{{app-mgr.last-created-uid}}",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"applications",
+								"{{app-mgr.last-created-uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put app",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "31252779-e882-4675-9127-ef9c1f968da9",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'app-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"tests[\"ETag is present\"] = postman.getResponseHeader(ETAG);",
+									"tests[\"ETag is numeric\"] = /^\\d+$/.test(postman.getResponseHeader(ETAG));",
+									"",
+									"scn_version = parseInt(postman.getResponseHeader(ETAG))",
+									"",
+									"tests[\"Etag is greater then 0\"] = scn_version > 0;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "x-if-version",
+								"value": "{{app-mgr.last-created-ver}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"consul sync test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"buldozer_subordinate:latest\",\n\t\"environment\":{\n\t\t\"LOG_LEVEL\":\"DEBUG\",\n\t\t\"BDZ_PROGRAM\":\"cat\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/applications/{{app-mgr.last-created-uid}}",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"applications",
+								"{{app-mgr.last-created-uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get app versions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a9161e8c-84e8-4cc5-8d61-976b52039b12",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'app-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"TensorFlow\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/applications/{{app-mgr.last-created-uid}}/versions",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"applications",
+								"{{app-mgr.last-created-uid}}",
+								"versions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "commit app version to archive",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8c79a02c-3405-4b55-b5a8-9ccfa68fd03f",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'app-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"tests[\"ETag is present\"] = postman.getResponseHeader(ETAG);",
+									"tests[\"ETag is numeric\"] = /^\\d+$/.test(postman.getResponseHeader(ETAG));",
+									"",
+									"etag_version = parseInt(postman.getResponseHeader(ETAG))",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Etag is greater then 0\"] = etag_version > 0;",
+									"tests[\"Response has version\"] = jsonData.version !== undefined",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"pm.environment.set(ENV_PREFIX + 'ver', jsonData.version)"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "x-if-version",
+								"value": "{{app-mgr.last-created-ver}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{http-api}}/applications/{{app-mgr.last-created-uid}}/commit",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"applications",
+								"{{app-mgr.last-created-uid}}",
+								"commit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get app version by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a9a7f46c-74f2-43a3-ac0d-866e08c5c1c6",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'app-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload is object\"] = Object.isPrototypeOf(jsonData)",
+									"tests[\"Payload has version as in request\"] = jsonData.version == pm.environment.get(ENV_PREFIX+'ver')"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"TensorFlow\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/applications/{{app-mgr.last-created-uid}}/versions/{{app-mgr.last-created-ver}}",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"applications",
+								"{{app-mgr.last-created-uid}}",
+								"versions",
+								"{{app-mgr.last-created-ver}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload app artifact",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8c79a02c-3405-4b55-b5a8-9ccfa68fd03f",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'app-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"tests[\"ETag is present\"] = postman.getResponseHeader(ETAG);",
+									"tests[\"ETag is numeric\"] = /^\\d+$/.test(postman.getResponseHeader(ETAG));",
+									"",
+									"etag_version = parseInt(postman.getResponseHeader(ETAG))",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Etag is greater then 0\"] = etag_version > 0;",
+									"tests[\"Response has version\"] = jsonData.version !== undefined",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"pm.environment.set(ENV_PREFIX + 'ver', jsonData.version)"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "image/png"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {}
+						},
+						"url": {
+							"raw": "{{http-api}}/applications/{{app-mgr.last-created-uid}}/upload",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"applications",
+								"{{app-mgr.last-created-uid}}",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "models",
+			"item": [
+				{
+					"name": "list models",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{http-api}}/models",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create model",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1d7c16c0-7591-44d1-ba1b-3433141cf961",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'model-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"tests[\"ETag is present\"] = postman.getResponseHeader(ETAG);",
+									"tests[\"ETag is numeric\"] = /^\\d+$/.test(postman.getResponseHeader(ETAG));",
+									"",
+									"scn_version = parseInt(postman.getResponseHeader(ETAG))",
+									"",
+									"tests[\"Etag is greater then 0\"] = scn_version > 0;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"ver\", scn_version);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/models",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get model",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "60d0690b-2506-400e-8332-02a7cdca6c13",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'model-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"tests[\"ETag is present\"] = postman.getResponseHeader(ETAG);",
+									"tests[\"ETag is numeric\"] = /^\\d+$/.test(postman.getResponseHeader(ETAG));",
+									"",
+									"scn_version = parseInt(postman.getResponseHeader(ETAG))",
+									"",
+									"tests[\"Etag is greater then 0\"] = scn_version > 0;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"TensorFlow\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/models/{{model-mgr.last-created-uid}}",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"models",
+								"{{model-mgr.last-created-uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "commit model version to archive",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8c9bd821-b7e8-4a93-b8a8-871503ef4b64",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'model-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"tests[\"ETag is present\"] = postman.getResponseHeader(ETAG);",
+									"tests[\"ETag is numeric\"] = /^\\d+$/.test(postman.getResponseHeader(ETAG));",
+									"",
+									"etag_version = parseInt(postman.getResponseHeader(ETAG))",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Etag is greater then 0\"] = etag_version > 0;",
+									"tests[\"Response has version\"] = jsonData.version !== undefined",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"pm.environment.set(ENV_PREFIX + 'ver', jsonData.version)"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "x-if-version",
+								"value": "{{model-mgr.last-created-ver}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{http-api}}/models/{{model-mgr.last-created-uid}}/commit",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"models",
+								"{{model-mgr.last-created-uid}}",
+								"commit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload model artifact",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "531a556e-d325-495d-b2df-be99add83baf",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'app-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"tests[\"ETag is present\"] = postman.getResponseHeader(ETAG);",
+									"tests[\"ETag is numeric\"] = /^\\d+$/.test(postman.getResponseHeader(ETAG));",
+									"",
+									"etag_version = parseInt(postman.getResponseHeader(ETAG))",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Etag is greater then 0\"] = etag_version > 0;",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "image/png"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {}
+						},
+						"url": {
+							"raw": "{{http-api}}/models/{{app-mgr.last-created-uid}}/upload",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"models",
+								"{{app-mgr.last-created-uid}}",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "workspaces",
+			"item": [
+				{
+					"name": "create workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d8e3349f-7ece-4024-9627-ff36667f90ec",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/workspaces",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete workspace",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces",
+								"{{wsp-mgr.last-created-uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list workspaces",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "aab69509-e07c-4ea7-8af4-aae5a7d8ec8a",
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/workspaces",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get workspace",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces",
+								"{{wsp-mgr.last-created-uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get workspace route conf",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces",
+								"{{wsp-mgr.last-created-uid}}",
+								"route"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put workspace route conf",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces",
+								"{{wsp-mgr.last-created-uid}}",
+								"route"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
