@@ -4,13 +4,14 @@
    contain the root `toctree` directive.
 
 Welcome to Buldozer Platform's documentation!
-============================================
+=============================================
 
 .. toctree::
     :maxdepth: 2
     :caption: Contents:
 
     arch
+    quickstart_manual
 
 Indices and tables
 ==================
