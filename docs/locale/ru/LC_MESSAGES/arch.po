@@ -1,0 +1,89 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2018, CRPLab LLC
+# This file is distributed under the same license as the Buldozer Services
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Buldozer Services 0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-09-20 20:58+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: ../../arch.rst:2
+msgid "Buldozer General Architecture"
+msgstr ""
+
+#: ../../arch.rst:7
+msgid "Components:"
+msgstr ""
+
+#: ../../arch.rst:11
+msgid ""
+"service to manage Application types, configurations, instances and "
+"versions CRUD-like with REST based API"
+msgstr ""
+
+#: ../../arch.rst:16
+msgid ""
+"service to manage Models, their types and versions CRUD-like with REST "
+"based API"
+msgstr ""
+
+#: ../../arch.rst:21
+msgid ""
+"service to manage training process - RPC based, not directly accessible. "
+"takes App[ver] and DataSet to produce Model"
+msgstr ""
+
+#: ../../arch.rst:26
+msgid ""
+"service to manage low-level environments for Applications to run in. An "
+"abstraction over container and virtual machine providers allowing to spin"
+" up an environment, provision App, Model and Supervisor to it and connect"
+" it to the platform for data and task receiving and processing"
+msgstr ""
+
+#: ../../arch.rst:33
+msgid ""
+"a daemon deployed inside of container/vm to control desired application "
+"(acts as PID 1 in container), manages receiving incoming stream in slices"
+" and feeding it to application, then grabbing output and posting it back "
+"to stream"
+msgstr ""
+
+#: ../../arch.rst:39
+msgid ""
+"service managing access to Kafka stream and turning it into a RPC/REST "
+"API to accumulate and return slices of stream of given length (in time or"
+" size)"
+msgstr ""
+
+#: ../../arch.rst:44
+msgid ""
+"service to save output stream data to DB (no RPC/REST access, just read "
+"and save from Kafka)"
+msgstr ""
+
+#: ../../arch.rst:48
+msgid "distributed block or object store (Ceph, Minio, S3 or similar)"
+msgstr ""
+
+#: ../../arch.rst:52
+msgid "a PostgreSQL Database instance or cluster"
+msgstr ""
+
+#: ../../arch.rst:56
+msgid ""
+"a solution like Kong or Tyk to manage access and routing of external "
+"calls to services of the platform"
+msgstr ""
+

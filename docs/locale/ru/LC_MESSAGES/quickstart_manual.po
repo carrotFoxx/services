@@ -1,0 +1,460 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2018, CRPLab LLC
+# This file is distributed under the same license as the Buldozer Services
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Buldozer Services 0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-09-20 21:10+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: ../../quickstart_manual.rst:3
+msgid "Quickstart Manual"
+msgstr "Вводное руководство"
+
+#: ../../quickstart_manual.rst:6
+msgid "Definitions"
+msgstr "Определения"
+
+#: ../../quickstart_manual.rst:9
+msgid "Application"
+msgstr "Приложение"
+
+#: ../../quickstart_manual.rst:11
+msgid ""
+"an abstraction which defines environment and software suite to utilize "
+"the Model with."
+msgstr ""
+"абстракция определяющая окружение и программное обеспечение с которым "
+"можно утилизировать Модель"
+
+#: ../../quickstart_manual.rst:13
+msgid "Model"
+msgstr "Модель"
+
+#: ../../quickstart_manual.rst:15
+msgid ""
+"a collection of settings typically represented as a config file for a "
+"software suite represented as Application."
+msgstr ""
+"набор свойств обычно предствленный в виде файла для "
+"программного пакета определенного Приложением"
+
+#: ../../quickstart_manual.rst:17
+msgid "Workspace"
+msgstr "Workspace"
+
+#: ../../quickstart_manual.rst:19
+msgid ""
+"an abstraction which defines runtime, by combining Application and Model "
+"in same environment, and provides options to stream data in and out for "
+"processing"
+msgstr ""
+"абстрация определяющая состав исполнящей среды через связь Приложения и Модели "
+"в общем окружении и предоствляющая возможность передавать потоки событий "
+"для обработки в обе стороны"
+
+#: ../../quickstart_manual.rst:23
+msgid "Working with Applications"
+msgstr "Работа с Приложениями"
+
+#: ../../quickstart_manual.rst:26
+msgid "Application Structure"
+msgstr "Структура объекта Приложения"
+
+#: ../../quickstart_manual.rst:49 ../../quickstart_manual.rst:278
+#: ../../quickstart_manual.rst:377
+msgid "uid"
+msgstr ""
+
+#: ../../quickstart_manual.rst:51 ../../quickstart_manual.rst:280
+#: ../../quickstart_manual.rst:379
+msgid "object id"
+msgstr "идентификатор объекта"
+
+#: ../../quickstart_manual.rst:51 ../../quickstart_manual.rst:280
+msgid "version"
+msgstr ""
+
+#: ../../quickstart_manual.rst:53 ../../quickstart_manual.rst:282
+msgid "current object version"
+msgstr "текущая версия объекта"
+
+#: ../../quickstart_manual.rst:53 ../../quickstart_manual.rst:282
+#: ../../quickstart_manual.rst:379
+msgid "created"
+msgstr ""
+
+#: ../../quickstart_manual.rst:55 ../../quickstart_manual.rst:284
+#: ../../quickstart_manual.rst:381
+msgid "float value of unixtime ms then object was initially created"
+msgstr "время создания объекта (unix timestamp)"
+
+#: ../../quickstart_manual.rst:55 ../../quickstart_manual.rst:284
+#: ../../quickstart_manual.rst:381
+msgid "updated"
+msgstr ""
+
+#: ../../quickstart_manual.rst:57 ../../quickstart_manual.rst:286
+#: ../../quickstart_manual.rst:383
+msgid "float value of unixtime ms then object was updated last time"
+msgstr "время последнего обновления объекта (unix timestamp)"
+
+#: ../../quickstart_manual.rst:57 ../../quickstart_manual.rst:286
+#: ../../quickstart_manual.rst:383
+msgid "owner"
+msgstr ""
+
+#: ../../quickstart_manual.rst:59 ../../quickstart_manual.rst:288
+#: ../../quickstart_manual.rst:385
+msgid "id of a user who created the object"
+msgstr "идентификатор создателя объекта"
+
+#: ../../quickstart_manual.rst:59 ../../quickstart_manual.rst:288
+#: ../../quickstart_manual.rst:385
+msgid "name"
+msgstr ""
+
+#: ../../quickstart_manual.rst:61 ../../quickstart_manual.rst:290
+#: ../../quickstart_manual.rst:387
+msgid "object user-defined name"
+msgstr "имя данное пользователем"
+
+#: ../../quickstart_manual.rst:61
+msgid "description"
+msgstr ""
+
+#: ../../quickstart_manual.rst:63
+msgid "object user-defined description"
+msgstr "описание данное пользователем"
+
+#: ../../quickstart_manual.rst:63 ../../quickstart_manual.rst:290
+msgid "attachment"
+msgstr ""
+
+#: ../../quickstart_manual.rst:65 ../../quickstart_manual.rst:292
+msgid ""
+"this is a system property, a link to a binary attachment, optionally "
+"uploaded for an object"
+msgstr ""
+"системное свойство определяющее ссылку на бинарное приложение, опционально загруженное для объекта"
+
+#: ../../quickstart_manual.rst:65
+msgid "environment"
+msgstr ""
+
+#: ../../quickstart_manual.rst:67
+msgid ""
+"a dict of user-defined key-value pairs to be added as system environment "
+"variables on the runtime"
+msgstr ""
+"словарь определенных пользователем пар ключ-значение, которые будут добавлены в "
+"системное окружение при инициализации исполняемой среды"
+
+#: ../../quickstart_manual.rst:67
+msgid "package"
+msgstr ""
+
+#: ../../quickstart_manual.rst:69
+msgid ""
+"a environment base to be used, currently it is a docker image id or "
+"reference, the only supported value is `buldozer_subordinate:latest`"
+msgstr ""
+"базовый образ окружения, которое будет использовано для запуска приложения, "
+"в текущий момент - это ссылка/идентификатор образа Docker, "
+"значения отличные от `buldozer_subordinate:latest` пока не поддерживаются"
+
+#: ../../quickstart_manual.rst:74
+msgid "Creating an Application"
+msgstr "Создание Приложения"
+
+#: ../../quickstart_manual.rst:76
+msgid "to create an application use following request"
+msgstr "чтобы создать объект Приложения достаточно выполнить следующий запрос"
+
+#: ../../quickstart_manual.rst:80 ../../quickstart_manual.rst:123
+#: ../../quickstart_manual.rst:162 ../../quickstart_manual.rst:218
+#: ../../quickstart_manual.rst:248 ../../quickstart_manual.rst:405
+#: ../../quickstart_manual.rst:437
+msgid "**example request**"
+msgstr "**пример запроса**"
+
+#: ../../quickstart_manual.rst:98 ../../quickstart_manual.rst:130
+#: ../../quickstart_manual.rst:180 ../../quickstart_manual.rst:226
+#: ../../quickstart_manual.rst:337 ../../quickstart_manual.rst:419
+#: ../../quickstart_manual.rst:450 ../../quickstart_manual.rst:462
+msgid "**example response**"
+msgstr "**пример ответа**"
+
+#: ../../quickstart_manual.rst
+msgid "Request JSON Object"
+msgstr "JSON объект запроса"
+
+#: ../../quickstart_manual.rst:109 ../../quickstart_manual.rst:155
+#: ../../quickstart_manual.rst:202
+msgid "Application object"
+msgstr "объект Приложения"
+
+#: ../../quickstart_manual.rst
+msgid "Response JSON Object"
+msgstr "JSON объект ответа"
+
+#: ../../quickstart_manual.rst:110
+msgid "created application uid"
+msgstr "идентификатор созданного Приложения"
+
+#: ../../quickstart_manual.rst:113
+msgid ""
+"application and models API uses versions passed explicitly in *X-Version*"
+" and *X-If-Version* headers to ensure you are working with object you "
+"intended to."
+msgstr ""
+"API приложений и моделей использует версии передаваемые явно в заголовках "
+"*X-Version* и *X-If-Version* чтобы удостоверится что вы работаете именно с "
+"тем объектом с которым вы изначально намеревались работать"
+
+#: ../../quickstart_manual.rst:117
+msgid "Listing existing Applications"
+msgstr "Просмотр существующих Приложений"
+
+#: ../../quickstart_manual.rst:119
+msgid "to list just created application use:"
+msgstr "чтобы посмотреть созданные приложения используйте следующий запрос"
+
+#: ../../quickstart_manual.rst
+msgid "Response JSON Array of Objects"
+msgstr "JSON массив объектов ответа"
+
+#: ../../quickstart_manual.rst:158
+msgid "Altering existing Application"
+msgstr "Изменение существующего Приложения"
+
+#: ../../quickstart_manual.rst:203
+msgid "altered Application object"
+msgstr "измененный объект приложения"
+
+#: ../../quickstart_manual.rst:206
+msgid "Commit app version to archive"
+msgstr "Передача версии приложения в архив"
+
+#: ../../quickstart_manual.rst:208
+msgid ""
+"In order to use application as an environment and provision it on the "
+"infrastructure it is required to persist a copy of its current state to "
+"archive, which maintains a history of changes and provides reliable "
+"access to all versions of application for internal services in order to "
+"keep ongoing changes isolated from running instances and provide "
+"uninterrupted service and consistency."
+msgstr ""
+"Чтобы использовать приложение и разместить его в инфраструктуре необходимо "
+"сохранить неизменяемую копию его состояния в архив который содержит всю"
+"историю измений и предоставляет внутренним сервисам надежный доступ к ней, "
+"таким образом текущий процесс изменений изолируется от активных истансов, "
+"что позволяет предоставлять непрерывный сервис и гарантию консистентности"
+#: ../../quickstart_manual.rst:213
+msgid ""
+"To commit application version to archive, then you finished applying "
+"changes and ready to do so, use following request:"
+msgstr ""
+"Чтобы отправить версию приложения в архив, когда вы закончите вносить изменения "
+"и будете готовы это сделать, воспользуйтесь следующим запросом:"
+
+#: ../../quickstart_manual.rst:235
+msgid "number of version in archive"
+msgstr "номер версии в архиве"
+
+#: ../../quickstart_manual.rst:239
+msgid "Removing application"
+msgstr "Удаление приложения"
+
+#: ../../quickstart_manual.rst:241
+msgid "application instance can be removed using following request"
+msgstr "объекты приложений могут быть удалены используя следующий запрос:"
+
+#: ../../quickstart_manual.rst:244
+msgid "archive records will not be removed"
+msgstr "архивные записи удалены не будут"
+
+#: ../../quickstart_manual.rst
+msgid "Status Codes"
+msgstr "Коды ответа"
+
+#: ../../quickstart_manual.rst:256
+msgid "resource successfully removed"
+msgstr "ресурс успешно удален"
+
+#: ../../quickstart_manual.rst:259
+msgid "Working with Models"
+msgstr "Работа с Моделями"
+
+#: ../../quickstart_manual.rst:262
+msgid "Model Structure"
+msgstr "Структура Модели"
+
+#: ../../quickstart_manual.rst:296
+msgid ""
+"Model API is structured in the same way as the Application API, so most "
+"queries are the same, except for the root path and object passed in POST "
+"and PUT, just switch it to Model structure."
+msgstr ""
+"API Моделей структурирован точно так же как и API Приложений, так что большинство "
+"запросов точно такие же, за исключением корневого пути и объектов предаваемых "
+"в теле запросов POST и PUT, просто поменяйте их согласно структуре Модели"
+
+#: ../../quickstart_manual.rst:299
+msgid "We will only cover the differences and additional APIs available."
+msgstr "Далее описаны лишь отличия и дополнительные доступные API"
+
+#: ../../quickstart_manual.rst:302
+msgid "Uploading Model Artifact"
+msgstr "Загрузка артефакта Модели"
+
+#: ../../quickstart_manual.rst:306
+msgid "This is file upload endpoint, 2 different upload mechanics are supported."
+msgstr "Это ендпоинт для загрузки файлов, поддерживается 2 механизма загрузки"
+
+#: ../../quickstart_manual.rst:308
+msgid "http multipart/data (standard file upload as per RFC 7578)"
+msgstr "http multipart/data согласно стандарту RFC7578"
+
+#: ../../quickstart_manual.rst:309
+msgid ""
+"body stream (streaming upload) - takes entire body of request as a file "
+"contents"
+msgstr "потоковая загрузка, использует все содержимое тела запроса и записывает его в файл"
+
+#: ../../quickstart_manual.rst:311
+msgid "**example rfc7578 upload (simplified)**"
+msgstr "**пример загрузки согласно RFC7578 (упрощенный)**"
+
+#: ../../quickstart_manual.rst:324
+msgid "**example stream upload**"
+msgstr "**пример потоковой загрузки**"
+
+#: ../../quickstart_manual.rst:350
+msgid "Utilizing Workspaces"
+msgstr "Использование Рабочих пространств"
+
+#: ../../quickstart_manual.rst:352
+msgid ""
+"Workspaces are main configuration point to actually use the platform for "
+"things it is designed to."
+msgstr ""
+"Рабочие пространства - это основная точка конфигурации чтобы использовать платформу для тех вещей "
+"для которых она создана"
+
+#: ../../quickstart_manual.rst:354
+msgid ""
+"Applications and Model are just definitions utilized by Workspace to "
+"provision runtime which processes data streams and allows to route them "
+"in, out and from one workspace to another."
+msgstr ""
+"Приложения и Модели это лишь определения используемые Рабочим пространством для "
+"создания исполняемого окружения которое обрабатывает потоки данных и направлять их в, из и от одного "
+"окружения к другому"
+
+#: ../../quickstart_manual.rst:358
+msgid "Workspace Structure"
+msgstr "Структура объекта Рабочего окружения"
+
+#: ../../quickstart_manual.rst:387
+msgid "app_id"
+msgstr ""
+
+#: ../../quickstart_manual.rst:389
+msgid "application to bind in runtime"
+msgstr "приложение привязываемое в исполняемую среду"
+
+#: ../../quickstart_manual.rst:389
+msgid "app_ver"
+msgstr ""
+
+#: ../../quickstart_manual.rst:391
+msgid "application version to bind"
+msgstr "версия приложения привязываемого в исполняемою среду"
+
+#: ../../quickstart_manual.rst:391
+msgid "model_id"
+msgstr ""
+
+#: ../../quickstart_manual.rst:393
+msgid "model to bind in runtime"
+msgstr "модель привязываемая в исполняемую среду"
+
+#: ../../quickstart_manual.rst:393
+msgid "model_ver"
+msgstr ""
+
+#: ../../quickstart_manual.rst:395
+msgid "model version to bind"
+msgstr "версия модели привязываемого в исполняемую среду"
+
+#: ../../quickstart_manual.rst:395
+msgid "instance_id"
+msgstr ""
+
+#: ../../quickstart_manual.rst:397
+msgid ""
+"internal runtime id (may refer to Docker container, Kubernetes pod or "
+"OpenStack VM)"
+msgstr ""
+"внутренний идентификатор исполняемой среды (может относится к контейнеру Docker, Kubernetes Pod'у "
+"или виртуальной машине OpenStack)"
+
+#: ../../quickstart_manual.rst:401
+msgid "Creating Workspace"
+msgstr "Создание Рабочего окружения"
+
+#: ../../quickstart_manual.rst:429
+msgid "Workspace object"
+msgstr "объект Рабочего окружения"
+
+#: ../../quickstart_manual.rst:430
+msgid "created workspace uid"
+msgstr "идентификатор созданнног рабочего окружения"
+
+#: ../../quickstart_manual.rst:433
+msgid "Routing Kafka streams to and from Workspace"
+msgstr "Направление потоков событий Kafka в и из рабочего окружения"
+
+#: ../../quickstart_manual.rst:456 ../../quickstart_manual.rst:478
+msgid "kafka topic to consume data from"
+msgstr "топик kafka поставляющий входные данные"
+
+#: ../../quickstart_manual.rst:457 ../../quickstart_manual.rst:479
+msgid "kafka topic to write processed data to"
+msgstr "топик kafka принимающий результаты обработки"
+
+#: ../../quickstart_manual.rst:458
+msgid "route config stored in coordinator"
+msgstr "конфигурация маршрутов сохранена в координаторе"
+
+#: ../../quickstart_manual.rst:475
+msgid ""
+"incremental update number (incremented each time you update routing "
+"config)"
+msgstr ""
+"инкрементальный *желаемый* номер обновления конфигурации "
+"(каждый раз когда вы обновляете конфигурацию - он увеличивается)"
+
+#: ../../quickstart_manual.rst:476
+msgid ""
+"incremental adopted number (equality of *desired* and *adopted* versions "
+"indicates that config was successfully provisioned to runtime)"
+msgstr ""
+"номер адаптированного обновления (равенство *желаемой* и *адаптируемой* версий "
+"свидетельствует об успешном применении конфигурации исполняемой средой)"
+
+#~ msgid "**example rfc7578 upload**"
+#~ msgstr ""
+
