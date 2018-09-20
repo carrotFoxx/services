@@ -92,37 +92,37 @@ paths:
                   - MatLab
                   - TensorFlow
 
-  /datasets:
+  /models:
     get:
-      description: list of datasets
+      description: list of models
       responses:
         '200':
-          $ref: '#/components/responses/DataSetDetailsListResponse'
+          $ref: '#/components/responses/ModelDetailsListResponse'
     post:
-      description: create dataset
+      description: create model
       requestBody:
-        $ref: '#/components/requestBodies/DataSetDetailsSubmission'
+        $ref: '#/components/requestBodies/ModelDetailsSubmission'
       responses:
         '200':
-          $ref: '#/components/responses/DataSetDetailsResponse'
-  /datasets/{datasetId}:
+          $ref: '#/components/responses/ModelDetailsResponse'
+  /models/{modelId}:
     parameters:
-      - $ref: '#/components/parameters/datasetId'
+      - $ref: '#/components/parameters/modelId'
     get:
-      description: get dataset details
+      description: get model details
       responses:
         '200':
-          $ref: '#/components/responses/DataSetDetailsResponse'
+          $ref: '#/components/responses/ModelDetailsResponse'
     put:
-      description: update dataset details
+      description: update model details
       requestBody:
-        $ref: '#/components/requestBodies/DataSetDetailsSubmission'
+        $ref: '#/components/requestBodies/ModelDetailsSubmission'
       responses:
         '200':
-          $ref: '#/components/responses/DataSetDetailsResponse'
-  /datasets/{datasetId}/upload:
+          $ref: '#/components/responses/ModelDetailsResponse'
+  /models/{modelId}/upload:
     parameters:
-      - $ref: '#/components/parameters/datasetId'
+      - $ref: '#/components/parameters/modelId'
     post:
       requestBody:
         $ref: '#/components/requestBodies/FileUploadSubmission'
@@ -130,31 +130,31 @@ paths:
         '204':
           description: file upload accepted
 
-  /datasets/{datasetId}/commit:
+  /models/{modelId}/commit:
     parameters:
-      - $ref: '#/components/parameters/datasetId'
+      - $ref: '#/components/parameters/modelId'
     post:
-      description: commit dataset version to archive (version history)
+      description: commit model version to archive (version history)
       responses:
         '200':
           $ref: '#/components/responses/VersionInfoResponse'
-  /datasets/{datasetId}/versions:
+  /models/{modelId}/versions:
     parameters:
-      - $ref: '#/components/parameters/datasetId'
+      - $ref: '#/components/parameters/modelId'
     get:
-      description: show dataset versions
+      description: show model versions
       responses:
         '200':
-          $ref: '#/components/responses/DataSetDetailsListResponse'
-  /datasets/{datasetId}/versions/{versionId}:
+          $ref: '#/components/responses/ModelDetailsListResponse'
+  /models/{modelId}/versions/{versionId}:
     parameters:
-      - $ref: '#/components/parameters/datasetId'
+      - $ref: '#/components/parameters/modelId'
       - $ref: '#/components/parameters/versionId'
     get:
-      description: show dataset version
+      description: show model version
       responses:
         '200':
-          $ref: '#/components/responses/DataSetDetailsResponse'
+          $ref: '#/components/responses/ModelDetailsResponse'
 
   /workspaces:
     get:
@@ -252,9 +252,9 @@ components:
       schema:
         type: integer
         format: int32
-    datasetId:
-      description: dataset uid
-      name: datasetId
+    modelId:
+      description: model uid
+      name: modelId
       in: path
       required: true
       schema:
@@ -274,11 +274,11 @@ components:
           schema:
             $ref: '#/components/schemas/Application'
 
-    DataSetDetailsSubmission:
+    ModelDetailsSubmission:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DataSet'
+            $ref: '#/components/schemas/Model'
 
     FileUploadSubmission:
       content:
@@ -338,15 +338,15 @@ components:
                 items:
                   $ref: '#/components/schemas/Application'
 
-    DataSetDetailsResponse:
-      description: dataset details response
+    ModelDetailsResponse:
+      description: model details response
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DataSet'
+            $ref: '#/components/schemas/Model'
 
-    DataSetDetailsListResponse:
-      description: dataset details list response
+    ModelDetailsListResponse:
+      description: model details list response
       content:
         application/json:
           schema:
@@ -355,7 +355,7 @@ components:
               list:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DataSet'
+                  $ref: '#/components/schemas/Model'
 
     WorkspaceDetailsResponse:
       description: workspace details response
@@ -462,7 +462,7 @@ components:
         - $ref: '#/components/schemas/VersionedObject'
         - $ref: '#/components/schemas/AppBase'
 
-    DataSetBase:
+    ModelBase:
       type: object
       required:
         - name
@@ -474,13 +474,13 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/AnyType'
 
-    DataSet:
+    Model:
       allOf:
         - $ref: '#/components/schemas/ObjectBase'
         - $ref: '#/components/schemas/OwnedObject'
         - $ref: '#/components/schemas/TrackedObject'
         - $ref: '#/components/schemas/VersionedObject'
-        - $ref: '#/components/schemas/DataSetBase'
+        - $ref: '#/components/schemas/ModelBase'
 
     WorkspaceBase:
       type: object
@@ -488,7 +488,7 @@ components:
         - name
         - kind
         - app_id
-        - dataset_id
+        - model_id
       properties:
         name:
           type: string
@@ -504,7 +504,7 @@ components:
             $ref: '#/components/schemas/AnyType'
         app_id:
           $ref: '#/components/schemas/ObjectId'
-        dataset_id:
+        model_id:
           $ref: '#/components/schemas/ObjectId'
 
     Workspace:
