@@ -1,0 +1,20 @@
+serviceType: NodePort
+service:
+  nodePorts:
+    http: 30080
+    https: 30443
+ssl:
+  enabled: false
+  insecureSkipVerify: true
+acme:
+  enabled: false
+dashboard:
+  enabled: true
+  domain: traefik.kube.local
+accessLogs:
+  enabled: true
+deployment:
+  hostPort:
+    httpEnabled: true
+    dashboardEnabled: true
+

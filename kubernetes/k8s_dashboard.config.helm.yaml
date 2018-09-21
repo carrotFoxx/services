@@ -1,0 +1,4 @@
+ingress:
+  enabled: true
+  hosts:
+    - dash.kube.local
