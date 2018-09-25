@@ -73,8 +73,22 @@ services:
       dockerfile: docker/Dockerfile
       context: .
     environment:
-    - SERVICE_NAME=persist_manager
+    - SERVICE_NAME=persister
     - TRAEFIK_ENABLE=false
+    labels:
+    - SERVICE_IGNORE=true
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+        max-file: '2'
+
+  spl_manager:
+    build:
+      dockerfile: docker/Dockerfile
+      context: .
+    environment:
+    - SERVICE_NAME=sampler
     labels:
     - SERVICE_IGNORE=true
     logging:

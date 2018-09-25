@@ -15,7 +15,7 @@ class SamplingError(Exception):
     pass
 
 
-class LoadGeneratorProducer:
+class LoadGeneratorProducerManager:
     def __init__(self, servers: str, loop: asyncio.AbstractEventLoop = None) -> None:
         self.servers = servers
         self._loop = loop or asyncio.get_event_loop()
@@ -33,7 +33,7 @@ class LoadGeneratorProducer:
         # wrap sampler function to get expected exception type
         sampler_func = convert_exceptions(sampler_func, to=SamplingError)
         logger.info('add consumer for topic=%s', topic)
-        t = self._tm.add(topic, topic=topic, persist_func=sampler_func)
+        t = self._tm.add(topic, topic=topic, sampler_func=sampler_func)
         # this will relaunch task if it failed with exception (non-intentionally)
         t.add_done_callback(
             lambda fut: self._tm.add(

@@ -15,6 +15,11 @@ class SampleRecordGenerator:
 
         gen = count() if amount < 0 else range(amount)
         self._sequencer: Iterator = iter(takewhile(self._should_stop, gen))
+        self._current = None
+
+    @property
+    def current(self) -> int:
+        return self._current
 
     def kill(self):
         self._break = True
@@ -24,8 +29,9 @@ class SampleRecordGenerator:
 
     @convert_exceptions(exc=StopIteration, to=CancelledError)
     def generate(self) -> Awaitable[str]:
+        self._current = next(self._sequencer)
         # sleeping for 0 seconds is optimized in asyncio, so we wont bother handling this
-        return asyncio.sleep(self._delay, result=json.dumps(self._create_payload(next(self._sequencer))))
+        return asyncio.sleep(self._delay, result=json.dumps(self._create_payload(self._current)))
 
     def _create_payload(self, seq_value: int):
         return {
