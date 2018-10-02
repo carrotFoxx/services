@@ -61,7 +61,7 @@ def default_on_error(fn_or_none=None, *,
     return decorator(fn_or_none) if fn_or_none else decorator
 
 
-def log_exceptions(fn_or_none=None, *,
+def log_exceptions(fn_or_none=None, *, propagate: bool = False,
                    exc: Union[Type[Exception], Tuple[Type[Exception], ...]] = Exception):
     """
     log raised exceptions (except for CancelledError for coroutines) and fail silently
@@ -81,6 +81,8 @@ def log_exceptions(fn_or_none=None, *,
                 raise
             except exc:
                 logging.exception('muted exception')
+                if propagate:
+                    raise
 
         return sync_wrapper if not _is_coroutine(fn) else async_wrapper
 

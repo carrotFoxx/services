@@ -1,7 +1,8 @@
 import asyncio
 import logging
-from asyncio import CancelledError
+from asyncio import CancelledError, Future
 from typing import Awaitable, Callable, Dict, List
+from uuid import uuid4
 
 import aiokafka
 import attr
@@ -9,6 +10,7 @@ from aiokafka import AIOKafkaConsumer, ConsumerRebalanceListener, ConsumerRecord
 
 from mco.utils import log_exceptions
 from microcore.base.control import AsyncIOTaskManager
+from microcore.entity.bases import StringEnum
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +54,11 @@ class RecordBatchContainer:
         self._offset_manager.add_offset(key, offset)
 
 
+class FailurePolicy(StringEnum):
+    SHUTDOWN = 'shutdown'
+    RELAUNCH = 'relaunch'
+
+
 class PersistenceConsumerManager:
 
     def __init__(self, servers: str, loop: asyncio.AbstractEventLoop = None) -> None:
@@ -67,18 +74,32 @@ class PersistenceConsumerManager:
             x.cancel()
         return asyncio.sleep(1)
 
-    def add_consumer(self, topic: str, group_id: str, persist_func: Callable[[RecordBatchContainer], Awaitable]):
+    def _relaunch(self, fut: Future, policy: FailurePolicy = FailurePolicy.RELAUNCH, **config):
+        if not fut.exception():
+            return
+
+        if policy is FailurePolicy.SHUTDOWN:
+            logger.error('consumer failure, shutdown [policy=%s]', policy)
+            self._loop.stop()
+            return
+
+        self.add_consumer(**config)
+
+    def add_consumer(self, topic: str, group_id: str, persist_func: Callable[[RecordBatchContainer], Awaitable],
+                     policy: FailurePolicy = FailurePolicy.RELAUNCH):
         logger.info('add consumer for topic=%s', topic)
-        t = self._tm.add(topic, topic=topic, group_id=group_id, persist_func=persist_func)
+        t = self._tm.add('%s-%s' % (topic, uuid4().hex),
+                         topic=topic,
+                         group_id=group_id,
+                         persist_func=persist_func)
         # this will relaunch task if it failed with exception (non-intentionally)
         t.add_done_callback(
-            lambda fut: self._tm.add(
-                hid=topic,
+            lambda fut: self._relaunch(
+                fut, policy=policy,
                 topic=topic,
                 group_id=group_id,
                 persist_func=persist_func
             )
-            if fut.exception() else None
         )
 
     def remove_consumer(self, topic: str):
@@ -98,7 +119,7 @@ class PersistenceConsumerManager:
         rebalance_listener = OffsetReporter(consumer=consumer)
         return consumer, rebalance_listener
 
-    @log_exceptions
+    @log_exceptions(propagate=True)
     async def _task(self, topic: str, group_id: str, persist_func: Callable[[RecordBatchContainer], Awaitable]):
         consumer, offset_mgr = self._create_consumer(group_id)
         try:

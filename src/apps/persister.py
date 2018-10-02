@@ -2,7 +2,7 @@ import os
 
 from config import KAFKA_DSN, MONGO_DB, ROOT_LOG
 from microcore.base.application import Application
-from persistence.consumer import PersistenceConsumerManager
+from persistence.consumer import PersistenceConsumerManager, FailurePolicy
 from persistence.writer import MongoWriter
 
 
@@ -22,7 +22,8 @@ class PersistenceManagerApplication(Application):
         self.pcm.add_consumer(
             topic='bdz_wsp_results',
             group_id=os.environ.get('BDZ_CONSUMER_GROUP_ID', 'bdz_default_cg'),
-            persist_func=self.writer.process
+            persist_func=self.writer.process,
+            policy=FailurePolicy.SHUTDOWN
         )
 
     async def _shutdown(self):
