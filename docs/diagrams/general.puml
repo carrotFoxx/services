@@ -2,8 +2,8 @@
 
 [Stream Saver] as stfs
 
-queue "Kafka-In" as kf_in
-queue "Kafka-Out" as kf_out
+queue "kafka:in" as kf_in
+queue "kafka:out" as kf_out
 
 [App Manager] as app_mgr
 

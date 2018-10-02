@@ -1,0 +1,32 @@
+@startuml
+
+package "Analytics and Anomaly Detection" {
+
+    !include general.puml
+
+}
+
+package "Information Retrieval" {
+
+    database ArchiveDB as mongo
+
+    queue "kafka:events" as topic_ev
+    queue "kafka:parsed" as topic_pd
+
+    [Cef-Parser] as parser
+    [Splitter] as splitter
+    [Consumer] as consumer
+
+    topic_ev -> parser
+    parser --> topic_pd
+    topic_pd --> consumer
+    topic_pd --> splitter
+
+    consumer --> mongo
+
+    splitter <..l..> consul: read routing\n table
+    splitter --l--> kf_in: route events\nto runtime in
+
+}
+
+@enduml
