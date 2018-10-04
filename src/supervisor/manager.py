@@ -71,6 +71,7 @@ class Supervisor:
         self._tm.remove(self._KAFKA_READER)
         self._tm.remove(self._PIPE_WRITER)
         self._tm.remove(self._PIPE_READER)
+        self._tm.remove(self._STDERR_READER)
         self._tm.remove(self._KAFKA_WRITER)
         if self._process:
             self._process.send_signal(signal.SIGTERM)
@@ -132,6 +133,7 @@ class Supervisor:
 
     _PIPE_WRITER = 'pipe_writer'
     _PIPE_READER = 'pipe_reader'
+    _STDERR_READER = 'stderr_reader'
 
     async def _engine_controller(self):
         try:
@@ -150,6 +152,7 @@ class Supervisor:
         self._process = process
         self._tm.add(self._PIPE_WRITER, self._engine_writer(process.stdin))
         self._tm.add(self._PIPE_READER, self._engine_reader(process.stdout))
+        self._tm.add(self._STDERR_READER, self._engine_logger(process.stderr))
         await process.wait()
         self._process = None
         logger.info('stopped engine/subprocess')
@@ -174,7 +177,7 @@ class Supervisor:
         logger.info('starting PIPE reader')
         while True:
             try:
-                record: str = await stream_reader.readline()
+                record: bytes = await stream_reader.readline()
                 logger.debug('received from PIPE')
                 # attach ts and meta upon receival from supervised process
                 await self._wq.put(self._format_record(record))
@@ -184,9 +187,25 @@ class Supervisor:
             except:
                 logger.exception('unexpected exception while reading from PIPE')
 
-    def _format_record(self, record: str):
+    @staticmethod
+    async def _engine_logger(stream_reader: asyncio.StreamReader):
+        """reads stderr and emits it to log"""
+        logger.info('starting STDERR reader')
+        while True:
+            try:
+                record: bytes = await stream_reader.readline()
+                record = record.decode('utf-8').strip()
+                # attach ts and meta upon receival from supervised process
+                logger.info('[engine-stderr]:%s', record)
+            except (CancelledError, GeneratorExit):
+                logger.info('closing STDERR reader')
+                raise
+            except:
+                logger.exception('unexpected exception while reading from PIPE')
+
+    def _format_record(self, record: bytes) -> bytes:
         return json.dumps({
             'wsp': str(self.state_monitor.node_id),
-            'raw': str(record),
+            'raw': record.decode('utf-8').rstrip(),
             'ts': int(datetime.now().timestamp() * 1000)
-        })
+        }).encode('utf-8')
