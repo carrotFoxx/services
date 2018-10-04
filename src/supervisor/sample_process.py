@@ -13,8 +13,6 @@ import os
 import sys
 
 # setup logging to file
-
-_log_fd = open(os.environ.get('LOG_FILE', './general.log'), mode='w+')
 _log_fmt = "[%(asctime)s]:" + logging.BASIC_FORMAT
 logging.basicConfig(stream=sys.stderr, format=_log_fmt, level=logging.DEBUG)
 

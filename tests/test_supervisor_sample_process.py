@@ -20,7 +20,7 @@ KAFKA_DSN = 'kafka:9092'
 @pytest.fixture
 async def supervisor(event_loop: asyncio.AbstractEventLoop) -> Supervisor:
     s = Supervisor(
-        'python3', '/opt/project/src/supervisor/sample_process.py',
+        '/opt/project/src/supervisor/sample_process.py',
         state_monitor=StateMonitor(
             node_id='1',
             consul=ConsulClient(base=CONSUL_DSN, loop=event_loop),
@@ -84,7 +84,7 @@ async def test_supervisor(supervisor: Supervisor, event_loop: asyncio.AbstractEv
     ct: asyncio.Task = event_loop.create_task(consume(outgoing_topic, to=control, event_loop=event_loop))
     await asyncio.sleep(1)
     event_loop.create_task(produce(incoming_topic, amount=10, event_loop=event_loop))
-    await asyncio.sleep(5)
+    await asyncio.sleep(1)
     ct.cancel()
     # await supervisor.stop()
 
