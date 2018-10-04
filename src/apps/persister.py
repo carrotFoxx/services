@@ -1,12 +1,13 @@
 import os
 
+from common.healthcheck import HealthCheckAPI
 from config import KAFKA_DSN, MONGO_DB, ROOT_LOG
-from microcore.base.application import Application
-from persistence.consumer import PersistenceConsumerManager, FailurePolicy
+from microcore.base.application import WebApplication
+from persistence.consumer import FailurePolicy, PersistenceConsumerManager
 from persistence.writer import MongoWriter
 
 
-class PersistenceManagerApplication(Application):
+class PersistenceManagerApplication(WebApplication):
     async def _setup(self):
         await super()._setup()
 
@@ -20,11 +21,13 @@ class PersistenceManagerApplication(Application):
         )
 
         self.pcm.add_consumer(
-            topic='bdz_wsp_results',
+            topic=os.environ.get('BDZ_CONSUMER_TOPIC', 'bdz_wsp_results'),
             group_id=os.environ.get('BDZ_CONSUMER_GROUP_ID', 'bdz_default_cg'),
             persist_func=self.writer.process,
             policy=FailurePolicy.SHUTDOWN
         )
+
+        self.add_routes_from(HealthCheckAPI())
 
     async def _shutdown(self):
         await self.pcm.stop()

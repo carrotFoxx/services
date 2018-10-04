@@ -170,7 +170,7 @@ services:
     - KAFKA_BROKER_ID=1
 
     - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
-    - KAFKA_CREATE_TOPICS=correlations:5:1,events:5:1
+    - KAFKA_CREATE_TOPICS=correlations:5:1,events:5:1,bdz_wsp_results:5:1
     - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
     - KAFKA_DELETE_TOPIC_ENABLE=true
 
