@@ -134,6 +134,7 @@ class PersistenceConsumerManager:
                     if len(records) == 0:
                         await asyncio.sleep(1)
                         continue
+                    logger.info('received records to store')
                     await persist_func(RecordBatchContainer(records, offset_mgr))
                 except PersistenceError:
                     logger.exception('failed persisting some of records')

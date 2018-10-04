@@ -1,3 +1,4 @@
+from common.healthcheck import HealthCheckAPI
 from config import KAFKA_DSN, ROOT_LOG
 from microcore.base.application import WebApplication
 from sampling.api import SamplerAPI
@@ -16,6 +17,8 @@ class SamplerApplication(WebApplication):
         self.add_routes_from(SamplerAPI(
             manager=self.lgm
         ))
+
+        self.add_routes_from(HealthCheckAPI())
 
     async def _shutdown(self):
         await super()._shutdown()

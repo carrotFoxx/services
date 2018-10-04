@@ -31,18 +31,9 @@ class LoadGeneratorProducerManager:
 
     def add_producer(self, topic: str, sampler_func: Callable[..., Awaitable]):
         # wrap sampler function to get expected exception type
-        sampler_func = convert_exceptions(sampler_func, to=SamplingError)
+        sampler_func = convert_exceptions(sampler_func, exc=RuntimeError, to=SamplingError)
         logger.info('add consumer for topic=%s', topic)
-        t = self._tm.add(topic, topic=topic, sampler_func=sampler_func)
-        # this will relaunch task if it failed with exception (non-intentionally)
-        t.add_done_callback(
-            lambda fut: self._tm.add(
-                hid=topic,
-                topic=topic,
-                sampler_func=sampler_func
-            )
-            if fut.exception() else None
-        )
+        self._tm.add(topic, topic=topic, sampler_func=sampler_func)
 
     def _create_producer(self) -> AIOKafkaProducer:
         return AIOKafkaProducer(
@@ -61,7 +52,7 @@ class LoadGeneratorProducerManager:
                     # sequenced value generator output to producer
                     await producer.send(
                         topic=topic,
-                        value=await sampler_func()
+                        value=str(await sampler_func()).encode('utf-8')
                     )
                 except SamplingError:
                     logger.exception('failed to sample a record')

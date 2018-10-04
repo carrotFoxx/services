@@ -21,8 +21,8 @@ class SamplerConfig:
 
     class Schema(ma.Schema):
         topic = ma.fields.String(required=True)
-        amount = ma.fields.Integer()
-        delay = ma.fields.Float()
+        amount = ma.fields.Integer(default=1000)
+        delay = ma.fields.Float(default=0.5)
 
         @ma.post_load
         def make_object(self, dct: dict):
@@ -59,6 +59,7 @@ class SamplerAPI(Routable):
         item.add_route(hdrs.METH_GET, self.get)
         item.add_route(hdrs.METH_DELETE, self.delete)
 
+    @json_response
     async def add(self, request: Request):
         try:
             config: SamplerConfig = self.config_schema.load(await request.json())
@@ -74,6 +75,8 @@ class SamplerAPI(Routable):
             topic=config.topic,
             sampler_func=gen.generate
         )
+
+        return self.config_schema.dump(config)
 
     @json_response
     async def list(self, _: Request):

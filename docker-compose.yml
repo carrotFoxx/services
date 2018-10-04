@@ -75,6 +75,8 @@ services:
     environment:
     - SERVICE_NAME=persister
     - TRAEFIK_ENABLE=false
+    env_file:
+    - dsn.env
     labels:
     - SERVICE_IGNORE=true
     logging:
@@ -89,6 +91,8 @@ services:
       context: .
     environment:
     - SERVICE_NAME=sampler
+    env_file:
+    - dsn.env
     labels:
     - SERVICE_IGNORE=true
     logging:

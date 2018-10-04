@@ -13,6 +13,7 @@ import os
 import sys
 
 # setup logging to file
+
 _log_fmt = "[%(asctime)s]:" + logging.BASIC_FORMAT
 logging.basicConfig(stream=sys.stderr, format=_log_fmt, level=logging.DEBUG)
 
@@ -44,6 +45,7 @@ def mainloop():
                 result = process_window(window)
                 window = []
                 sys.stdout.write(result)
+                sys.stdout.flush()
                 log.debug('wrote value to stdout')
         except (InterruptedError, KeyboardInterrupt):
             log.exception('interruption received')

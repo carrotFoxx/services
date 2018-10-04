@@ -1,0 +1,130 @@
+test_name: wsp manager test
+
+stages:
+- name: create app
+  request:
+    method: POST
+    url: '{tavern.env_vars.API_HOST}/applications'
+    headers: &auth_headers
+      x-user-id: '1'
+    json:
+      name: tavern test app
+      description: cat used to pipe data
+      package: buldozer_subordinate:latest
+      environment:
+        LOG_LEVEL: DEBUG
+        BDZ_PROGRAM: /opt/app/supervisor/sample_process.py
+  response:
+    status_code: 201
+    body:
+      uid: !anything
+    save:
+      body:
+        app_uid: uid
+      headers:
+        app_ver: x-version
+
+- name: commit app version
+  request:
+    method: POST
+    url: '{tavern.env_vars.API_HOST}/applications/{app_uid}/commit'
+    headers:
+      <<: *auth_headers
+      x-if-version: '{app_ver}'
+  response:
+    body:
+      version: !anyint
+    save:
+      body:
+        app_cver: version
+
+
+- name: create model
+  request:
+    method: POST
+    url: '{tavern.env_vars.API_HOST}/models'
+    headers: *auth_headers
+    json:
+      name: tavern test model
+      package: 'simple.file'
+  response:
+    status_code: 201
+    body:
+      uid: !anything
+    save:
+      body:
+        mdl_uid: uid
+      headers:
+        mdl_ver: x-version
+
+- name: upload model file
+  request:
+    method: POST
+    url: '{tavern.env_vars.API_HOST}/models/{mdl_uid}/upload'
+    headers: *auth_headers
+    files:
+      file: 'test_model_mgr.tavern.yaml'
+  response:
+    body:
+      Content-Type: !anystr
+      _filename: !anystr
+      _length: !anyint
+
+- name: commit model version
+  request:
+    method: POST
+    url: '{tavern.env_vars.API_HOST}/models/{mdl_uid}/commit'
+    headers:
+      <<: *auth_headers
+      x-if-version: '{mdl_ver}'
+
+  response:
+    body:
+      version: !anyint
+    save:
+      body:
+        mdl_cver: version
+
+- name: create workspace
+  request:
+    url: '{tavern.env_vars.API_HOST}/workspaces'
+    headers: *auth_headers
+    method: POST
+    json:
+      name: tavern test
+
+      app_id: '{app_uid}'
+      app_ver: !int '{app_cver}'
+
+      model_id: '{mdl_uid}'
+      model_ver: !int '{mdl_cver}'
+  response:
+    status_code: 201
+    body:
+      uid: !anystr
+    save:
+      body:
+        wsp_uid: uid
+  delay_after: 5
+
+- name: setup workspace routing
+  request:
+    url: '{tavern.env_vars.API_HOST}/workspaces/{wsp_uid}/route'
+    method: PUT
+    headers: *auth_headers
+    json:
+      incoming_stream: events
+      outgoing_stream: bdz_wsp_results
+  response:
+    status_code: 204
+
+- name: check routing adoption
+  request:
+    url: '{tavern.env_vars.API_HOST}/workspaces/{wsp_uid}/route'
+    method: GET
+    headers: *auth_headers
+  response:
+    status_code: 200
+    body:
+      adopted_version: !int 1
+  delay_before: 60
