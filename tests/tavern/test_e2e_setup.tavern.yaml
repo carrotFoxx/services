@@ -126,5 +126,30 @@ stages:
   response:
     status_code: 200
     body:
-      adopted_version: !int 1
-  delay_before: 60
+      adopted_version: '1'
+  delay_before: 90
+
+- name: send test load
+  request:
+    url: '{tavern.env_vars.API_HOST}/sampler'
+    method: POST
+    headers: *auth_headers
+    json:
+      topic: events
+      amount: 100
+      delay: 0.5
+
+  response:
+    status_code: 200
+
+- name: check load is working
+  request:
+    url: '{tavern.env_vars.API_HOST}/sampler/events'
+    method: GET
+    headers: *auth_headers
+  response:
+    status_code: 200
+    body:
+      topic: events
+      current: !anyint
+  delay_before: 5
