@@ -10,6 +10,7 @@ import io
 import json
 import logging
 import os
+import signal
 import sys
 
 # setup logging to file
@@ -22,6 +23,9 @@ log = logging.getLogger()
 log.info('start sample process')
 
 INTERVAL = int(os.environ.get('WINDOW_SIZE', 5))
+
+signal.signal(signal.SIGTERM, lambda sig, frame: exit(0))
+signal.signal(signal.SIGHUP, lambda sig, frame: exit(0))
 
 
 def process_window(window: list):
@@ -47,9 +51,12 @@ def mainloop():
                 sys.stdout.write(result)
                 sys.stdout.flush()
                 log.debug('wrote value to stdout')
-        except (InterruptedError, KeyboardInterrupt):
+        except (InterruptedError, KeyboardInterrupt, BrokenPipeError):
             log.exception('interruption received')
             exit(0)
+        except SystemExit as e:
+            log.info('shutdown from SIG')
+            exit(e.code)
         except:
             log.exception('unexpected exception')
 
