@@ -1,7 +1,7 @@
 .. Buldozer Platform documentation master file, created by
-   sphinx-quickstart on Wed Mar 14 11:04:41 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+sphinx-quickstart on Wed Mar 14 11:04:41 2018.
+You can adapt this file completely to your liking, but it should at least
+contain the root `toctree` directive.
 
 Welcome to Buldozer Platform's documentation!
 =============================================
@@ -10,8 +10,9 @@ Welcome to Buldozer Platform's documentation!
     :maxdepth: 2
     :caption: Contents:
 
-    arch
-    quickstart_manual
+   arch
+   quickstart_manual
+   consul
 
 Indices and tables
 ==================
