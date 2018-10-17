@@ -90,9 +90,11 @@ define/adopt strategy is selected for KV stores
 
 .. describe:: Define/Adopt Strategy
 
-    this approach is based on fact what configuration
-    is replicated in permanent matter from KV store
-    elsewhere.
+    this approach is based on fact that configuration
+    is replicated from KV store to elsewhere there
+    it is store permanently (same version does not
+    requires to be replicated twice, if the system
+    hasn't experienced a critical outage and data-loss).
 
     writer changes the config and then "signals" to
     reader that fact via incrementing config version
