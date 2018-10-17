@@ -1,0 +1,75 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2018, CRPLab LLC
+# This file is distributed under the same license as the Buldozer Services
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Buldozer Services 0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-17 17:53+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: ../../consul.rst:3
+msgid "Consul KV structure specification"
+msgstr ""
+
+#: ../../consul.rst:5
+msgid ""
+"This document describes KV namespaces and structures used to express "
+"configurations for Topic and DataManager services"
+msgstr ""
+
+#: ../../consul.rst:11
+msgid "Data-Manager configuration"
+msgstr ""
+
+#: ../../consul.rst:13
+msgid ""
+"Data-Manager configuration requires strong consistency and cannot be "
+"changed on \"per-key\" basis, therefore a pointer strategy should be used"
+" to store configurations in KV stores"
+msgstr ""
+
+#: ../../consul.rst:20
+msgid ""
+"common approach to ensure consistent configuration changes and to prevent"
+" read of incomplete (mid-change, inconsistent) configuration"
+msgstr ""
+
+#: ../../consul.rst:27
+msgid "Actual Version Pointer"
+msgstr ""
+
+#: ../../consul.rst:31
+msgid "this path should be checked for changes"
+msgstr ""
+
+#: ../../consul.rst:37
+msgid "example"
+msgstr ""
+
+#: ../../consul.rst:46
+msgid "Path to config"
+msgstr ""
+
+#: ../../consul.rst:53
+msgid "Routing config"
+msgstr ""
+
+#: ../../consul.rst:74
+msgid "Topic Manager"
+msgstr ""
+
+#: ../../consul.rst:76
+msgid "topic configurations stored in Consul and replicated to Kafka"
+msgstr ""
+

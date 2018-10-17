@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # generate code reference
-sphinx-apidoc --ext-autodoc --ext-todo --ext-coverage --ext-viewcode -M -e -o ./apidocs ../src/
+# sphinx-apidoc --ext-autodoc --ext-todo --ext-coverage --ext-viewcode -M -e -o ./apidocs ../src/
 # generate gettext
 make gettext
 # generate po files updates
