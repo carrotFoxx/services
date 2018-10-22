@@ -1,0 +1,21 @@
+stages:
+- build
+
+create_image:
+  stage: build
+  only:
+  - master
+  - tags
+  - web
+
+  image: docker:stable
+  variables:
+    DCR_IMAGE_NAME: git.crplab.ru:5050/buldozer/services
+    DCR_IMAGE_TAG: latest
+
+  before_script:
+  - docker info
+  script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN git.crplab.ru:5050
+  - docker build -t $DCR_IMAGE_NAME:$DCR_IMAGE_TAG -f docker/Unsupervised.Dockerfile .
+  - docker push $DCR_IMAGE_NAME:$DCR_IMAGE_TAG
