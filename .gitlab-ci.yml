@@ -20,6 +20,8 @@ create_image:
 
   before_script:
   - docker info
+  - apk install git
+  - ls -lah .
   - if [ ! -f tagrelease ]; then wget -O tagrelease $TAGRELEASE_URL && chmod +x tagrelease; fi
   script:
   - DCR_IMAGE_VTAG=`./tagrelease -i patch`
