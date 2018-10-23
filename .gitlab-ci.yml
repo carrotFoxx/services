@@ -12,7 +12,7 @@ create_image:
   variables:
     DCR_IMAGE_NAME: git.crplab.ru:5050/buldozer/services
     DCR_IMAGE_TAG: latest
-    TAGRELEASE_URL: https://github.com/dikderoy/tagrelease/releases/download/v1.0.0/tagrelease-linux-amd64
+    TAGRELEASE_URL: https://github.com/dikderoy/tagrelease/releases/download/v1.1.0/tagrelease-linux-amd64
 
   cache:
     paths:
@@ -24,7 +24,7 @@ create_image:
   - ls -lah .
   - if [ ! -f tagrelease ]; then wget -O tagrelease $TAGRELEASE_URL && chmod +x tagrelease; fi
   script:
-  - DCR_IMAGE_VTAG=`./tagrelease -i patch`
+  - DCR_IMAGE_VTAG=`./tagrelease -i patch -e -`
   - echo $DCR_IMAGE_VTAG
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN git.crplab.ru:5050
   - docker build -t $DCR_IMAGE_NAME:$DCR_IMAGE_TAG -f docker/Unsupervised.Dockerfile .
