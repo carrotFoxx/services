@@ -1,9 +1,9 @@
-from container_manager.definition import Instance, InstanceDefinition
-from container_manager.docker import DockerProvider
+from container_manager import Provider
+from container_manager.definitions import Instance, InstanceDefinition
 
 
 class ContainerManager:
-    def __init__(self, provider: DockerProvider) -> None:
+    def __init__(self, provider: Provider) -> None:
         self.provider = provider
 
     async def create_app_instance(self, definition: InstanceDefinition) -> Instance:

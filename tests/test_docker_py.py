@@ -4,7 +4,7 @@ import pprint
 import pytest
 from docker.models.containers import Container
 
-from container_manager.definition import InstanceDefinition
+from container_manager.definitions import InstanceDefinition
 from container_manager.docker import DockerProvider
 
 log = logging.getLogger()

@@ -9,7 +9,7 @@ from aiohttp_json_rpc import RpcGenericServerDefinedError
 from common.consul import ConsulClient, consul_key
 from common.entities import App, Model, RouteConfig, Workspace
 from config import CONSUL_SUBORDINATE_DIR, SPV_STATE_KEY_ADOPTED_VERSION, SPV_STATE_KEY_DESIRED_VERSION
-from container_manager.definition import Instance, InstanceDefinition
+from container_manager.definitions import Instance, InstanceDefinition
 from mco.rpc import RPCClient
 from microcore.base.repository import Repository
 

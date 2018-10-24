@@ -1,30 +1,18 @@
-from abc import ABC, abstractmethod
 from typing import Awaitable
 
-from container_manager.definitions import Instance, InstanceDefinition
+from container_manager import Instance, InstanceDefinition, Provider
 
 
-class ProviderError(Exception):
-    pass
+class KubernetesProvider(Provider):
 
-
-class InstanceNotFound(ProviderError):
-    pass
-
-
-class Provider(ABC):
-    @abstractmethod
     def create_instance(self, definition: InstanceDefinition) -> Awaitable[Instance]:
         pass
 
-    @abstractmethod
     def launch_instance(self, definition: InstanceDefinition) -> Awaitable[Instance]:
         pass
 
-    @abstractmethod
     def stop_instance(self, definition: InstanceDefinition) -> Awaitable[bool]:
         pass
 
-    @abstractmethod
     def remove_instance(self, definition: InstanceDefinition) -> Awaitable[bool]:
         pass

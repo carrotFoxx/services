@@ -7,8 +7,8 @@ import docker.errors
 from docker.models.containers import Container
 from docker.models.networks import Network
 
-from container_manager import InstanceNotFound, ProviderError
-from container_manager.definition import Instance, InstanceDefinition
+from container_manager import InstanceNotFound, Provider, ProviderError
+from container_manager.definitions import Instance, InstanceDefinition
 from mco.utils import convert_exceptions
 from microcore.base.sync import run_in_executor
 
@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 raise_provider_exception = convert_exceptions(exc=docker.errors.APIError, to=ProviderError)
 
 
-class DockerProvider:
+class DockerProvider(Provider):
     def __init__(self, user_space_network: str = 'buldozer_usp_net', *, loop: asyncio.AbstractEventLoop = None) -> None:
         super().__init__()
         self.usp_network_name = user_space_network
@@ -150,13 +150,14 @@ class DockerProvider:
         return self._c2i(self._create_container(definition))
 
     @run_in_executor
-    def launch_instance(self, definition: InstanceDefinition):
+    def launch_instance(self, definition: InstanceDefinition) -> Awaitable[Instance]:
+        # noinspection PyTypeChecker
         return self._c2i(self._launch_instance(definition))
 
     @run_in_executor
-    def stop_instance(self, definition: InstanceDefinition):
+    def stop_instance(self, definition: InstanceDefinition) -> Awaitable[bool]:
         return self._stop_instance(definition)
 
     @run_in_executor
-    def remove_instance(self, definition: InstanceDefinition):
+    def remove_instance(self, definition: InstanceDefinition) -> Awaitable[bool]:
         return self._remove_instance(definition)
