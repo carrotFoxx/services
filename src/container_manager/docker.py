@@ -12,29 +12,19 @@ from container_manager.definitions import Instance, InstanceDefinition
 from mco.utils import convert_exceptions
 from microcore.base.sync import run_in_executor
 
-LABEL_PREFIX = 'com.buldozer.'
-ORCHESTRATOR_ID = 'docker-provider'
-
 log = logging.getLogger(__name__)
 
 raise_provider_exception = convert_exceptions(exc=docker.errors.APIError, to=ProviderError)
 
 
 class DockerProvider(Provider):
+    ORCHESTRATOR_ID = 'docker'
+
     def __init__(self, user_space_network: str = 'buldozer_usp_net', *, loop: asyncio.AbstractEventLoop = None) -> None:
         super().__init__()
         self.usp_network_name = user_space_network
         self._client = docker.DockerClient.from_env()
         self._loop = loop or asyncio.get_event_loop()
-
-    @staticmethod
-    def _normalize_labels(dct: dict):
-        return {
-            **{LABEL_PREFIX + key: str(value) for key, value in dct.items() if not key.startswith(LABEL_PREFIX)},
-            **{key: str(value) for key, value in dct.items() if key.startswith(LABEL_PREFIX)},
-            LABEL_PREFIX + 'project': 'buldozer',
-            LABEL_PREFIX + 'provider': ORCHESTRATOR_ID
-        }
 
     @raise_provider_exception
     def _usp_network_exists(self):
@@ -92,7 +82,7 @@ class DockerProvider(Provider):
             environment=definition.environment,
             labels=self._normalize_labels(
                 {**definition.labels,
-                 'com.buldozer.instance_id': definition.uid}
+                 'instance_id': definition.uid}
             )
         )
 

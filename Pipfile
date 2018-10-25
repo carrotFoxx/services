@@ -24,7 +24,7 @@ aiokafka = "==0.4.2"
 more-itertools = "*"
 python-consul = "*"
 uvloop = "*"
-aiokubernetes = "*"
+kubernetes = "*"
 
 [dev-packages]
 pytest = ">=3.4"
