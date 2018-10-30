@@ -5,7 +5,8 @@ from typing import Awaitable
 import kubernetes as k8s
 from kubernetes.client import V1Container, V1DeleteOptions, V1Deployment, V1DeploymentCondition, V1DeploymentList, \
     V1DeploymentSpec, V1DeploymentStatus, V1DeploymentStrategy, V1EnvVar, V1LabelSelector, V1LocalObjectReference, \
-    V1Namespace, V1NamespaceList, V1ObjectMeta, V1PodSpec, V1PodTemplateSpec, V1Scale, V1ScaleSpec, V1Status
+    V1NFSVolumeSource, V1Namespace, V1NamespaceList, V1ObjectMeta, V1PodSpec, V1PodTemplateSpec, V1Scale, V1ScaleSpec, \
+    V1Status, V1Volume, V1VolumeMount
 from kubernetes.client.rest import ApiException
 from kubernetes.config import ConfigException
 
@@ -13,22 +14,29 @@ from container_manager import Instance, InstanceDefinition, InstanceNotFound, Pr
 from mco.utils import convert_exceptions
 from microcore.base.sync import run_in_executor
 
+WSP_NAME_TPL = '%s.wsp.bdz'
+VOL_NAME_TPL = '%s-vol-bdz'
+
 log = logging.getLogger(__name__)
 raise_provider_exception = convert_exceptions(exc=ApiException, to=ProviderError)
 
 
+# BEWARE! THIS TEST WILL USE FIRST AVAILABLE DEFAULT KUBECTL CONTEXT FOUND ON YOUR MACHINE
+
 class KubernetesProvider(Provider):
     ORCHESTRATOR_ID = 'kubernetes'
 
-    def __init__(self, user_space_namespace: str = 'buldozer_usp_net',
+    def __init__(self,
+                 user_space_namespace: str,
+                 nfs_share: V1NFSVolumeSource,
                  image_pull_secrets=None,
-                 *,
-                 loop: asyncio.AbstractEventLoop = None) -> None:
+                 *, loop: asyncio.AbstractEventLoop = None) -> None:
         super().__init__()
         self._loop = loop or asyncio.get_event_loop()
 
         self.image_pull_secrets: list = image_pull_secrets or []
         self.usp_namespace_name: str = user_space_namespace
+        self.nfs_share = nfs_share
         try:
             k8s.config.incluster_config.load_incluster_config()
         except ConfigException:
@@ -43,16 +51,19 @@ class KubernetesProvider(Provider):
         meta: k8s.client.V1ObjectMeta = deployment.metadata
         status: V1DeploymentStatus = deployment.status
 
-        available_cond: V1DeploymentCondition = None
-        for cond in status.conditions:  # type: V1DeploymentCondition
-            if cond.type == "Available":
-                available_cond = cond
-                break
+        available_cond: str = "unknown"
+        if status.conditions is not None:
+            for cond in status.conditions:  # type: V1DeploymentCondition
+                if cond.type == "Available":
+                    available_cond = "running" if cond.status == "True" else "pending"
+                    break
+        else:
+            available_cond = "pending"
 
         return Instance(
             uid=meta.uid,
             name=f'{meta.namespace}/{meta.name}',
-            state="running" if available_cond.status == "True" else "progressing"
+            state=available_cond
         )
 
     @raise_provider_exception
@@ -74,7 +85,7 @@ class KubernetesProvider(Provider):
             label_selector=','.join(['='.join([k, v]) for k, v in self._normalize_labels(definition.labels).items()])
         )
         for dep in deployments.items:  # type: V1Deployment
-            if dep.metadata.name == 'wsp_%s' % definition.uid:
+            if dep.metadata.name == WSP_NAME_TPL % definition.uid:
                 return dep
         raise InstanceNotFound
 
@@ -91,7 +102,7 @@ class KubernetesProvider(Provider):
             kind="Deployment",
             metadata=V1ObjectMeta(
                 namespace=self.usp_namespace_name,
-                name='wsp_%s' % definition.uid,
+                name=WSP_NAME_TPL % definition.uid,
                 labels=self._normalize_labels(
                     {**definition.labels,
                      'instance_id': definition.uid}
@@ -122,32 +133,29 @@ class KubernetesProvider(Provider):
                                             for secret_name in self.image_pull_secrets],
                         termination_grace_period_seconds=120,
                         containers=[V1Container(
-                            name='supervised_process',
+                            name='supervised-process',
                             image_pull_policy='Always',
                             image=definition.image,
+
+                            # will teardown this after test
+                            command=['/bin/bash'],
+                            args=['-c', 'sleep 999'],
+                            # end teardown
+
                             termination_message_policy='FallbackToLogsOnError',
                             env=[V1EnvVar(name=env_key, value=env_val)
                                  for env_key, env_val in definition.environment.items()],
-                            # todo: figure out and enable volume mounting
-                            # volume_mounts=[V1VolumeMount(
-                            #     name='shared_fs',
-                            #     mount_path=mount,
-                            #     sub_path=sub_path,
-                            #     read_only=True
-                            # ) for mount, sub_path in definition.attachments.items()],
+                            volume_mounts=[V1VolumeMount(
+                                name=VOL_NAME_TPL % definition.uid,
+                                mount_path=mount,
+                                sub_path=sub_path,
+                                read_only=True
+                            ) for mount, sub_path in definition.attachments.items()],
                         )],
-
-                        # todo: should mount shared model storage here, check and test this
-                        # volumes=[
-                        #
-                        #     V1Volume(
-                        #         name='shared_fs',
-                        #         persistent_volume_claim=V1PersistentVolumeClaimVolumeSource(
-                        #             claim_name='buldozer_shared_fs',
-                        #             read_only=True
-                        #         )
-                        #     )
-                        # ]
+                        volumes=[V1Volume(
+                            name=VOL_NAME_TPL % definition.uid,
+                            nfs=self.nfs_share
+                        )]
                     )
                 )
             )
@@ -161,6 +169,10 @@ class KubernetesProvider(Provider):
             body=V1Scale(
                 api_version="autoscaling/v1",
                 kind="Scale",
+                metadata=V1ObjectMeta(
+                    namespace=deployment.metadata.namespace,
+                    name=deployment.metadata.name
+                ),
                 spec=V1ScaleSpec(
                     replicas=replicas
                 )
