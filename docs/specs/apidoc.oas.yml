@@ -26,7 +26,7 @@ paths:
           $ref: '#/components/responses/ApplicationDetailsResponse'
   /applications/{appId}:
     parameters:
-      - $ref: '#/components/parameters/appId'
+    - $ref: '#/components/parameters/appId'
     get:
       summary: read application data
       responses:
@@ -41,7 +41,7 @@ paths:
           $ref: '#/components/responses/ApplicationDetailsResponse'
   /applications/{appId}/upload:
     parameters:
-      - $ref: '#/components/parameters/appId'
+    - $ref: '#/components/parameters/appId'
     post:
       requestBody:
         $ref: '#/components/requestBodies/FileUploadSubmission'
@@ -51,7 +51,7 @@ paths:
 
   /applications/{appId}/commit:
     parameters:
-      - $ref: '#/components/parameters/appId'
+    - $ref: '#/components/parameters/appId'
     post:
       description: commit app version to archive (version history)
       responses:
@@ -59,7 +59,7 @@ paths:
           $ref: '#/components/responses/VersionInfoResponse'
   /applications/{appId}/versions:
     parameters:
-      - $ref: '#/components/parameters/appId'
+    - $ref: '#/components/parameters/appId'
     get:
       description: list versions of an application (filtered list only related to that app)
       responses:
@@ -67,8 +67,8 @@ paths:
           $ref: '#/components/responses/ApplicationDetailsListResponse'
   /applications/{appId}/versions/{versionId}:
     parameters:
-      - $ref: '#/components/parameters/appId'
-      - $ref: '#/components/parameters/versionId'
+    - $ref: '#/components/parameters/appId'
+    - $ref: '#/components/parameters/versionId'
     get:
       description: get specified version of an app
       responses:
@@ -88,9 +88,9 @@ paths:
                 items:
                   type: string
                 example:
-                  - Hysys
-                  - MatLab
-                  - TensorFlow
+                - Hysys
+                - MatLab
+                - TensorFlow
 
   /models:
     get:
@@ -107,7 +107,7 @@ paths:
           $ref: '#/components/responses/ModelDetailsResponse'
   /models/{modelId}:
     parameters:
-      - $ref: '#/components/parameters/modelId'
+    - $ref: '#/components/parameters/modelId'
     get:
       description: get model details
       responses:
@@ -122,7 +122,7 @@ paths:
           $ref: '#/components/responses/ModelDetailsResponse'
   /models/{modelId}/upload:
     parameters:
-      - $ref: '#/components/parameters/modelId'
+    - $ref: '#/components/parameters/modelId'
     post:
       requestBody:
         $ref: '#/components/requestBodies/FileUploadSubmission'
@@ -132,7 +132,7 @@ paths:
 
   /models/{modelId}/commit:
     parameters:
-      - $ref: '#/components/parameters/modelId'
+    - $ref: '#/components/parameters/modelId'
     post:
       description: commit model version to archive (version history)
       responses:
@@ -140,7 +140,7 @@ paths:
           $ref: '#/components/responses/VersionInfoResponse'
   /models/{modelId}/versions:
     parameters:
-      - $ref: '#/components/parameters/modelId'
+    - $ref: '#/components/parameters/modelId'
     get:
       description: show model versions
       responses:
@@ -148,8 +148,8 @@ paths:
           $ref: '#/components/responses/ModelDetailsListResponse'
   /models/{modelId}/versions/{versionId}:
     parameters:
-      - $ref: '#/components/parameters/modelId'
-      - $ref: '#/components/parameters/versionId'
+    - $ref: '#/components/parameters/modelId'
+    - $ref: '#/components/parameters/versionId'
     get:
       description: show model version
       responses:
@@ -172,12 +172,12 @@ paths:
 
   /workspaces/{workspaceId}:
     parameters:
-      - $ref: '#/components/parameters/workspaceId'
+    - $ref: '#/components/parameters/workspaceId'
     get:
       description: get workspace details
       responses:
-       '200':
-        $ref: '#/components/responses/WorkspaceDetailsResponse'
+        '200':
+          $ref: '#/components/responses/WorkspaceDetailsResponse'
     put:
       description: update workspace details
       requestBody:
@@ -207,11 +207,11 @@ paths:
 
   /scheduling/operations/{operationId}:
     parameters:
-      - name: operationId
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/ObjectId'
+    - name: operationId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/ObjectId'
     get:
       description: get operation info and results
       responses:
@@ -221,13 +221,13 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Operation'
-                  - type: object
-                    properties:
-                      results:
-                        type: object
-                        items:
-                          $ref: '#/components/schemas/AnyType'
+                - $ref: '#/components/schemas/Operation'
+                - type: object
+                  properties:
+                    results:
+                      type: object
+                      items:
+                        $ref: '#/components/schemas/AnyType'
     delete:
       description: remove operation info and results
       responses:
@@ -403,12 +403,12 @@ components:
 
     AnyType:
       anyOf:
-        - type: object
-        - type: array
-        - type: string
-        - type: integer
-        - type: number
-        - type: boolean
+      - type: object
+      - type: array
+      - type: string
+      - type: integer
+      - type: number
+      - type: boolean
 
     ObjectBase:
       type: object
@@ -440,9 +440,9 @@ components:
     AppBase:
       type: object
       required:
-        - name
-        - description
-        - package
+      - name
+      - description
+      - package
       properties:
         name:
           type: string
@@ -453,72 +453,95 @@ components:
         package:
           type: string
           example: MatLab
+        attachment:
+          type: string
+          description: filepath attached (binary link or image ref)
+          example:
+            - file:///opt/data/abstract-file-name.ext
+            - docker://hub.docker.io/user/image:tag
+        environment:
+          type: object
+          description: process env entries to populate
+          example:
+            ENV_VAR_1: sample
 
     Application:
       allOf:
-        - $ref: '#/components/schemas/ObjectBase'
-        - $ref: '#/components/schemas/OwnedObject'
-        - $ref: '#/components/schemas/TrackedObject'
-        - $ref: '#/components/schemas/VersionedObject'
-        - $ref: '#/components/schemas/AppBase'
+      - $ref: '#/components/schemas/ObjectBase'
+      - $ref: '#/components/schemas/OwnedObject'
+      - $ref: '#/components/schemas/TrackedObject'
+      - $ref: '#/components/schemas/VersionedObject'
+      - $ref: '#/components/schemas/AppBase'
 
     ModelBase:
       type: object
       required:
-        - name
+      - name
+      - package
       properties:
         name:
           type: string
-        data:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/AnyType'
+        package:
+          type: string
+          example: MatLab
+        attachment:
+          type: string
+          description: filepath attached
+          example: file:///opt/data/abstract-file-name.ext
 
     Model:
       allOf:
-        - $ref: '#/components/schemas/ObjectBase'
-        - $ref: '#/components/schemas/OwnedObject'
-        - $ref: '#/components/schemas/TrackedObject'
-        - $ref: '#/components/schemas/VersionedObject'
-        - $ref: '#/components/schemas/ModelBase'
+      - $ref: '#/components/schemas/ObjectBase'
+      - $ref: '#/components/schemas/OwnedObject'
+      - $ref: '#/components/schemas/TrackedObject'
+      - $ref: '#/components/schemas/VersionedObject'
+      - $ref: '#/components/schemas/ModelBase'
 
     WorkspaceBase:
       type: object
       required:
-        - name
-        - kind
-        - app_id
-        - model_id
+      - name
+      - kind
+      - app_id
+      - app_ver
+      - model_id
+      - model_ver
       properties:
         name:
           type: string
         kind:
           type: string
           enum:
-            - openstack-vm
-            - k8s-container
-            - dkr-container
+          - openstack-vm
+          - k8s-container
+          - dkr-container
         config:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/AnyType'
         app_id:
           $ref: '#/components/schemas/ObjectId'
+        app_ver:
+          type: integer
+          example: 1
         model_id:
           $ref: '#/components/schemas/ObjectId'
+        model_ver:
+          type: integer
+          example: 1
 
     Workspace:
       allOf:
-        - $ref: '#/components/schemas/ObjectBase'
-        - $ref: '#/components/schemas/OwnedObject'
-        - $ref: '#/components/schemas/TrackedObject'
-        - $ref: '#/components/schemas/VersionedObject'
-        - $ref: '#/components/schemas/WorkspaceBase'
+      - $ref: '#/components/schemas/ObjectBase'
+      - $ref: '#/components/schemas/OwnedObject'
+      - $ref: '#/components/schemas/TrackedObject'
+      - $ref: '#/components/schemas/VersionedObject'
+      - $ref: '#/components/schemas/WorkspaceBase'
 
     OperationBase:
       required:
-        - name
-        - query
+      - name
+      - query
       properties:
         name:
           type: string
@@ -531,7 +554,7 @@ components:
 
     Operation:
       allOf:
-        - $ref: '#/components/schemas/ObjectBase'
-        - $ref: '#/components/schemas/OwnedObject'
-        - $ref: '#/components/schemas/TrackedObject'
-        - $ref: '#/components/schemas/OperationBase'
+      - $ref: '#/components/schemas/ObjectBase'
+      - $ref: '#/components/schemas/OwnedObject'
+      - $ref: '#/components/schemas/TrackedObject'
+      - $ref: '#/components/schemas/OperationBase'

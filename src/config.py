@@ -56,3 +56,7 @@ KAFKA_DEFAULT_OUTGOING_TOPIC = 'bdz_wsp_results'
 SPV_STATE_RESYNC_INTERVAL = 60
 SPV_STATE_KEY_DESIRED_VERSION = 'desired_version'
 SPV_STATE_KEY_ADOPTED_VERSION = 'adopted_version'
+
+# mounted folder path / shared fs volume mount to strip/add
+SHARED_FS_MOUNT_PATH = os.getenv('SHARED_FS_MOUNT_PATH', '/opt/data/')
+SHARED_STORAGE_FILE_PATH_TPL = os.path.join(SHARED_FS_MOUNT_PATH, 'files/%s')

@@ -9,7 +9,12 @@ FIELD_FILENAME = '_filename'
 FIELD_LENGTH = '_length'
 
 
-async def accept_upload(request: Request):
+async def accept_upload(request: Request, path_tpl: str = '/opt/data/%s'):
+    """
+
+    :param request: request to extract files from
+    :param path_tpl: %template of file destination ( ex.: /opt/data/%s )
+    """
     metadata = {}
     if request.content_type.startswith('multipart/'):
         reader = await request.multipart()
@@ -19,7 +24,7 @@ async def accept_upload(request: Request):
                 continue
             if part.filename is not None:
                 metadata[hdrs.CONTENT_TYPE] = part.headers.get(hdrs.CONTENT_TYPE) or 'application/binary'
-                metadata[FIELD_FILENAME] = filename = '/opt/data/%s' % str(uuid4()) + part.filename
+                metadata[FIELD_FILENAME] = filename = path_tpl % str(uuid4()) + part.filename
 
                 length = 0
                 with open(filename, mode='xb') as file:
@@ -35,7 +40,7 @@ async def accept_upload(request: Request):
         reader: StreamReader = request.content
         metadata[hdrs.CONTENT_TYPE] = request.content_type
         ext = mimetypes.guess_extension(metadata[hdrs.CONTENT_TYPE]) or '.ukn'
-        metadata[FIELD_FILENAME] = filename = '/opt/data/%s' % str(uuid4()) + ext
+        metadata[FIELD_FILENAME] = filename = path_tpl % str(uuid4()) + ext
         length = 0
         with open(filename, mode='xb') as file:
             async for chunk in reader.iter_chunked(BodyPartReader.chunk_size):

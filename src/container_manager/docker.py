@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from typing import Awaitable
 
 import docker
@@ -20,8 +21,12 @@ raise_provider_exception = convert_exceptions(exc=docker.errors.APIError, to=Pro
 class DockerProvider(Provider):
     ORCHESTRATOR_ID = 'docker'
 
-    def __init__(self, user_space_network: str = 'buldozer_usp_net', *, loop: asyncio.AbstractEventLoop = None) -> None:
+    def __init__(self,
+                 user_space_network: str = 'buldozer_usp_net',
+                 mount_prefix: str = '',
+                 *, loop: asyncio.AbstractEventLoop = None) -> None:
         super().__init__()
+        self.mount_prefix = mount_prefix
         self.usp_network_name = user_space_network
         self._client = docker.DockerClient.from_env()
         self._loop = loop or asyncio.get_event_loop()
@@ -44,7 +49,8 @@ class DockerProvider(Provider):
 
     @raise_provider_exception
     def _image_exists(self, definition: InstanceDefinition):
-        return len(self._client.images.list(filters={'reference': definition.image})) == 1
+        image = self._extract_image(definition.image)
+        return len(self._client.images.list(filters={'reference': image})) == 1
 
     @raise_provider_exception
     def _launch_instance(self, definition: InstanceDefinition) -> Container:
@@ -63,7 +69,8 @@ class DockerProvider(Provider):
 
     @raise_provider_exception
     def _create_container(self, definition) -> Container:
-        if not self._image_exists(definition):
+        image = self._extract_image(definition.image)
+        if not self._image_exists(image):
             log.info('pulling Instance image [%s]', definition.image)
             self._client.images.pull(*definition.image.split(':'))
 
@@ -73,11 +80,13 @@ class DockerProvider(Provider):
 
         log.info('creating container for %s', definition)
         return self._client.containers.create(
-            image=definition.image,
+            image=image,
             detach=True,
             network=self.usp_network_name,
             restart_policy={'Name': definition.restart_policy},
-            volumes={vol: {'bind': mount, 'mode': 'ro'}
+            # we operate on host paths here, so we should add a mounted folder path to bind-mount it correctly
+            # actual attachment should contain only relative path inside shared fs / mounted folder
+            volumes={os.path.join(self.mount_prefix, vol): {'bind': mount, 'mode': 'ro'}
                      for vol, mount in definition.attachments.items()},
             environment=definition.environment,
             labels=self._normalize_labels(

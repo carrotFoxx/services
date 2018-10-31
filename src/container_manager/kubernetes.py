@@ -97,6 +97,7 @@ class KubernetesProvider(Provider):
         )
 
     def _create_deployment_definition(self, definition: InstanceDefinition, replicas=0) -> V1Deployment:
+        image = self._extract_image(definition.image)
         return V1Deployment(
             api_version="apps/v1",
             kind="Deployment",
@@ -135,13 +136,7 @@ class KubernetesProvider(Provider):
                         containers=[V1Container(
                             name='supervised-process',
                             image_pull_policy='Always',
-                            image=definition.image,
-
-                            # will teardown this after test
-                            command=['/bin/bash'],
-                            args=['-c', 'sleep 999'],
-                            # end teardown
-
+                            image=image,
                             termination_message_policy='FallbackToLogsOnError',
                             env=[V1EnvVar(name=env_key, value=env_val)
                                  for env_key, env_val in definition.environment.items()],

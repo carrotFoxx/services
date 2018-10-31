@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from enum import Enum
 from typing import Awaitable
 
 from container_manager.definitions import Instance, InstanceDefinition
@@ -13,6 +14,20 @@ class InstanceNotFound(ProviderError):
 
 
 LABEL_PREFIX = 'com.buldozer.'
+
+REF_SPLIT_TOKEN = '://'
+
+
+class ProviderKind(Enum):
+    File = 'file'
+    Docker = 'docker'
+    VirtualMachine = 'vm'
+
+
+class AttachmentPrefix(Enum):
+    File = ProviderKind.File.value + REF_SPLIT_TOKEN
+    Docker = ProviderKind.Docker.value + REF_SPLIT_TOKEN
+    VirtualMachine = ProviderKind.VirtualMachine.value + REF_SPLIT_TOKEN
 
 
 class Provider(ABC):
@@ -42,3 +57,8 @@ class Provider(ABC):
             LABEL_PREFIX + 'project': 'buldozer',
             LABEL_PREFIX + 'provider': cls.ORCHESTRATOR_ID
         }
+
+    @staticmethod
+    def _extract_image(ref: str):
+        kind, image = ref.split(REF_SPLIT_TOKEN)
+        return image
