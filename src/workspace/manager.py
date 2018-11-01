@@ -53,7 +53,7 @@ class WorkspaceManager:
         attachments = {}
         if model and model.attachment is not None:
             attachments = {
-                '/var/model': model.attachment.split(REF_SPLIT_TOKEN, 1)[1]
+                '/var/model': model.attachment
             }
         instance_id = self._get_hashed_id(workspace.uid, app.uid, app.version, model.uid, model.version)
 

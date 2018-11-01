@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 from typing import Awaitable
 
 import docker
@@ -9,6 +8,7 @@ from docker.models.containers import Container
 from docker.models.networks import Network
 
 from container_manager import InstanceNotFound, Provider, ProviderError
+from container_manager.attachment import FileAttachment
 from container_manager.definitions import Instance, InstanceDefinition
 from mco.utils import convert_exceptions
 from microcore.base.sync import run_in_executor
@@ -48,8 +48,7 @@ class DockerProvider(Provider):
         )
 
     @raise_provider_exception
-    def _image_exists(self, definition: InstanceDefinition):
-        image = self._extract_image(definition.image)
+    def _image_exists(self, image: str):
         return len(self._client.images.list(filters={'reference': image})) == 1
 
     @raise_provider_exception
@@ -86,7 +85,7 @@ class DockerProvider(Provider):
             restart_policy={'Name': definition.restart_policy},
             # we operate on host paths here, so we should add a mounted folder path to bind-mount it correctly
             # actual attachment should contain only relative path inside shared fs / mounted folder
-            volumes={os.path.join(self.mount_prefix, vol): {'bind': mount, 'mode': 'ro'}
+            volumes={vol: {'bind': FileAttachment(mount, self.mount_prefix).absolute(), 'mode': 'ro'}
                      for vol, mount in definition.attachments.items()},
             environment=definition.environment,
             labels=self._normalize_labels(

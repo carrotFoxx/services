@@ -40,6 +40,8 @@ services:
     environment:
     - SERVICE_NAME=envmanager
     - TRAEFIK_ENABLE=false
+    - PROVIDER_DOCKER_ENABLE=1
+    - USER_SPACE_NAME=buldozer_usp_net
     labels:
     - SERVICE_IGNORE=true
     env_file:

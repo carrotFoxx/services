@@ -23,16 +23,15 @@ class EnvironmentManagerApp(RPCServerApplication):
             'docker-enabled': bool(os.getenv('PROVIDER_DOCKER_ENABLE', False)),
             'kubernetes-enabled': bool(os.getenv('PROVIDER_KUBERNETES_ENABLE', False)),
             'user-space-name': os.getenv('USER_SPACE_NAME', 'default'),
-            'mount-prefix': os.getenv('MOUNT_PREFIX', '/opt/data'),
             'k8s': {
                 'nfs-path': os.getenv('K8S_NFS_SHARE_PATH'),
                 'nfs-server': os.getenv('K8S_NFS_SHARE_SERVER'),
-                'pull-secrets': [str(s).strip() for s in str(os.getenv('K8S_IMAGE_PULL_SECRET_NAMES')).split(',')]
+                'pull-secrets': [str(s).strip() for s in str(os.getenv('K8S_IMAGE_PULL_SECRET_NAMES', '')).split(',')]
             }
         }
         provider_map = {}
 
-        if data['docker-enabled'] and data['kubernetes-enable']:
+        if data['docker-enabled'] and data['kubernetes-enabled']:
             raise EnvironmentError('docker and kubernetes could not be both enabled')
         if data['kubernetes-enabled']:
             if not data['k8s']['nfs-path'] or not data['k8s']['nfs-server']:
@@ -56,7 +55,7 @@ class EnvironmentManagerApp(RPCServerApplication):
                 ),
                 image_pull_secrets=data['k8s']['pull-secrets']
             )
-
+        ROOT_LOG.info("acquired configuration:\n%s\n%s", provider_map, data)
         return provider_map
 
     async def _setup(self):

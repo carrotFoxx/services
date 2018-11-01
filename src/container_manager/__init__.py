@@ -59,6 +59,6 @@ class Provider(ABC):
         }
 
     @staticmethod
-    def _extract_image(ref: str):
+    def _extract_image(ref: str) -> str:
         kind, image = ref.split(REF_SPLIT_TOKEN)
         return image

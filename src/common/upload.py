@@ -1,4 +1,5 @@
 import mimetypes
+import os
 from typing import Union
 from uuid import uuid4
 
@@ -15,6 +16,9 @@ async def accept_upload(request: Request, path_tpl: str = '/opt/data/%s'):
     :param request: request to extract files from
     :param path_tpl: %template of file destination ( ex.: /opt/data/%s )
     """
+    # ensure dir exists
+    os.makedirs(os.path.dirname(path_tpl), exist_ok=True)
+
     metadata = {}
     if request.content_type.startswith('multipart/'):
         reader = await request.multipart()

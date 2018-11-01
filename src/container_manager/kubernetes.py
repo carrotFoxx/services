@@ -11,6 +11,7 @@ from kubernetes.client.rest import ApiException
 from kubernetes.config import ConfigException
 
 from container_manager import Instance, InstanceDefinition, InstanceNotFound, Provider, ProviderError
+from container_manager.attachment import FileAttachment
 from mco.utils import convert_exceptions
 from microcore.base.sync import run_in_executor
 
@@ -143,7 +144,7 @@ class KubernetesProvider(Provider):
                             volume_mounts=[V1VolumeMount(
                                 name=VOL_NAME_TPL % definition.uid,
                                 mount_path=mount,
-                                sub_path=sub_path,
+                                sub_path=FileAttachment(sub_path, '/').path,
                                 read_only=True
                             ) for mount, sub_path in definition.attachments.items()],
                         )],

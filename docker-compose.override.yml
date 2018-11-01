@@ -8,6 +8,10 @@ services:
     volumes:
     - ./docker/app-data:/opt/data
 
+  env_manager:
+    environment:
+    - SHARED_FS_MOUNT_PATH=${PWD}/docker/app-data
+
   zookeeper:
     volumes:
     - ./docker/zk-data/data:/data

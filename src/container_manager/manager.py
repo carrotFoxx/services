@@ -1,6 +1,4 @@
-from typing import Dict, Type
-
-import inject
+from typing import Dict
 
 from container_manager import Provider, ProviderKind
 from container_manager.definitions import Instance, InstanceDefinition
@@ -19,7 +17,7 @@ class ContainerManager:
         kind = ProviderKind(kind)
         if kind not in self.providers:
             raise NoSuitableProviderEnabled
-        return inject.instance(self.providers[kind])
+        return self.providers[kind]
 
     async def create_app_instance(self, definition: InstanceDefinition) -> Instance:
         return await self._get_provider(definition.image).launch_instance(definition)
