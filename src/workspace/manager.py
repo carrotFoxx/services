@@ -8,7 +8,8 @@ from aiohttp_json_rpc import RpcGenericServerDefinedError
 
 from common.consul import ConsulClient, consul_key
 from common.entities import App, Model, RouteConfig, Workspace
-from config import CONSUL_SUBORDINATE_DIR, SPV_STATE_KEY_ADOPTED_VERSION, SPV_STATE_KEY_DESIRED_VERSION
+from config import CONSUL_DSN, CONSUL_SUBORDINATE_DIR, KAFKA_DSN, SPV_STATE_KEY_ADOPTED_VERSION, \
+    SPV_STATE_KEY_DESIRED_VERSION
 from container_manager import ProviderKind, REF_SPLIT_TOKEN
 from container_manager.definitions import Instance, InstanceDefinition
 from mco.rpc import RPCClient
@@ -63,7 +64,9 @@ class WorkspaceManager:
             attachments=attachments,
             environment={
                 **app.environment,
-                'BDZ_NODE_ID': workspace.uid
+                'BDZ_NODE_ID': workspace.uid,
+                'BDZ_CONSUL_DSN': CONSUL_DSN,
+                'BDZ_KAFKA_DSN': KAFKA_DSN,
             },
             labels={
                 'wsp_id': workspace.uid,

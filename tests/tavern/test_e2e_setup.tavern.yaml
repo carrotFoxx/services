@@ -11,7 +11,7 @@ stages:
       name: tavern test app
       description: cat used to pipe data
       package: Python.Test
-      attachment: docker://buldozer_subordinate:latest
+      attachment: docker://supervised:latest
       environment:
         LOG_LEVEL: DEBUG
         BDZ_PROGRAM: /opt/app/supervisor/sample_process.py
