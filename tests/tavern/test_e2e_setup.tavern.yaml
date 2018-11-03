@@ -1,4 +1,4 @@
-test_name: wsp manager test
+test_name: e2e setup resources
 
 stages:
 - name: create app

@@ -1,0 +1,77 @@
+---
+version: '3.7'
+
+x-build-tpl: &x-build
+  build:
+    dockerfile: docker/Dockerfile
+    context: .
+  env_file:
+  - remote-kube.dsn.env
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
+      max-file: '2'
+
+
+services:
+  app_manager:
+    <<: *x-build
+    environment:
+    - SERVICE_NAME=applications
+
+  model_manager:
+    <<: *x-build
+    environment:
+    - SERVICE_NAME=models
+
+  env_manager:
+    <<: *x-build
+    environment:
+    - SERVICE_NAME=envmanager
+    - TRAEFIK_ENABLE=false
+
+    - PROVIDER_KUBERNETES_ENABLE=1
+    - USER_SPACE_NAME=buldozer
+    - K8S_NFS_SHARE_SERVER=10.0.0.11
+    - K8S_NFS_SHARE_PATH=/mnt/storage
+    - K8S_IMAGE_PULL_SECRET_NAMES=crplab,gitlab
+    volumes:
+      - ~/.kube:/root/.kube:ro
+
+  wsp_manager:
+    <<: *x-build
+    environment:
+    - SERVICE_NAME=workspaces
+
+  pst_manager:
+    <<: *x-build
+    environment:
+    - SERVICE_NAME=persister
+    - TRAEFIK_ENABLE=false
+
+  spl_manager:
+    <<: *x-build
+    environment:
+    - SERVICE_NAME=sampler
+
+  traefik:
+    image: traefik:1.6
+    volumes:
+    - ./docker/traefik.toml:/traefik.toml
+    ports:
+    - '80:80'
+    - '8080:8080'
+
+  consul:
+    image: consul:1.2.2
+    command: agent -dev -bootstrap -ui -client=0.0.0.0
+    environment:
+    - CONSUL_BIND_INTERFACE=eth0
+    ports:
+    - '8500:8500'
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+        max-file: '2'

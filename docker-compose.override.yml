@@ -10,6 +10,8 @@ services:
 
   env_manager:
     environment:
+    - PROVIDER_DOCKER_ENABLE=1
+    - USER_SPACE_NAME=buldozer_usp_net
     - SHARED_FS_MOUNT_PATH=${PWD}/docker/app-data
 
   zookeeper:
