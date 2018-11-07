@@ -10,8 +10,10 @@ from kubernetes.client import V1Container, V1DeleteOptions, V1Deployment, V1Depl
 from kubernetes.client.rest import ApiException
 from kubernetes.config import ConfigException
 
-from container_manager import Instance, InstanceDefinition, InstanceNotFound, Provider, ProviderError
+from container_manager import InstanceNotFound, ProviderError
 from container_manager.attachment import FileAttachment
+from container_manager.definitions import Instance, InstanceDefinition
+from container_manager.provider import Provider
 from mco.utils import convert_exceptions
 from microcore.base.sync import run_in_executor
 
@@ -22,7 +24,7 @@ log = logging.getLogger(__name__)
 raise_provider_exception = convert_exceptions(exc=ApiException, to=ProviderError)
 
 
-# BEWARE! THIS TEST WILL USE FIRST AVAILABLE DEFAULT KUBECTL CONTEXT FOUND ON YOUR MACHINE
+# BEWARE! THIS WILL USE FIRST AVAILABLE SELECTED KUBECTL CONTEXT FOUND ON YOUR MACHINE
 
 class KubernetesProvider(Provider):
     ORCHESTRATOR_ID = 'kubernetes'

@@ -5,7 +5,8 @@ from kubernetes.client import V1NFSVolumeSource
 
 from common.healthcheck import HealthCheckAPI
 from config import ROOT_LOG, SHARED_FS_MOUNT_PATH
-from container_manager import Provider, ProviderKind
+from container_manager.provider import Provider
+from container_manager import ProviderKind
 from container_manager.api import ContainerManagerRPCAPI
 from container_manager.docker import DockerProvider
 from container_manager.kubernetes import KubernetesProvider

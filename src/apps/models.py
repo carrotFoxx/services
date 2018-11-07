@@ -34,7 +34,6 @@ class ModelManagerApp(RPCServerApplication):
             HealthCheckAPI()
         )
 
-
         self.server.middlewares.append(JsonMiddlewareSet.error)
         self.server.middlewares.append(JsonMiddlewareSet.content_type)
         self.server.middlewares.append(OwnedMiddlewareSet.extract_owner)

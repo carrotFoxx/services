@@ -1,7 +1,9 @@
 from typing import Dict
 
-from container_manager import Provider, ProviderKind
+from container_manager.attachment import AttachmentPrefix
 from container_manager.definitions import Instance, InstanceDefinition
+from container_manager.provider import Provider
+from container_manager import ProviderKind
 
 
 class NoSuitableProviderEnabled(Exception):
@@ -13,8 +15,7 @@ class ContainerManager:
         self.providers = provider_map
 
     def _get_provider(self, referred_object: str) -> Provider:
-        kind, _ = referred_object.split('://', 1)
-        kind = ProviderKind(kind)
+        kind = AttachmentPrefix.check(referred_object)
         if kind not in self.providers:
             raise NoSuitableProviderEnabled
         return self.providers[kind]

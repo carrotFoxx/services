@@ -3,8 +3,11 @@ import logging
 import pytest
 from kubernetes.client import V1NFSVolumeSource
 
-from container_manager import InstanceDefinition
+from container_manager.definitions import InstanceDefinition
 from container_manager.kubernetes import KubernetesProvider
+
+
+# BEWARE! THIS WILL USE FIRST AVAILABLE SELECTED KUBECTL CONTEXT FOUND ON YOUR MACHINE
 
 
 @pytest.fixture(scope='module')

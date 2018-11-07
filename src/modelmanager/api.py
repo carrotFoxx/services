@@ -6,7 +6,7 @@ from common.entities import Model
 from common.upload import FIELD_FILENAME, accept_upload
 from common.versioning import VersionedAPI
 from config import SHARED_FS_MOUNT_PATH, SHARED_STORAGE_FILE_PATH_TPL
-from container_manager import AttachmentPrefix
+from container_manager.attachment import AttachmentPrefix
 from microcore.entity.encoders import json_response
 
 

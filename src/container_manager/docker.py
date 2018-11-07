@@ -7,7 +7,8 @@ import docker.errors
 from docker.models.containers import Container
 from docker.models.networks import Network
 
-from container_manager import InstanceNotFound, Provider, ProviderError
+from container_manager import InstanceNotFound, ProviderError
+from container_manager.provider import Provider
 from container_manager.attachment import FileAttachment
 from container_manager.definitions import Instance, InstanceDefinition
 from mco.utils import convert_exceptions
