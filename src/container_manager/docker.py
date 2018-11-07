@@ -8,33 +8,29 @@ from docker.models.containers import Container
 from docker.models.networks import Network
 
 from container_manager import InstanceNotFound, ProviderError
-from container_manager.definition import Instance, InstanceDefinition
+from container_manager.provider import Provider
+from container_manager.attachment import FileAttachment
+from container_manager.definitions import Instance, InstanceDefinition
 from mco.utils import convert_exceptions
 from microcore.base.sync import run_in_executor
-
-LABEL_PREFIX = 'com.buldozer.'
-ORCHESTRATOR_ID = 'docker-provider'
 
 log = logging.getLogger(__name__)
 
 raise_provider_exception = convert_exceptions(exc=docker.errors.APIError, to=ProviderError)
 
 
-class DockerProvider:
-    def __init__(self, user_space_network: str = 'buldozer_usp_net', *, loop: asyncio.AbstractEventLoop = None) -> None:
+class DockerProvider(Provider):
+    ORCHESTRATOR_ID = 'docker'
+
+    def __init__(self,
+                 user_space_network: str = 'buldozer_usp_net',
+                 mount_prefix: str = '',
+                 *, loop: asyncio.AbstractEventLoop = None) -> None:
         super().__init__()
+        self.mount_prefix = mount_prefix
         self.usp_network_name = user_space_network
         self._client = docker.DockerClient.from_env()
         self._loop = loop or asyncio.get_event_loop()
-
-    @staticmethod
-    def _normalize_labels(dct: dict):
-        return {
-            **{LABEL_PREFIX + key: str(value) for key, value in dct.items() if not key.startswith(LABEL_PREFIX)},
-            **{key: str(value) for key, value in dct.items() if key.startswith(LABEL_PREFIX)},
-            LABEL_PREFIX + 'project': 'buldozer',
-            LABEL_PREFIX + 'provider': ORCHESTRATOR_ID
-        }
 
     @raise_provider_exception
     def _usp_network_exists(self):
@@ -53,8 +49,8 @@ class DockerProvider:
         )
 
     @raise_provider_exception
-    def _image_exists(self, definition: InstanceDefinition):
-        return len(self._client.images.list(filters={'reference': definition.image})) == 1
+    def _image_exists(self, image: str):
+        return len(self._client.images.list(filters={'reference': image})) == 1
 
     @raise_provider_exception
     def _launch_instance(self, definition: InstanceDefinition) -> Container:
@@ -73,7 +69,8 @@ class DockerProvider:
 
     @raise_provider_exception
     def _create_container(self, definition) -> Container:
-        if not self._image_exists(definition):
+        image = self._extract_image(definition.image)
+        if not self._image_exists(image):
             log.info('pulling Instance image [%s]', definition.image)
             self._client.images.pull(*definition.image.split(':'))
 
@@ -83,16 +80,18 @@ class DockerProvider:
 
         log.info('creating container for %s', definition)
         return self._client.containers.create(
-            image=definition.image,
+            image=image,
             detach=True,
             network=self.usp_network_name,
             restart_policy={'Name': definition.restart_policy},
-            volumes={vol: {'bind': mount, 'mode': 'ro'}
+            # we operate on host paths here, so we should add a mounted folder path to bind-mount it correctly
+            # actual attachment should contain only relative path inside shared fs / mounted folder
+            volumes={vol: {'bind': FileAttachment(mount, self.mount_prefix).absolute(), 'mode': 'ro'}
                      for vol, mount in definition.attachments.items()},
             environment=definition.environment,
             labels=self._normalize_labels(
                 {**definition.labels,
-                 'com.buldozer.instance_id': definition.uid}
+                 'instance_id': definition.uid}
             )
         )
 
@@ -150,13 +149,14 @@ class DockerProvider:
         return self._c2i(self._create_container(definition))
 
     @run_in_executor
-    def launch_instance(self, definition: InstanceDefinition):
+    def launch_instance(self, definition: InstanceDefinition) -> Awaitable[Instance]:
+        # noinspection PyTypeChecker
         return self._c2i(self._launch_instance(definition))
 
     @run_in_executor
-    def stop_instance(self, definition: InstanceDefinition):
+    def stop_instance(self, definition: InstanceDefinition) -> Awaitable[bool]:
         return self._stop_instance(definition)
 
     @run_in_executor
-    def remove_instance(self, definition: InstanceDefinition):
+    def remove_instance(self, definition: InstanceDefinition) -> Awaitable[bool]:
         return self._remove_instance(definition)

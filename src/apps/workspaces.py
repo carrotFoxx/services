@@ -1,3 +1,5 @@
+import os
+
 import inject
 
 from common.healthcheck import HealthCheckAPI
@@ -14,19 +16,23 @@ from workspace.manager import WorkspaceManager
 
 
 def _injections(binder: inject.Binder):
+    app_manager = os.getenv('MGR_APP_DSN', 'ws://app_manager:8080')
+    mdl_manager = os.getenv('MGR_MDL_DSN', 'ws://model_manager:8080')
+    env_manager = os.getenv('MGR_ENV_DSN', 'ws://env_manager:8080')
+
     binder.bind_to_constructor(*CRM.provider(
         'rpc_app_manager',
-        lambda: RPCClient(server_url='ws://app_manager:8080', encoder=inject.instance(ProxyNativeEncoder)),
+        lambda: RPCClient(server_url=app_manager, encoder=inject.instance(ProxyNativeEncoder)),
         is_async=True
     ))
     binder.bind_to_constructor(*CRM.provider(
         'rpc_model_manager',
-        lambda: RPCClient(server_url='ws://model_manager:8080', encoder=inject.instance(ProxyNativeEncoder)),
+        lambda: RPCClient(server_url=mdl_manager, encoder=inject.instance(ProxyNativeEncoder)),
         is_async=True
     ))
     binder.bind_to_constructor(*CRM.provider(
         'rpc_env_manager',
-        lambda: RPCClient(server_url='ws://env_manager:8080', encoder=inject.instance(ProxyNativeEncoder)),
+        lambda: RPCClient(server_url=env_manager, encoder=inject.instance(ProxyNativeEncoder)),
         is_async=True
     ))
 

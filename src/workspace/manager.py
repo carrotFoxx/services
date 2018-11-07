@@ -8,8 +8,10 @@ from aiohttp_json_rpc import RpcGenericServerDefinedError
 
 from common.consul import ConsulClient, consul_key
 from common.entities import App, Model, RouteConfig, Workspace
-from config import CONSUL_SUBORDINATE_DIR, SPV_STATE_KEY_ADOPTED_VERSION, SPV_STATE_KEY_DESIRED_VERSION
-from container_manager.definition import Instance, InstanceDefinition
+from config import CONSUL_DSN, CONSUL_SUBORDINATE_DIR, KAFKA_DSN, SPV_STATE_KEY_ADOPTED_VERSION, \
+    SPV_STATE_KEY_DESIRED_VERSION
+from container_manager.attachment import AttachmentPrefix
+from container_manager.definitions import Instance, InstanceDefinition
 from mco.rpc import RPCClient
 from microcore.base.repository import Repository
 
@@ -34,8 +36,18 @@ class WorkspaceManager:
             hash_func.update(bytes(str(x), encoding='utf-8'))
         return hash_func.hexdigest()
 
+    @staticmethod
+    def _check_app_ref(ref: str):
+        try:
+            p = AttachmentPrefix.check(ref)
+        except ValueError:
+            raise RuntimeError('invalid attachment type')
+        logger.info('creating definition with provider %s', p)
+
     def _create_definition(self, workspace: Workspace, app: App, model: Model) -> InstanceDefinition:
-        image = app.package
+        image = app.attachment
+        # check image ref format
+        self._check_app_ref(image)
         attachments = {}
         if model and model.attachment is not None:
             attachments = {
@@ -49,7 +61,9 @@ class WorkspaceManager:
             attachments=attachments,
             environment={
                 **app.environment,
-                'BDZ_NODE_ID': workspace.uid
+                'BDZ_NODE_ID': workspace.uid,
+                'BDZ_CONSUL_DSN': CONSUL_DSN,
+                'BDZ_KAFKA_DSN': KAFKA_DSN,
             },
             labels={
                 'wsp_id': workspace.uid,

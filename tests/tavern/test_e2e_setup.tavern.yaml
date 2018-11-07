@@ -1,4 +1,4 @@
-test_name: wsp manager test
+test_name: e2e setup resources
 
 stages:
 - name: create app
@@ -10,7 +10,8 @@ stages:
     json:
       name: tavern test app
       description: cat used to pipe data
-      package: buldozer_subordinate:latest
+      package: Python.Test
+      attachment: docker://supervised:latest
       environment:
         LOG_LEVEL: DEBUG
         BDZ_PROGRAM: /opt/app/supervisor/sample_process.py
@@ -46,7 +47,7 @@ stages:
     headers: *auth_headers
     json:
       name: tavern test model
-      package: 'simple.file'
+      package: Python.Test
   response:
     status_code: 201
     body:
