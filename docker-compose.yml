@@ -1,133 +1,75 @@
----
+x-logging: &x-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
+      max-file: '2'
+
+x-build: &x-build
+  build:
+    dockerfile: docker/Dockerfile
+    context: .
+  labels:
+  - SERVICE_IGNORE=true
+  env_file:
+  - dsn.env
+  <<: *x-logging
+
+
 version: '3.7'
 services:
   app_manager:
-    build:
-      dockerfile: docker/Dockerfile
-      context: .
+    <<: *x-build
     environment:
     - SERVICE_NAME=applications
-    labels:
-    - SERVICE_IGNORE=true
-    env_file:
-    - dsn.env
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: '2'
 
   model_manager:
-    build:
-      dockerfile: docker/Dockerfile
-      context: .
+    <<: *x-build
     environment:
     - SERVICE_NAME=models
-    labels:
-    - SERVICE_IGNORE=true
-    env_file:
-    - dsn.env
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: '2'
 
   env_manager:
-    build:
-      dockerfile: docker/Dockerfile
-      context: .
+    <<: *x-build
     environment:
     - SERVICE_NAME=envmanager
     - TRAEFIK_ENABLE=false
-    labels:
-    - SERVICE_IGNORE=true
-    env_file:
-    - dsn.env
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: '2'
 
   wsp_manager:
-    build:
-      dockerfile: docker/Dockerfile
-      context: .
+    <<: *x-build
     environment:
     - SERVICE_NAME=workspaces
-    labels:
-    - SERVICE_IGNORE=true
-    env_file:
-    - dsn.env
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: '2'
 
   pst_manager:
-    build:
-      dockerfile: docker/Dockerfile
-      context: .
+    <<: *x-build
     environment:
     - SERVICE_NAME=persister
     - TRAEFIK_ENABLE=false
-    env_file:
-    - dsn.env
-    labels:
-    - SERVICE_IGNORE=true
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: '2'
 
   spl_manager:
-    build:
-      dockerfile: docker/Dockerfile
-      context: .
+    <<: *x-build
     environment:
     - SERVICE_NAME=sampler
-    env_file:
-    - dsn.env
-    labels:
-    - SERVICE_IGNORE=true
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: '2'
 
   mongo:
+    <<: *x-logging
     image: mongo:3.6
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: '2'
 
   consul:
+    <<: *x-logging
     image: consul:1.2.2
     command: agent -dev -bootstrap -ui -client=0.0.0.0
     environment:
     - CONSUL_BIND_INTERFACE=eth0
     labels:
     - SERVICE_IGNORE=true
-    ports:
-    - '8500:8500'
     networks:
     - default
     - buldozer_usp_net
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: '2'
 
   registrator:
+    <<: *x-logging
     image: gliderlabs/registrator:latest
     command:
     - '-internal'
@@ -139,6 +81,7 @@ services:
     - /var/run/docker.sock:/tmp/docker.sock
 
   traefik:
+    <<: *x-logging
     image: traefik:1.6
     volumes:
     - ./docker/traefik.toml:/traefik.toml
@@ -147,25 +90,17 @@ services:
     ports:
     - '80:80'
     - '8080:8080'
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: '2'
 
   zookeeper:
+    <<: *x-logging
     image: zookeeper:3.4
     labels:
     - SERVICE_2181_NAME=zookeeper
     - SERVICE_2888_IGNORE=true
     - SERVICE_3888_IGNORE=true
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: '2'
 
   kafka:
+    <<: *x-logging
     image: wurstmeister/kafka:2.11-2.0.0
     environment:
     - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
@@ -185,16 +120,6 @@ services:
     networks:
     - default
     - buldozer_usp_net
-    logging:
-      driver: json-file
-      options:
-        max-size: 100m
-        max-file: '2'
-
-  subordinate:
-    build:
-      context: .
-      dockerfile: docker/Subordinate.Dockerfile
 
 networks:
   default:
