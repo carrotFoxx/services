@@ -10,7 +10,8 @@ create_image:
 
   image: docker:stable
   variables:
-    DCR_IMAGE_NAME: registry.crplab.ru/buldozer/services
+    DCR_REGISTRY: registry.crplab.ru
+    DCR_IMAGE_NAME: buldozer/services
     DCR_IMAGE_TAG: latest
     TAGRELEASE_URL: https://github.com/dikderoy/tagrelease/releases/download/v1.1.0/tagrelease-linux-amd64
 
@@ -21,13 +22,15 @@ create_image:
   before_script:
   - docker info
   - apk add --no-cache git
-  - ls -lah .
   - if [ ! -f tagrelease ]; then wget -O tagrelease $TAGRELEASE_URL && chmod +x tagrelease; fi
   script:
   - DCR_IMAGE_VTAG=`./tagrelease -i patch -e -`
-  - echo $DCR_IMAGE_VTAG
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN git.crplab.ru:5050
-  - docker build -t $DCR_IMAGE_NAME:$DCR_IMAGE_TAG -f docker/Unsupervised.Dockerfile .
-  - docker tag $DCR_IMAGE_NAME:$DCR_IMAGE_TAG $DCR_IMAGE_NAME:$DCR_IMAGE_VTAG
-  - docker push $DCR_IMAGE_NAME:$DCR_IMAGE_TAG
-  - docker push $DCR_IMAGE_NAME:$DCR_IMAGE_VTAG
+  - DCR_FIN="$DCR_REGISTRY/$DCR_IMAGE_NAME:$DCR_IMAGE_TAG"
+  - DCR_VFIN="$DCR_REGISTRY/$DCR_IMAGE_NAME:$DCR_IMAGE_VTAG"
+  - echo $DCR_VFIN
+
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $DCR_REGISTRY
+  - docker build -t $DCR_FIN -f docker/Unsupervised.Dockerfile .
+  - docker tag $DCR_FIN $DCR_VFIN
+  - docker push $DCR_FIN
+  - docker push $DCR_VFIN
