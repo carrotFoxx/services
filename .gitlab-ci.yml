@@ -10,7 +10,7 @@ create_image:
 
   image: docker:stable
   variables:
-    DCR_IMAGE_NAME: git.crplab.ru:5050/buldozer/services
+    DCR_IMAGE_NAME: registry.crplab.ru/buldozer/services
     DCR_IMAGE_TAG: latest
     TAGRELEASE_URL: https://github.com/dikderoy/tagrelease/releases/download/v1.1.0/tagrelease-linux-amd64
 
