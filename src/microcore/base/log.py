@@ -69,7 +69,8 @@ class LogSetup:
         )
 
         raven_logging_handler = SentryHandler(client=raven, level=logging.ERROR)
-        logger.addHandler(raven_logging_handler)
+        logging.getLogger().addHandler(raven_logging_handler)
+        logger.info("setup sentry reporting with version:%s, dns=%s", version, dsn)
 
         return raven
 

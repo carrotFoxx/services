@@ -12,7 +12,7 @@ from microcore.storage.mongo import motor
 
 asyncio.set_event_loop_policy(EventLoopPolicy())
 
-PLATFORM_VERSION = LogSetup.get_platform_version()
+PLATFORM_VERSION = os.getenv('PLATFORM_VERSION', 'unknown')
 
 LOG_LEVEL = LogSetup.detect()
 
