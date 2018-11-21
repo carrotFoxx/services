@@ -1,18 +1,18 @@
 from appmanager.adapters import AppArchiveMongoStorageAdapter, AppMongoStorageAdapter
 from appmanager.api import ApplicationManagerAPI
-from common.healthcheck import HealthCheckAPI
+from common import health_checkers
+from common.application_mixin import CommonAppMixin
 from common.versioning import VersionedRPCAPI
 from config import ROOT_LOG
 from injector import configure_injector
 from mco.rpc import RPCServerApplication
 from microcore.base.repository import Repository
-from microcore.web.api import JsonMiddlewareSet
 from microcore.web.owned_api import OwnedMiddlewareSet
 
 configure_injector()
 
 
-class ApplicationManagerApp(RPCServerApplication):
+class ApplicationManagerApp(RPCServerApplication, CommonAppMixin):
     async def _setup(self):
         await super()._setup()
 
@@ -30,12 +30,7 @@ class ApplicationManagerApp(RPCServerApplication):
                 archive=archive
             )
         )
-        self.add_routes_from(
-            HealthCheckAPI()
-        )
-
-        self.server.middlewares.append(JsonMiddlewareSet.error)
-        self.server.middlewares.append(JsonMiddlewareSet.content_type)
+        self.health_check_service.add_check('mongodb', health_checkers.check_mongo_available)
         self.server.middlewares.append(OwnedMiddlewareSet.extract_owner)
 
 

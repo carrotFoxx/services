@@ -5,6 +5,7 @@ import os
 import sys
 from datetime import timedelta
 
+from motor.core import AgnosticDatabase
 from uvloop import EventLoopPolicy
 
 from microcore.base.log import LogSetup
@@ -39,7 +40,7 @@ if SENTRY_DSN:
         version=PLATFORM_VERSION
     )
 
-MONGO_DB = motor().buldozer
+MONGO_DB: AgnosticDatabase = motor().buldozer
 
 WSP_GC_COLLECT_DELAY = timedelta(seconds=int(os.getenv('WSP_GC_COLLECT_DELAY', 60 * 60)))
 WSP_GC_INTERVAL = int(os.getenv('WSP_GC_INTERVAL', 600))

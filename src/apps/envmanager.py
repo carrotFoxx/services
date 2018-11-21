@@ -3,21 +3,21 @@ from typing import Dict
 
 from kubernetes.client import V1NFSVolumeSource
 
-from common.healthcheck import HealthCheckAPI
+from common.application_mixin import CommonAppMixin
 from config import ROOT_LOG, SHARED_FS_MOUNT_PATH
-from container_manager.provider import Provider
 from container_manager import ProviderKind
 from container_manager.api import ContainerManagerRPCAPI
 from container_manager.docker import DockerProvider
 from container_manager.kubernetes import KubernetesProvider
 from container_manager.manager import ContainerManager
+from container_manager.provider import Provider
 from injector import configure_injector
 from mco.rpc import RPCServerApplication
 
 configure_injector()
 
 
-class EnvironmentManagerApp(RPCServerApplication):
+class EnvironmentManagerApp(RPCServerApplication, CommonAppMixin):
     @staticmethod
     def _config() -> Dict[ProviderKind, Provider]:
         data = {
@@ -66,9 +66,6 @@ class EnvironmentManagerApp(RPCServerApplication):
             ContainerManager(self._config())
         )
         self.add_methods_from(self.controller)
-        self.add_routes_from(
-            HealthCheckAPI()
-        )
 
 
 if __name__ == '__main__':

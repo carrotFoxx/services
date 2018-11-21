@@ -1,13 +1,13 @@
 import os
 
-from common.healthcheck import HealthCheckAPI
+from common import health_checkers
+from common.application_mixin import CommonAppMixin
 from config import KAFKA_DSN, MONGO_DB, ROOT_LOG
-from microcore.base.application import WebApplication
 from persistence.consumer import FailurePolicy, PersistenceConsumerManager
 from persistence.writer import MongoWriter
 
 
-class PersistenceManagerApplication(WebApplication):
+class PersistenceManagerApplication(CommonAppMixin):
     async def _setup(self):
         await super()._setup()
 
@@ -26,8 +26,7 @@ class PersistenceManagerApplication(WebApplication):
             persist_func=self.writer.process,
             policy=FailurePolicy.SHUTDOWN
         )
-
-        self.add_routes_from(HealthCheckAPI())
+        self.health_check_service.add_check('mongodb', health_checkers.check_mongo_available)
 
     async def _shutdown(self):
         await self.pcm.stop()

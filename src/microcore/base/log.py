@@ -65,7 +65,7 @@ class LogSetup:
             site=site,
             environment=env,
             tags=tags,
-            include_paths=['reasonai_dm', 'raven_aiohttp']
+            include_paths=['raven_aiohttp']
         )
 
         raven_logging_handler = SentryHandler(client=raven, level=logging.ERROR)

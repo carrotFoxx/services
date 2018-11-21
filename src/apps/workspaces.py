@@ -2,13 +2,13 @@ import os
 
 import inject
 
-from common.healthcheck import HealthCheckAPI
+from common import health_checkers
+from common.application_mixin import CommonAppMixin
 from config import ROOT_LOG
 from injector import CRM, configure_injector
 from mco.rpc import RPCClient, RPCServerApplication
 from microcore.base.repository import Repository
 from microcore.entity.encoders import ProxyNativeEncoder
-from microcore.web.api import JsonMiddlewareSet
 from microcore.web.owned_api import OwnedMiddlewareSet
 from workspace.adapters import WorkspaceMongoStorageAdapter
 from workspace.api import WorkspaceAPI
@@ -40,7 +40,7 @@ def _injections(binder: inject.Binder):
 configure_injector(_injections)
 
 
-class WorkspaceManagerApp(RPCServerApplication):
+class WorkspaceManagerApp(RPCServerApplication, CommonAppMixin):
     async def _setup(self):
         await super()._setup()
 
@@ -51,12 +51,9 @@ class WorkspaceManagerApp(RPCServerApplication):
                 manager=WorkspaceManager(workspaces=repository)
             )
         )
-        self.add_routes_from(
-            HealthCheckAPI()
-        )
 
-        self.server.middlewares.append(JsonMiddlewareSet.error)
-        self.server.middlewares.append(JsonMiddlewareSet.content_type)
+        self.health_check_service.add_check('mongodb', health_checkers.check_mongo_available)
+        self.health_check_service.add_check('consul', health_checkers.check_consul_available)
         self.server.middlewares.append(OwnedMiddlewareSet.extract_owner)
 
     async def _shutdown(self):

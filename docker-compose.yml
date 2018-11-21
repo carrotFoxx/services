@@ -54,7 +54,7 @@ services:
 
   mongo:
     <<: *x-logging
-    image: mongo:3.6
+    image: mongo:4.0
 
   consul:
     <<: *x-logging
@@ -82,7 +82,7 @@ services:
 
   traefik:
     <<: *x-logging
-    image: traefik:1.6
+    image: traefik:1.7
     volumes:
     - ./docker/traefik.toml:/traefik.toml
     labels:
