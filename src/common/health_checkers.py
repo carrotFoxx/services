@@ -1,11 +1,13 @@
+import aiohttp
 import inject
-from aiohttp import ClientResponse
+import urllib3
+from aiohttp import ClientResponse, hdrs
 
 from common.consul import ConsulClient
+from config import MONGO_DB, SENTRY_DSN
 
 
 async def check_mongo_available() -> (bool, str):
-    from config import MONGO_DB
     await MONGO_DB.command('ismaster')
     return True, 'successful round-trip to mongodb server'
 
@@ -18,3 +20,27 @@ async def check_consul_available(consul: ConsulClient) -> (bool, str):
         if response.status == 200:
             return True, 'successful round-trip to consul'
         return False, 'consul responded with code=%s' % response.status
+
+
+_sentry_health_url = None
+
+
+def _get_sentry_health_url() -> str:
+    global _sentry_health_url
+    if not _sentry_health_url:
+        url = urllib3.util.parse_url(SENTRY_DSN)
+        _sentry_health_url = str(urllib3.util.Url(
+            scheme=url.scheme,
+            host=url.host,
+            port=url.port,
+            path='/api/0/'))
+    return _sentry_health_url
+
+
+async def check_sentry_reachable() -> (bool, str):
+    if not SENTRY_DSN:
+        return True, 'sentry not configured, wherefore not required'
+    async with aiohttp.request(hdrs.METH_HEAD, _get_sentry_health_url()) as response:
+        if response.status == 200:
+            return True, 'successful round-trip to sentry'
+        return False, 'sentry responded with code=%s' % response.status
