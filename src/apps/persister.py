@@ -26,7 +26,7 @@ class PersistenceManagerApplication(CommonAppMixin):
             persist_func=self.writer.process,
             policy=FailurePolicy.SHUTDOWN
         )
-        self.health_check_service.add_check('mongodb', health_checkers.check_mongo_available)
+        self.health_check_service.add_check(health_checkers.mongo_available)
 
     async def _shutdown(self):
         await self.pcm.stop()

@@ -9,10 +9,13 @@ x-build: &x-build
   build:
     dockerfile: docker/Dockerfile
     context: .
+    args:
+      PLATFORM_VERSION: "${PLATFORM_VERSION:-x.y.za0+deadbeef}"
+
   labels:
-  - SERVICE_IGNORE=true
+    - SERVICE_IGNORE=true
   env_file:
-  - dsn.env
+    - dsn.env
   <<: *x-logging
 
 
@@ -21,36 +24,36 @@ services:
   app_manager:
     <<: *x-build
     environment:
-    - SERVICE_NAME=applications
+      - SERVICE_NAME=applications
 
   model_manager:
     <<: *x-build
     environment:
-    - SERVICE_NAME=models
+      - SERVICE_NAME=models
 
   env_manager:
     <<: *x-build
     environment:
-    - SERVICE_NAME=envmanager
-    - TRAEFIK_ENABLE=false
+      - SERVICE_NAME=envmanager
+      - TRAEFIK_ENABLE=false
     volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock
 
   wsp_manager:
     <<: *x-build
     environment:
-    - SERVICE_NAME=workspaces
+      - SERVICE_NAME=workspaces
 
   pst_manager:
     <<: *x-build
     environment:
-    - SERVICE_NAME=persister
-    - TRAEFIK_ENABLE=false
+      - SERVICE_NAME=persister
+      - TRAEFIK_ENABLE=false
 
   spl_manager:
     <<: *x-build
     environment:
-    - SERVICE_NAME=sampler
+      - SERVICE_NAME=sampler
 
   mongo:
     <<: *x-logging
@@ -61,65 +64,65 @@ services:
     image: consul:1.2.2
     command: agent -dev -bootstrap -ui -client=0.0.0.0
     environment:
-    - CONSUL_BIND_INTERFACE=eth0
+      - CONSUL_BIND_INTERFACE=eth0
     labels:
-    - SERVICE_IGNORE=true
+      - SERVICE_IGNORE=true
     networks:
-    - default
-    - buldozer_usp_net
+      - default
+      - buldozer_usp_net
 
   registrator:
     <<: *x-logging
     image: gliderlabs/registrator:latest
     command:
-    - '-internal'
-    - '-resync=30'
-    - '-ttl=60'
-    - '-ttl-refresh=30'
-    - 'consul://consul:8500'
+      - '-internal'
+      - '-resync=30'
+      - '-ttl=60'
+      - '-ttl-refresh=30'
+      - 'consul://consul:8500'
     volumes:
-    - /var/run/docker.sock:/tmp/docker.sock
+      - /var/run/docker.sock:/tmp/docker.sock
 
   traefik:
     <<: *x-logging
     image: traefik:1.7
     volumes:
-    - ./docker/traefik.toml:/traefik.toml
+      - ./docker/traefik.toml:/traefik.toml
     labels:
-    - SERVICE_IGNORE=true
+      - SERVICE_IGNORE=true
     ports:
-    - '80:80'
-    - '8080:8080'
+      - '80:80'
+      - '8080:8080'
 
   zookeeper:
     <<: *x-logging
     image: zookeeper:3.4
     labels:
-    - SERVICE_2181_NAME=zookeeper
-    - SERVICE_2888_IGNORE=true
-    - SERVICE_3888_IGNORE=true
+      - SERVICE_2181_NAME=zookeeper
+      - SERVICE_2888_IGNORE=true
+      - SERVICE_3888_IGNORE=true
 
   kafka:
     <<: *x-logging
     image: wurstmeister/kafka:2.11-2.0.0
     environment:
-    - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-    - KAFKA_LISTENERS=PLAINTEXT://:9092
-    - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://:9092
-    - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_BROKER_ID=1
 
-    - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
-    - KAFKA_CREATE_TOPICS=correlations:5:1,events:5:1,bdz_wsp_results:5:1
-    - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
-    - KAFKA_DELETE_TOPIC_ENABLE=true
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CREATE_TOPICS=correlations:5:1,events:5:1,bdz_wsp_results:5:1
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_DELETE_TOPIC_ENABLE=true
 
-    - KAFKA_LOG_RETENTION_BYTES=200000000
-    - KAFKA_LOG_SEGMENT_BYTES=20000000
+      - KAFKA_LOG_RETENTION_BYTES=200000000
+      - KAFKA_LOG_SEGMENT_BYTES=20000000
     expose:
-    - 9092
+      - 9092
     networks:
-    - default
-    - buldozer_usp_net
+      - default
+      - buldozer_usp_net
 
 networks:
   default:

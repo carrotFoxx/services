@@ -8,8 +8,6 @@ from microcore.web.api import JsonMiddlewareSet
 class CommonAppMixin(WebApplication):
     def _setup(self):
         self.health_check_service = HealthCheckService(
-            success_ttl=30,
-            failure_ttl=10,
             check_timeout=5,
             loop=self._loop
         )
@@ -20,5 +18,5 @@ class CommonAppMixin(WebApplication):
         self.server.middlewares.append(JsonMiddlewareSet.error)
         self.server.middlewares.append(JsonMiddlewareSet.content_type)
         if SENTRY_DSN is not None:
-            self.health_check_service.add_check('sentry', health_checkers.check_sentry_reachable)
+            self.health_check_service.add_check(health_checkers.sentry_reachable)
         return super()._setup()
