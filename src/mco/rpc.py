@@ -5,6 +5,7 @@ import logging
 from typing import Any, Awaitable, List
 
 import inject
+from aiohttp import ClientConnectorError
 from aiohttp_json_rpc import JsonRpc, JsonRpcClient, RpcGenericServerDefinedError, RpcInvalidParamsError, \
     RpcInvalidRequestError
 from aiohttp_json_rpc.communicaton import JsonRpcRequest
@@ -25,6 +26,8 @@ class RPCServerApplication(WebApplication):
         await super()._setup()
         self.rpc_setup = JsonRpc()
         self.server.router.add_route('*', '/', self.rpc_setup)
+        # add system method ping
+        self.add_methods([self.ping])
 
     def add_methods_from(self, routable: RPCRoutable):
         self.add_methods(routable.set_methods())
@@ -35,6 +38,10 @@ class RPCServerApplication(WebApplication):
         ]
         self.rpc_setup.add_methods(*methods)
 
+    @staticmethod
+    async def ping():
+        return 'pong'
+
 
 RPC_DEFAULT_TIMEOUT = 5
 
@@ -42,21 +49,40 @@ RPC_DEFAULT_TIMEOUT = 5
 class RPCClient:
     def __init__(self, server_url: str, encoder: ProxyNativeEncoder, *, loop=None) -> None:
         super().__init__()
+        self._url = server_url
         self._encoder = encoder
         self._loop = loop or asyncio.get_event_loop()
-        self._client = JsonRpcClient(url=server_url, loop=self._loop)
+        self._client = JsonRpcClient(url=self._url, loop=self._loop)
 
     def __getattribute__(self, name: str) -> Any:
         if name.startswith('_') or name == 'close':
             return super().__getattribute__(name)
         return functools.partial(self._request, method=name)
 
+    async def _with_retry(self, *args, **kwargs):
+        """
+        retries only once
+        """
+        try:
+            return await self._client.call(*args, **kwargs)
+        except (RuntimeError, AttributeError, ClientConnectorError):
+            logger.exception('rpc connection lost, trying to reconnect')
+            try:
+                await self._client.disconnect()
+            except:
+                try:  # uber hack
+                    self._client._session.close()
+                except:
+                    pass
+            await self._client.connect_url(self._url)
+        return await self._client.call(*args, **kwargs)
+
     async def _request(self, *args, method: str, rpc_timeout=RPC_DEFAULT_TIMEOUT, **kwargs) -> Any:
         if len(args) > 0 and len(kwargs) > 0:
             raise RpcInvalidParamsError('params should be either positional or key-value, but not both')
         params = list(args) or kwargs
         params = self._encoder.dump(params)
-        response = await self._client.call(method=method, params=params, timeout=rpc_timeout)
+        response = await self._with_retry(method=method, params=params, timeout=rpc_timeout)
         return self._encoder.load(response)
 
     def close(self) -> Awaitable:

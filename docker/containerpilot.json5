@@ -36,7 +36,7 @@
     },
     {
       name: "onExit",
-      exec: "pkill -signal SIGTERM containerpilot",
+      exec: "pkill --signal SIGTERM containerpilot",
       when: {
         source: "{{.SERVICE_NAME}}",
         once: "stopped"

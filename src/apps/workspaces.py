@@ -54,6 +54,9 @@ class WorkspaceManagerApp(RPCServerApplication, CommonAppMixin):
 
         self.health_check_service.add_check(health_checkers.mongo_available)
         self.health_check_service.add_check(health_checkers.consul_available)
+        self.health_check_service.add_check(health_checkers.rpc_app_manager_alive)
+        self.health_check_service.add_check(health_checkers.rpc_mdl_manager_alive)
+        self.health_check_service.add_check(health_checkers.rpc_env_manager_alive)
         self.server.middlewares.append(OwnedMiddlewareSet.extract_owner)
 
     async def _shutdown(self):

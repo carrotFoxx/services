@@ -6,6 +6,7 @@ from aiohttp import ClientResponse, hdrs
 from common.consul import ConsulClient
 from common.healthcheck import ComponentImportance, ComponentType, HealthCheckComponent, MetricType, component_name
 from config import MONGO_DB, SENTRY_DSN
+from mco.rpc import RPCClient
 
 
 async def check_mongo_available() -> (bool, str):
@@ -70,4 +71,33 @@ sentry_reachable = HealthCheckComponent(
     importance=ComponentImportance.CONCERN,
     success_ttl=5 * 60,
     failure_ttl=60
+)
+
+
+async def check_rpc_alive(rpc: RPCClient):
+    return await rpc.ping() == 'pong', 'successful round-trip to rpc-server'
+
+
+rpc_app_manager_alive = HealthCheckComponent(
+    component_name('app_manager.rpc', MetricType.CONNECTIVITY),
+    check_function=inject.params(rpc='rpc_app_manager')(check_rpc_alive),
+    component_type=ComponentType.SYSTEM.value,
+    success_ttl=60,
+    failure_ttl=20
+)
+
+rpc_mdl_manager_alive = HealthCheckComponent(
+    component_name('mdl_manager.rpc', MetricType.CONNECTIVITY),
+    check_function=inject.params(rpc='rpc_model_manager')(check_rpc_alive),
+    component_type=ComponentType.SYSTEM.value,
+    success_ttl=60,
+    failure_ttl=20
+)
+
+rpc_env_manager_alive = HealthCheckComponent(
+    component_name('env_manager.rpc', MetricType.CONNECTIVITY),
+    check_function=inject.params(rpc='rpc_env_manager')(check_rpc_alive),
+    component_type=ComponentType.SYSTEM.value,
+    success_ttl=60,
+    failure_ttl=20
 )

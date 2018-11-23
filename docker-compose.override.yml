@@ -2,40 +2,44 @@ version: '3.7'
 services:
   app_manager:
     volumes:
-    - ./docker/app-data:/opt/data
+      - ./docker/app-data:/opt/data
 
   model_manager:
     volumes:
-    - ./docker/app-data:/opt/data
+      - ./docker/app-data:/opt/data
+
+  wsp_manager:
+    ports:
+      - '8081:8080'
 
   env_manager:
     environment:
-    - PROVIDER_DOCKER_ENABLE=1
-    - USER_SPACE_NAME=buldozer_usp_net
-    - SHARED_FS_MOUNT_PATH=${PWD}/docker/app-data
+      - PROVIDER_DOCKER_ENABLE=1
+      - USER_SPACE_NAME=buldozer_usp_net
+      - SHARED_FS_MOUNT_PATH=${PWD}/docker/app-data
 
   zookeeper:
     volumes:
-    - ./docker/zk-data/data:/data
-    - ./docker/zk-data/datalog:/datalog
+      - ./docker/zk-data/data:/data
+      - ./docker/zk-data/datalog:/datalog
 
   mongo:
     volumes:
-    - ./docker/mongodb-data:/data/db
+      - ./docker/mongodb-data:/data/db
     ports:
-    - '27017:27017'
+      - '27017:27017'
 
   kafka:
     volumes:
-    - ./docker/kafka-data:/kafka
+      - ./docker/kafka-data:/kafka
     ports:
-    - "9092:9092"
+      - "9092:9092"
 
   traefik:
     ports:
-    - '80:80'
-    - '8080:8080'
+      - '80:80'
+      - '8080:8080'
 
   consul:
     ports:
-    - '8500:8500'
+      - '8500:8500'
