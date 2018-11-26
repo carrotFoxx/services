@@ -73,7 +73,7 @@ class VersionForger:
             rev=self.revision[:7]
         )
 
-    _RE_GIT_DESC = re.compile(r'^((\d+).(\d+)(.(\d+))?)(-(\d+)-([0-9A-Za-z]+))?$')
+    _RE_GIT_DESC = re.compile(r'^v?((\d+).(\d+)(.(\d+))?)(-(\d+)-([0-9A-Za-z]+))?$')
 
     _MASTER_BRANCHES = ('master', 'release')
     _TRUNK_BRANCHES = ('develop', 'development', 'trunk')

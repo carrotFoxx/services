@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Buldozer Services 0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-17 17:53+0300\n"
+"POT-Creation-Date: 2018-11-26 16:15+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,31 +45,176 @@ msgid ""
 " read of incomplete (mid-change, inconsistent) configuration"
 msgstr ""
 
-#: ../../consul.rst:27
+#: ../../consul.rst:38
 msgid "Actual Version Pointer"
 msgstr ""
 
-#: ../../consul.rst:31
+#: ../../consul.rst:27
 msgid "this path should be checked for changes"
 msgstr ""
 
-#: ../../consul.rst:37
-msgid "example"
+#: ../../consul.rst:38
+msgid "Example"
 msgstr ""
 
 #: ../../consul.rst:46
 msgid "Path to config"
 msgstr ""
 
-#: ../../consul.rst:53
+#: ../../consul.rst:41
+msgid "all config parts are stored in sub-keys under this path"
+msgstr ""
+
+#: ../../consul.rst:78
 msgid "Routing config"
 msgstr ""
 
-#: ../../consul.rst:74
-msgid "Topic Manager"
+#: ../../consul.rst:49
+msgid ""
+"individual routes are stored under config path in separate keys and have "
+"following format"
+msgstr ""
+
+#: ../../consul.rst:52
+msgid "a value in JSON:"
+msgstr ""
+
+#: ../../consul.rst:70
+msgid "Route Path"
+msgstr ""
+
+#: ../../consul.rst:65
+msgid "each individual rule is referenced by key meeting following pattern"
+msgstr ""
+
+#: ../../consul.rst:78
+msgid "Route ID (key name)"
+msgstr ""
+
+#: ../../consul.rst:73
+msgid ""
+"is a hash of valuable unique combination of options defined by Route "
+"Config."
 msgstr ""
 
 #: ../../consul.rst:76
-msgid "topic configurations stored in Consul and replicated to Kafka"
+msgid ""
+"In simple: it is a hash of all values which combination should not "
+"intersect between routes"
 msgstr ""
+
+#: ../../consul.rst:81
+msgid "Topic Manager configuration"
+msgstr ""
+
+#: ../../consul.rst:83
+msgid "Topic configurations are stored in Consul and replicated to Kafka"
+msgstr ""
+
+#: ../../consul.rst:86
+msgid ""
+"Topic Manager configuration requires stateless read for comparison and "
+"provisioning and granular changes to maintain. Therefore a define/adopt "
+"strategy is selected for KV stores"
+msgstr ""
+
+#: ../../consul.rst:93
+msgid ""
+"this approach is based on fact that configuration is replicated from KV "
+"store to elsewhere there it is store permanently (same version does not "
+"requires to be replicated twice, if the system hasn't experienced a "
+"critical outage and data-loss)."
+msgstr ""
+
+#: ../../consul.rst:99
+msgid ""
+"writer changes the config and then \"signals\" to reader that fact via "
+"incrementing config version (`version indicator`)"
+msgstr ""
+
+#: ../../consul.rst:103
+msgid ""
+"reader is watching `version indicator` changes and re-reads whole "
+"configuration on change"
+msgstr ""
+
+#: ../../consul.rst:106
+msgid ""
+"after successfully replicating configuration reader sets `adoption "
+"indicator` to value matching version replicated, to indicate completion "
+"of process and do not repeat adoption process in case of restarts."
+msgstr ""
+
+#: ../../consul.rst:112
+msgid ""
+"writer or any other concerned party may watch for changes of `adoption "
+"indicator` to know if process was completed successfully"
+msgstr ""
+
+#: ../../consul.rst:122
+msgid "Root Path"
+msgstr ""
+
+#: ../../consul.rst:118
+msgid "KV namespace"
+msgstr ""
+
+#: ../../consul.rst:140
+msgid "Strategy Indicators"
+msgstr ""
+
+#: ../../consul.rst:131
+msgid "Adoption indicator"
+msgstr ""
+
+#: ../../consul.rst:126
+msgid "holds version adopted, written by reader(adopter) only"
+msgstr ""
+
+#: ../../consul.rst:140
+msgid "Config Version Indicator"
+msgstr ""
+
+#: ../../consul.rst:134
+msgid ""
+"holds version defined by writer(issuer) can be written by parties which "
+"are changing the config"
+msgstr ""
+
+#: ../../consul.rst:163
+msgid "Topic configs"
+msgstr ""
+
+#: ../../consul.rst:143
+msgid ""
+"individual topic configs are stored under config path in separate keys "
+"and have following format (in JSON)"
+msgstr ""
+
+#: ../../consul.rst:161
+msgid "Topic config path"
+msgstr ""
+
+#: ../../consul.rst:156
+msgid ""
+"each individual topic config is located under key meeting following "
+"pattern."
+msgstr ""
+
+#: ../../consul.rst:163
+msgid "Topic Name (Key)"
+msgstr ""
+
+#: ../../consul.rst:164
+msgid "should match topic name in Kafka"
+msgstr ""
+
+#~ msgid "example"
+#~ msgstr ""
+
+#~ msgid "Topic Manager"
+#~ msgstr ""
+
+#~ msgid "topic configurations stored in Consul and replicated to Kafka"
+#~ msgstr ""
 

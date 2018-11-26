@@ -72,7 +72,7 @@ class DockerProvider(Provider):
         image = self._extract_image(definition.image)
         if not self._image_exists(image):
             log.info('pulling Instance image [%s]', definition.image)
-            self._client.images.pull(*definition.image.split(':'))
+            self._client.images.pull(*image.split(':'))
 
         if not self._usp_network_exists():
             log.info('creating USP network')

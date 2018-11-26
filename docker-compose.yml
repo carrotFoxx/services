@@ -124,6 +124,16 @@ services:
       - default
       - buldozer_usp_net
 
+  topic_manager:
+    <<: *x-logging
+    image: registry.crplab.ru/gis/topic-manager:latest
+    environment:
+      CONSUL_URL: http://consul:8500
+      KEYS_BASE_PATH: gis/topic-manager
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_CLIENT_ID: TopicManagerAdminClient
+      MEMORY_LIMITS: -Xmx256m -Xss128m
+
 networks:
   default:
   buldozer_usp_net:

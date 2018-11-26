@@ -184,6 +184,8 @@ class HealthCheckService:
         return False, f'{str(type(e))}:{str(e)}'
 
     def cache_max_age(self):
+        if len(self._components) == 0:
+            return 60
         if self._status is HealthStatus.PASSING:
             return min([c.success_ttl for c in self._components.values()])
         return min([c.failure_ttl for c in self._components.values()])

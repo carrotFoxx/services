@@ -11,7 +11,7 @@ stages:
       name: tavern test app
       description: cat used to pipe data
       package: Python.Test
-      attachment: docker://supervised:latest
+      attachment: docker://registry.crplab.ru/buldozer/services/supervised:latest
       environment:
         LOG_LEVEL: DEBUG
         BDZ_PROGRAM: /opt/app/supervisor/sample_process.py
@@ -114,7 +114,7 @@ stages:
     method: PUT
     headers: *auth_headers
     json:
-      incoming_stream: events
+      incoming_stream: new_stream_1
       outgoing_stream: bdz_wsp_results
   response:
     status_code: 204
@@ -136,7 +136,7 @@ stages:
     method: POST
     headers: *auth_headers
     json:
-      topic: events
+      topic: new_stream_1
       amount: 100
       delay: 0.5
 
