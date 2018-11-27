@@ -145,7 +145,7 @@ stages:
 
 - name: check load is working
   request:
-    url: '{tavern.env_vars.API_HOST}/sampler/events'
+    url: '{tavern.env_vars.API_HOST}/sampler/new_stream_1'
     method: GET
     headers: *auth_headers
   response:
@@ -153,4 +153,4 @@ stages:
     body:
       topic: events
       current: !anyint
-  delay_before: 5
+  delay_before: 2

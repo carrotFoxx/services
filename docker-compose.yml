@@ -129,7 +129,7 @@ services:
     image: registry.crplab.ru/gis/topic-manager:latest
     environment:
       CONSUL_URL: http://consul:8500
-      KEYS_BASE_PATH: gis/topic-manager
+      KEYS_BASE_PATH: gis/topic_manager
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_CLIENT_ID: TopicManagerAdminClient
       MEMORY_LIMITS: -Xmx256m -Xss128m

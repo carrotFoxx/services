@@ -47,7 +47,7 @@ WSP_GC_INTERVAL = int(os.getenv('WSP_GC_INTERVAL', 600))
 
 CONSUL_DSN = os.environ.get('CONSUL_DSN', 'http://consul:8500')
 CONSUL_SUBORDINATE_DIR = '/buldozer/subordinate/'
-CONSUL_TOPICS_DIR = '/gis/topic-manager/'
+CONSUL_TOPICS_DIR = '/gis/topic_manager/'
 
 KAFKA_DSN = os.environ.get('KAFKA_DSN', 'kafka:9092')
 
