@@ -25,6 +25,7 @@ more-itertools = "*"
 python-consul = "*"
 uvloop = "*"
 kubernetes = "*"
+aiohttp-cors = "*"
 
 [dev-packages]
 pytest = ">=3.4"

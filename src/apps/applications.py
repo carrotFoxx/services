@@ -30,6 +30,7 @@ class ApplicationManagerApp(RPCServerApplication, CommonAppMixin):
                 archive=archive
             )
         )
+        self.cors_add_all()
         self.health_check_service.add_check(health_checkers.mongo_available)
         self.server.middlewares.append(OwnedMiddlewareSet.extract_owner)
 
