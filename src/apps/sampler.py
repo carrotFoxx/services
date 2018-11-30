@@ -16,6 +16,7 @@ class SamplerApplication(CommonAppMixin):
         self.add_routes_from(SamplerAPI(
             manager=self.lgm
         ))
+        self.cors_add_all()
 
     async def _shutdown(self):
         await super()._shutdown()

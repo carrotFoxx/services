@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from aiohttp import hdrs
 from aiohttp.web import UrlDispatcher
@@ -10,6 +11,8 @@ from microcore.base.application import Routable
 from microcore.entity.encoders import json_response
 from microcore.web.owned_api import OwnedReadWriteStorageAPI
 from workspace.manager import WorkspaceManager
+
+log = logging.getLogger(__name__)
 
 
 class WorkspaceAPI(Routable, OwnedReadWriteStorageAPI):
@@ -35,20 +38,29 @@ class WorkspaceAPI(Routable, OwnedReadWriteStorageAPI):
         config.add_route(hdrs.METH_GET, self.get_route)
 
     async def _delete(self, stored: entity_type):
+        try:
+            await self.manager.decommission(stored)
+        except ValueError:
+            pass
         await self.repository.delete(stored.uid)
-        asyncio.create_task(self.manager.decommission(stored))
-
-    async def _provision_task(self, workspace: Workspace):
-        await self.manager.provision(workspace)
 
     async def _post(self, entity: Workspace):
+        # save on provisioning success
         await super()._post(entity)
-        asyncio.create_task(self._provision_task(entity))
+        # noinspection PyAsyncCall
+        asyncio.create_task(self._provisioning_task(entity))
+
+    async def _provisioning_task(self, workspace: Workspace):
+        try:
+            await self.manager.provision(workspace)
+        except:
+            log.exception('provisioning failed, deleting workspace')
+            await self.repository.delete(workspace.uid)
 
     async def set_route(self, request: Request):
         entity: Workspace = await self._get(request)
         try:
-            data = RouteConfig(**await request.json())
+            data = RouteConfig(wsp_uid=entity.uid, **await request.json())
         except (TypeError, ValueError) as e:
             raise HTTPBadRequest() from e
         await self.manager.reroute(workspace=entity, route=data)
@@ -60,5 +72,5 @@ class WorkspaceAPI(Routable, OwnedReadWriteStorageAPI):
         try:
             data: RouteConfig = await self.manager.get_route_config(entity)
         except self.manager.consul.InteractionError:
-            data = RouteConfig()
+            data = RouteConfig(wsp_uid=entity.uid)
         return data

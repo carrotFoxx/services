@@ -86,6 +86,8 @@ class ModelArchiveStorageEncoder(StorageEntityJSONEncoderBase):
 
 @attr.s(auto_attribs=True)
 class RouteConfig:
+    wsp_uid: str
+
     desired_version: int = 0
     adopted_version: int = 0
 

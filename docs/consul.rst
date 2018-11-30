@@ -26,12 +26,12 @@ used to store configurations in KV stores
 Actual Version Pointer
     this path should be checked for changes
 
-    .. code-block::
+    .. code-block:: bash
 
         /gis/data-manager/version: {version-id}
 
     Example
-        .. code-block::
+        .. code-block:: bash
 
             >> /gis/data-manager/version
             << 1
@@ -41,7 +41,7 @@ Path to config
     all config parts are stored in sub-keys
     under this path
 
-    .. code-block::
+    .. code-block:: bash
 
         /gis/data-manager/{version}/
 
@@ -51,7 +51,7 @@ Routing config
 
     a value in JSON:
 
-    .. code-block::
+    .. code-block:: json
 
         {
           "pattern":{
@@ -65,7 +65,7 @@ Routing config
         each individual rule is referenced
         by key meeting following pattern
 
-        .. code-block::
+        .. code-block:: bash
 
             /gis/data-manager/{version}/{route-id}: {routing-config}
 
@@ -117,7 +117,7 @@ define/adopt strategy is selected for KV stores
 Root Path
     KV namespace
 
-    .. code-block::
+    .. code-block:: bash
 
         /gis/topic-manager/
 
@@ -126,7 +126,7 @@ Strategy Indicators
         holds version adopted, written
         by reader(adopter) only
 
-        .. code-block::
+        .. code-block:: bash
 
             /gis/topic-manager/adopted_version: {int}
 
@@ -135,7 +135,7 @@ Strategy Indicators
         can be written by parties which are
         changing the config
 
-        .. code-block::
+        .. code-block:: bash
 
             /gis/topic-manager/desired-version: {int}
 
@@ -143,7 +143,7 @@ Topic configs
     individual topic configs are stored under config path
     in separate keys and have following format (in JSON)
 
-    .. code-block::
+    .. code-block:: json
 
         {
             "name": "topic-123",
@@ -156,7 +156,7 @@ Topic configs
         each individual topic config is located under
         key meeting following pattern.
 
-        .. code-block::
+        .. code-block:: bash
 
             /gis/topic-manager/topics/{topic-name}: {topic config}
 

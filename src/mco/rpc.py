@@ -43,7 +43,7 @@ class RPCServerApplication(WebApplication):
         return 'pong'
 
 
-RPC_DEFAULT_TIMEOUT = 5
+RPC_DEFAULT_TIMEOUT = 30
 
 
 class RPCClient:

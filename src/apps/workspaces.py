@@ -52,6 +52,7 @@ class WorkspaceManagerApp(RPCServerApplication, CommonAppMixin):
             )
         )
 
+        self.cors_add_all()
         self.health_check_service.add_check(health_checkers.mongo_available)
         self.health_check_service.add_check(health_checkers.consul_available)
         self.health_check_service.add_check(health_checkers.rpc_app_manager_alive)
