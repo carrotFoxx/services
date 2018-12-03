@@ -6,7 +6,7 @@ import attr
 
 from common.consul import ConsulClient, consul_key
 from common.entities import RouteConfig
-from config import CONSUL_SUBORDINATE_DIR, CONSUL_TOPICS_DIR, SPV_STATE_KEY_ADOPTED_VERSION, \
+from config import CONSUL_SUBORDINATE_DIR, CONSUL_TOPICS_CTL, CONSUL_TOPICS_DIR, SPV_STATE_KEY_ADOPTED_VERSION, \
     SPV_STATE_KEY_DESIRED_VERSION
 
 log = logging.getLogger(__name__)
@@ -88,7 +88,7 @@ class Configurator:
             await self._topic_register(topic)
 
     async def _increment_topic_config_version(self) -> bool:
-        key = consul_key(CONSUL_TOPICS_DIR, SPV_STATE_KEY_DESIRED_VERSION)
+        key = consul_key(CONSUL_TOPICS_CTL, SPV_STATE_KEY_DESIRED_VERSION)
         desired_version = int(await self.consul.kv.get(key, raw=True, default=0))
         desired_version += 1
         return await self.consul.kv.put(key, value=desired_version)
