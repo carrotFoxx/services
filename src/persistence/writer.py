@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 @attr.s(auto_attribs=True)
 class RecordData:
     workspace: str
-    raw_data: str
     timestamp: int
+    data: Union[str, list, dict] = None
 
 
 class MongoWriter:
@@ -29,8 +29,10 @@ class MongoWriter:
         record_data: dict = json.loads(record.value)
         return RecordData(
             workspace=record_data['wsp'],
-            raw_data=record_data['raw'],
-            timestamp=int(record_data['ts'])
+            timestamp=int(record_data['ts']),
+            data=record_data['parsed']
+            if 'parsed' in record_data and record_data['parsed'] is not None
+            else record_data['raw']
         )
 
     def _create_batch(self, iterator: Iterator, size: int = 100) -> Tuple[Dict[str, List[dict]], Union[int, None]]:
@@ -42,7 +44,7 @@ class MongoWriter:
                 record = self._decode_record(c_record)
                 batch.setdefault(record.workspace, [])
                 batch[record.workspace].append({
-                    'data': record.raw_data,
+                    'data': record.data,
                     'ts': record.timestamp
                 })
                 last_offset = c_record.offset
