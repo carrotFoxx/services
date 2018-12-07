@@ -55,6 +55,7 @@ class PackageJSONEncoder(RegisteredEntityJSONEncoder):
 class Model(VersionedObject, TrackedObject):
     name: str = None
     package: str = None  # indicate package it belongs to (Matlab, Hysys, TensorFlow, etc)
+    description: str = None
     attachment: str = None
 
 
