@@ -3,11 +3,12 @@ import logging
 
 from aiohttp import hdrs
 from aiohttp.web import UrlDispatcher
-from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent
+from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent, HTTPNotFound
 from aiohttp.web_request import Request
 
 from common.entities import RouteConfig, Workspace
 from microcore.base.application import Routable
+from microcore.base.repository import DoesNotExist
 from microcore.entity.encoders import json_response
 from microcore.web.owned_api import OwnedReadWriteStorageAPI
 from workspace.manager import WorkspaceManager
@@ -36,6 +37,9 @@ class WorkspaceAPI(Routable, OwnedReadWriteStorageAPI):
         config = router.add_resource('/workspaces/{id}/route')
         config.add_route(hdrs.METH_PUT, self.set_route)
         config.add_route(hdrs.METH_GET, self.get_route)
+
+        health = router.add_resource('/workspaces/{id}/health')
+        health.add_route(hdrs.METH_GET, self.health)
 
     async def _delete(self, stored: entity_type):
         try:
@@ -68,9 +72,20 @@ class WorkspaceAPI(Routable, OwnedReadWriteStorageAPI):
 
     @json_response
     async def get_route(self, request: Request):
-        entity: Workspace = await self._get(request)
+        try:
+            entity: Workspace = await self._get(request)
+        except DoesNotExist:
+            raise HTTPNotFound
         try:
             data: RouteConfig = await self.manager.get_route_config(entity)
         except self.manager.consul.InteractionError:
             data = RouteConfig(wsp_uid=entity.uid)
         return data
+
+    @json_response
+    async def health(self, request: Request):
+        try:
+            entity: Workspace = await self._get(request)
+        except DoesNotExist:
+            raise HTTPNotFound
+        return await self.manager.healthcheck(entity)

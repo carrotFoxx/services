@@ -1,7 +1,7 @@
 import asyncio
 import hashlib
 import logging
-from typing import Awaitable
+from typing import Awaitable, Dict, List
 
 import inject
 from aiohttp_json_rpc import RpcGenericServerDefinedError
@@ -118,3 +118,21 @@ class WorkspaceManager:
     async def schedule_gc(self, workspace: Workspace):
         # todo: schedule GC
         logger.debug('scheduling gc for %s', workspace)
+
+    async def healthcheck(self, workspace: Workspace) -> List[Dict[str, str]]:
+        _, checks = await self.consul.official.health.checks('bdz-wsp-%s' % workspace.uid)
+        if checks is None or len(checks) == 0:
+            return [
+                {"id": "-missing-",
+                 "name": "-missing-",
+                 "status": "not running",
+                 "output": "404: checks not found"}
+            ]
+        # shorted consul response, stripping off unrelated parts
+        return [
+            {"id": c["CheckID"],
+             "name": c["Name"],
+             "status": c["Status"],
+             "output": c["Output"]}
+            for c in checks
+        ]

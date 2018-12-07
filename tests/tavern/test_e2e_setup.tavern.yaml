@@ -151,6 +151,6 @@ stages:
   response:
     status_code: 200
     body:
-      topic: events
+      topic: new_stream_1
       current: !anyint
   delay_before: 2
