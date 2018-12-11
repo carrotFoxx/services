@@ -214,6 +214,20 @@ paths:
         '204':
           description: successfuly altered
 
+  /workspaces/{workspaceId}/health:
+    parameters:
+      - $ref: '#/components/parameters/workspaceId'
+    get:
+      responses:
+        '200':
+          description: health checks and statuses of workspace runtime
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkspaceHealthInfo'
+
   /results/{workspaceId}/data:
     parameters:
       - $ref: '#/components/parameters/workspaceId'
@@ -672,6 +686,30 @@ components:
         outgoing_stream:
           type: string
 
+    WorkspaceHealthInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: check id (consul check id)
+          example: buldozer:supervisor:wsp:0710e89f93c044efb445d70dbb85db0c
+        name:
+          type: string
+          description: check name (consul check name)
+          example: buldozer:supervisor
+        status:
+          type: string
+          description: check status
+          enum:
+            - passing
+            - warning
+            - critical
+          example: "passing"
+        output:
+          type: string
+          description: additional information provided by supervisor on failing checks
+
+
     ResultRecord:
       allOf:
         - $ref: '#/components/schemas/ObjectBase'
@@ -697,6 +735,12 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/AnyType'
+        src_collection:
+          type: string
+          description: collection from which data will be pulled
+        dst_topic:
+          type: string
+          description: topic to which data will be posted
 
     Operation:
       allOf:
