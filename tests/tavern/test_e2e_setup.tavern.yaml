@@ -15,6 +15,7 @@ stages:
       environment:
         LOG_LEVEL: DEBUG
         BDZ_PROGRAM: /opt/app/supervisor/sample_process.py
+        BDZ_OUTPUT_JSON: true
   response:
     status_code: 201
     body:

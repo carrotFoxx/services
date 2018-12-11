@@ -101,3 +101,11 @@ rpc_env_manager_alive = HealthCheckComponent(
     success_ttl=60,
     failure_ttl=20
 )
+
+rpc_wsp_manager_alive = HealthCheckComponent(
+    component_name('wsp_manager.rpc', MetricType.CONNECTIVITY),
+    check_function=inject.params(rpc='rpc_wsp_manager')(check_rpc_alive),
+    component_type=ComponentType.SYSTEM.value,
+    success_ttl=60,
+    failure_ttl=20
+)

@@ -55,6 +55,11 @@ services:
     environment:
       - SERVICE_NAME=sampler
 
+  res_manager:
+    <<: *x-build
+    environment:
+      - SERVICE_NAME=results
+
   mongo:
     <<: *x-logging
     image: mongo:4.0

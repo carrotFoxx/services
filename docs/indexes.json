@@ -1,0 +1,32 @@
+[
+  {
+    "v": 2,
+    "key": {
+      "_id": 1
+    },
+    "name": "_id_",
+    "ns": "events.cef"
+  },
+  {
+    "v": 2,
+    "key": {
+      "deviceVendor": 1,
+      "deviceProduct": 1,
+      "extensions.rt": 1,
+      "_id": 1
+    },
+    "name": "rt_idx",
+    "ns": "events.cef",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "systemInfo.datetime": 1
+    },
+    "name": "eviction_idx",
+    "ns": "events.cef",
+    "background": true,
+    "expireAfterSeconds": 604800
+  }
+]

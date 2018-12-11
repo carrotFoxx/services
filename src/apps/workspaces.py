@@ -45,12 +45,9 @@ class WorkspaceManagerApp(RPCServerApplication, CommonAppMixin):
         await super()._setup()
 
         repository = Repository(WorkspaceMongoStorageAdapter())
-        self.add_routes_from(
-            WorkspaceAPI(
-                repository=repository,
-                manager=WorkspaceManager(workspaces=repository)
-            )
-        )
+        api = WorkspaceAPI(repository=repository, manager=WorkspaceManager(workspaces=repository))
+        self.add_routes_from(api)  # add REST endpoints
+        self.add_methods_from(api)  # add RPC endpoints
 
         self.cors_add_all()
         self.health_check_service.add_check(health_checkers.mongo_available)

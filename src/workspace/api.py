@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from typing import List
 
 from aiohttp import hdrs
 from aiohttp.web import UrlDispatcher
@@ -7,6 +8,7 @@ from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent, HTTPNotFound
 from aiohttp.web_request import Request
 
 from common.entities import RouteConfig, Workspace
+from mco.rpc import RPCRoutable, rpc_expose
 from microcore.base.application import Routable
 from microcore.base.repository import DoesNotExist
 from microcore.entity.encoders import json_response
@@ -16,7 +18,7 @@ from workspace.manager import WorkspaceManager
 log = logging.getLogger(__name__)
 
 
-class WorkspaceAPI(Routable, OwnedReadWriteStorageAPI):
+class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
     entity_type = Workspace
 
     def __init__(self, manager: WorkspaceManager, **kwargs):
@@ -40,6 +42,11 @@ class WorkspaceAPI(Routable, OwnedReadWriteStorageAPI):
 
         health = router.add_resource('/workspaces/{id}/health')
         health.add_route(hdrs.METH_GET, self.health)
+
+    def set_methods(self) -> List[callable]:
+        return [
+            rpc_expose(self.repository.load, name='get')
+        ]
 
     async def _delete(self, stored: entity_type):
         try:

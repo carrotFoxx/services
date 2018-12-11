@@ -33,7 +33,11 @@ def process_window(window: list):
     w_size = len(window)
     last_seq = window[-1]['seq']
     w_seq_sum = sum([record['seq'] for record in window])
-    return 'Size:%s,Sum:%s,lSeq:%s\n' % (w_size, w_seq_sum, last_seq)
+    return json.dumps({
+        "Size": w_size,
+        "Sum": w_seq_sum,
+        "lSeq": last_seq
+    })
 
 
 def mainloop():
@@ -48,9 +52,9 @@ def mainloop():
             if len(window) == INTERVAL:
                 result = process_window(window)
                 window = []
-                sys.stdout.write(result)
+                sys.stdout.write(result+"\n")
                 sys.stdout.flush()
-                log.debug('wrote value to stdout')
+                log.debug('wrote value to stdout `%s`', result)
         except (InterruptedError, KeyboardInterrupt, BrokenPipeError):
             log.exception('interruption received')
             exit(0)
