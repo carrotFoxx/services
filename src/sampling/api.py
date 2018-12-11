@@ -9,6 +9,8 @@ from aiohttp.web_urldispatcher import UrlDispatcher
 
 from microcore.base.application import Routable
 from microcore.entity.encoders import json_response
+from microcore.web.owned_api import OwnedReadWriteStorageAPI
+from sampling.adapters import Retrospective
 from sampling.generator import SampleRecordGenerator
 from sampling.producer import LoadGeneratorProducerManager
 
@@ -106,3 +108,16 @@ class SamplerAPI(Routable):
             gen.kill()
             raise HTTPNoContent
         raise HTTPNotFound
+
+
+class RetrospectiveGeneratorAPI(OwnedReadWriteStorageAPI, Routable):
+    entity_type = Retrospective
+
+    def set_routes(self, router: UrlDispatcher):
+        root = router.add_resource('/sampler/retrospective')
+        root.add_route(hdrs.METH_GET, self.list)
+        root.add_route(hdrs.METH_POST, self.post)
+
+        item = router.add_resource('/sampler/retrospective/{id}')
+        item.add_route(hdrs.METH_GET, self.get)
+        item.add_route(hdrs.METH_DELETE, self.delete)
