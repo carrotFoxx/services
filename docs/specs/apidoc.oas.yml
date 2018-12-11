@@ -26,7 +26,7 @@ paths:
           $ref: '#/components/responses/ApplicationDetailsResponse'
   /applications/{appId}:
     parameters:
-    - $ref: '#/components/parameters/appId'
+      - $ref: '#/components/parameters/appId'
     get:
       summary: read application data
       responses:
@@ -41,7 +41,7 @@ paths:
           $ref: '#/components/responses/ApplicationDetailsResponse'
   /applications/{appId}/upload:
     parameters:
-    - $ref: '#/components/parameters/appId'
+      - $ref: '#/components/parameters/appId'
     post:
       requestBody:
         $ref: '#/components/requestBodies/FileUploadSubmission'
@@ -51,7 +51,7 @@ paths:
 
   /applications/{appId}/commit:
     parameters:
-    - $ref: '#/components/parameters/appId'
+      - $ref: '#/components/parameters/appId'
     post:
       description: commit app version to archive (version history)
       responses:
@@ -59,7 +59,7 @@ paths:
           $ref: '#/components/responses/VersionInfoResponse'
   /applications/{appId}/versions:
     parameters:
-    - $ref: '#/components/parameters/appId'
+      - $ref: '#/components/parameters/appId'
     get:
       description: list versions of an application (filtered list only related to that app)
       responses:
@@ -67,8 +67,8 @@ paths:
           $ref: '#/components/responses/ApplicationDetailsListResponse'
   /applications/{appId}/versions/{versionId}:
     parameters:
-    - $ref: '#/components/parameters/appId'
-    - $ref: '#/components/parameters/versionId'
+      - $ref: '#/components/parameters/appId'
+      - $ref: '#/components/parameters/versionId'
     get:
       description: get specified version of an app
       responses:
@@ -88,9 +88,9 @@ paths:
                 items:
                   type: string
                 example:
-                - Hysys
-                - MatLab
-                - TensorFlow
+                  - Hysys
+                  - MatLab
+                  - TensorFlow
 
   /models:
     get:
@@ -107,7 +107,7 @@ paths:
           $ref: '#/components/responses/ModelDetailsResponse'
   /models/{modelId}:
     parameters:
-    - $ref: '#/components/parameters/modelId'
+      - $ref: '#/components/parameters/modelId'
     get:
       description: get model details
       responses:
@@ -122,7 +122,7 @@ paths:
           $ref: '#/components/responses/ModelDetailsResponse'
   /models/{modelId}/upload:
     parameters:
-    - $ref: '#/components/parameters/modelId'
+      - $ref: '#/components/parameters/modelId'
     post:
       requestBody:
         $ref: '#/components/requestBodies/FileUploadSubmission'
@@ -132,7 +132,7 @@ paths:
 
   /models/{modelId}/commit:
     parameters:
-    - $ref: '#/components/parameters/modelId'
+      - $ref: '#/components/parameters/modelId'
     post:
       description: commit model version to archive (version history)
       responses:
@@ -140,7 +140,7 @@ paths:
           $ref: '#/components/responses/VersionInfoResponse'
   /models/{modelId}/versions:
     parameters:
-    - $ref: '#/components/parameters/modelId'
+      - $ref: '#/components/parameters/modelId'
     get:
       description: show model versions
       responses:
@@ -148,8 +148,8 @@ paths:
           $ref: '#/components/responses/ModelDetailsListResponse'
   /models/{modelId}/versions/{versionId}:
     parameters:
-    - $ref: '#/components/parameters/modelId'
-    - $ref: '#/components/parameters/versionId'
+      - $ref: '#/components/parameters/modelId'
+      - $ref: '#/components/parameters/versionId'
     get:
       description: show model version
       responses:
@@ -172,7 +172,7 @@ paths:
 
   /workspaces/{workspaceId}:
     parameters:
-    - $ref: '#/components/parameters/workspaceId'
+      - $ref: '#/components/parameters/workspaceId'
     get:
       description: get workspace details
       responses:
@@ -191,6 +191,105 @@ paths:
         '204':
           description: accepted for deletion
 
+  /workspaces/{workspaceId}/route:
+    parameters:
+      - $ref: '#/components/parameters/workspaceId'
+    get:
+      description: get current routing configuration
+      responses:
+        '200':
+          description: routing table and adopted version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteConfig'
+    put:
+      description: alter current routing config
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteConfig'
+      responses:
+        '204':
+          description: successfuly altered
+
+  /results/{workspaceId}/data:
+    parameters:
+      - $ref: '#/components/parameters/workspaceId'
+    get:
+      description: list products of given workspace
+      responses:
+        '200':
+          description: items produced
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResultRecord'
+
+  /results/{workspaceId}/plot:
+    parameters:
+      - $ref: '#/components/parameters/workspaceId'
+    get:
+      parameters:
+        - $ref: '#/components/parameters/PeriodStart'
+        - $ref: '#/components/parameters/PeriodEnd'
+        - name: n_step
+          in: query
+          schema:
+            type: integer
+          description: |
+            amount of steps time axis is devided into, to represent graph scale
+            (in other words - number of points to return)
+          required: true
+
+      description: get plot points with produced/total trends for given workspace
+      responses:
+        '200':
+          description: list of clusterized points to render the graph
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: number
+                      description: |
+                        chunk id on timeline (from 0 to {n_step}),
+                        some chunks could be ommited if no data available
+                        for period represented by that chunk
+                    amount:
+                      type: integer
+                      description: number of records produced by runtime on that period in time (clusterized)
+                    total:
+                      type: integer
+                      description: number of total records occured on that period in time (clusterized)
+                    r_start:
+                      type: number
+                      pattern: unixts*1000
+                      description: row start time point
+                    r_end:
+                      type: number
+                      pattern: unixts*1000
+                      description: row end time point
+                    f_evt:
+                      type: number
+                      description: time point then first event in that period occurs
+                    l_evt:
+                      type: number
+                      description: time point then last event in that period occurs
+                  required:
+                    - _id
+                    - amount
+                    - r_start
+                    - r_end
+
+
+
   /scheduling/operations:
     post:
       description: schedule operation on live workspace
@@ -207,11 +306,11 @@ paths:
 
   /scheduling/operations/{operationId}:
     parameters:
-    - name: operationId
-      in: path
-      required: true
-      schema:
-        $ref: '#/components/schemas/ObjectId'
+      - name: operationId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/ObjectId'
     get:
       description: get operation info and results
       responses:
@@ -221,13 +320,13 @@ paths:
             application/json:
               schema:
                 allOf:
-                - $ref: '#/components/schemas/Operation'
-                - type: object
-                  properties:
-                    results:
-                      type: object
-                      items:
-                        $ref: '#/components/schemas/AnyType'
+                  - $ref: '#/components/schemas/Operation'
+                  - type: object
+                    properties:
+                      results:
+                        type: object
+                        items:
+                          $ref: '#/components/schemas/AnyType'
     delete:
       description: remove operation info and results
       responses:
@@ -266,6 +365,23 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/ObjectId'
+
+    PeriodStart:
+      name: start
+      in: query
+      schema:
+        type: string
+        pattern: datetime
+      description: graph start time (should be >= process.start)
+      required: true
+    PeriodEnd:
+      name: end
+      in: query
+      schema:
+        type: string
+        pattern: datetime
+      description: graph end time (should be <= process.end)
+      required: true
 
   requestBodies:
     ApplicationDetailsSubmission:
@@ -400,15 +516,19 @@ components:
       type: string
       format: uuid
       example: d290f1ee-6c54-4b01-90e6-d701748f0851
+    TimePoint:
+      type: string
+      format: datetime
+      example: '2017-09-20T19:41:59.6001+03:00'
 
     AnyType:
       anyOf:
-      - type: object
-      - type: array
-      - type: string
-      - type: integer
-      - type: number
-      - type: boolean
+        - type: object
+        - type: array
+        - type: string
+        - type: integer
+        - type: number
+        - type: boolean
 
     ObjectBase:
       type: object
@@ -424,13 +544,13 @@ components:
     TrackedObject:
       properties:
         created:
-          type: string
-          format: datetime
-          example: '2017-09-20T19:41:59.6001+03:00'
+          $ref: '#/components/schemas/TimePoint'
         updated:
-          type: string
-          format: datetime
-          example: '2017-09-20T19:41:59.6001+03:00'
+          $ref: '#/components/schemas/TimePoint'
+    DatedObject:
+      properties:
+        timestamp:
+          $ref: '#/components/schemas/TimePoint'
     VersionedObject:
       properties:
         version:
@@ -440,9 +560,9 @@ components:
     AppBase:
       type: object
       required:
-      - name
-      - description
-      - package
+        - name
+        - description
+        - package
       properties:
         name:
           type: string
@@ -467,17 +587,17 @@ components:
 
     Application:
       allOf:
-      - $ref: '#/components/schemas/ObjectBase'
-      - $ref: '#/components/schemas/OwnedObject'
-      - $ref: '#/components/schemas/TrackedObject'
-      - $ref: '#/components/schemas/VersionedObject'
-      - $ref: '#/components/schemas/AppBase'
+        - $ref: '#/components/schemas/ObjectBase'
+        - $ref: '#/components/schemas/OwnedObject'
+        - $ref: '#/components/schemas/TrackedObject'
+        - $ref: '#/components/schemas/VersionedObject'
+        - $ref: '#/components/schemas/AppBase'
 
     ModelBase:
       type: object
       required:
-      - name
-      - package
+        - name
+        - package
       properties:
         name:
           type: string
@@ -491,30 +611,30 @@ components:
 
     Model:
       allOf:
-      - $ref: '#/components/schemas/ObjectBase'
-      - $ref: '#/components/schemas/OwnedObject'
-      - $ref: '#/components/schemas/TrackedObject'
-      - $ref: '#/components/schemas/VersionedObject'
-      - $ref: '#/components/schemas/ModelBase'
+        - $ref: '#/components/schemas/ObjectBase'
+        - $ref: '#/components/schemas/OwnedObject'
+        - $ref: '#/components/schemas/TrackedObject'
+        - $ref: '#/components/schemas/VersionedObject'
+        - $ref: '#/components/schemas/ModelBase'
 
     WorkspaceBase:
       type: object
       required:
-      - name
-      - kind
-      - app_id
-      - app_ver
-      - model_id
-      - model_ver
+        - name
+        - kind
+        - app_id
+        - app_ver
+        - model_id
+        - model_ver
       properties:
         name:
           type: string
         kind:
           type: string
           enum:
-          - openstack-vm
-          - k8s-container
-          - dkr-container
+            - openstack-vm
+            - k8s-container
+            - dkr-container
         config:
           type: object
           additionalProperties:
@@ -532,16 +652,42 @@ components:
 
     Workspace:
       allOf:
-      - $ref: '#/components/schemas/ObjectBase'
-      - $ref: '#/components/schemas/OwnedObject'
-      - $ref: '#/components/schemas/TrackedObject'
-      - $ref: '#/components/schemas/VersionedObject'
-      - $ref: '#/components/schemas/WorkspaceBase'
+        - $ref: '#/components/schemas/ObjectBase'
+        - $ref: '#/components/schemas/OwnedObject'
+        - $ref: '#/components/schemas/TrackedObject'
+        - $ref: '#/components/schemas/VersionedObject'
+        - $ref: '#/components/schemas/WorkspaceBase'
+
+    RouteConfig:
+      type: object
+      properties:
+        adopted_version:
+          type: integer
+          format: int32
+        desired_version:
+          type: integer
+          format: int32
+        incoming_stream:
+          type: string
+        outgoing_stream:
+          type: string
+
+    ResultRecord:
+      allOf:
+        - $ref: '#/components/schemas/ObjectBase'
+        - $ref: '#/components/schemas/DatedObject'
+        - type: object
+          properties:
+            data:
+              anyOf:
+                - type: object
+                - type: array
+                - type: string
 
     OperationBase:
       required:
-      - name
-      - query
+        - name
+        - query
       properties:
         name:
           type: string
@@ -554,7 +700,7 @@ components:
 
     Operation:
       allOf:
-      - $ref: '#/components/schemas/ObjectBase'
-      - $ref: '#/components/schemas/OwnedObject'
-      - $ref: '#/components/schemas/TrackedObject'
-      - $ref: '#/components/schemas/OperationBase'
+        - $ref: '#/components/schemas/ObjectBase'
+        - $ref: '#/components/schemas/OwnedObject'
+        - $ref: '#/components/schemas/TrackedObject'
+        - $ref: '#/components/schemas/OperationBase'
