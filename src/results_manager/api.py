@@ -86,9 +86,9 @@ class ResultsManagerAPI(Routable):
             end=end,
             n_steps=n_steps
         ).create(
-            cef_source=self.events_db.cef,
             anomaly_source=collection,
-            query={}  # need to acquire select condition based on splitter condition in consul for gis-slitter
+            # cef_source=self.events_db.cef,
+            # query={}  # need to acquire select condition based on splitter condition in consul for gis-slitter
         )
 
         return data

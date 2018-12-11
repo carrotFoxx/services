@@ -17,9 +17,12 @@ class Plot:
         log.info('creating graph using (start:%s, end:%s, step:%s, n_steps:%s)',
                  self.start, self.end, self.step, n_steps)
 
-    async def create(self, cef_source: AgnosticCollection, anomaly_source: AgnosticCollection, query: dict = None):
-        anomalies = await self._anomalies(anomaly_source)
-        amounts = await self._amounts(cef_source, query=query)
+    async def create(self,
+                     anomaly_source: AgnosticCollection = None,
+                     cef_source: AgnosticCollection = None,
+                     query: dict = None):
+        anomalies = await self._anomalies(anomaly_source) if anomaly_source else []
+        amounts = await self._amounts(cef_source, query=query) if cef_source else []
         return self._prepare_points(anomalies, amounts)
 
     def _anomalies(self, collection: AgnosticCollection, ts_field: str = 'ts') -> Awaitable[list]:
