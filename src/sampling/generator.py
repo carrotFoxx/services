@@ -1,18 +1,21 @@
 import abc
 import asyncio
 import json
+import logging
 import uuid
 from asyncio import CancelledError
 from datetime import datetime
 from itertools import count, takewhile
 from json import JSONEncoder
-from typing import Any, AsyncIterator, Awaitable, Iterator
+from typing import Any, AsyncIterator, Awaitable, Callable, Dict, Iterator
 
 import bson
 from marshmallow.utils import isoformat
 from motor.core import AgnosticCollection
 
 from mco.utils import convert_exceptions
+
+logger = logging.getLogger(__name__)
 
 
 class AbstractRecordGenerator(abc.ABC):
@@ -62,6 +65,7 @@ class MongoRecordGenerator(AbstractRecordGenerator):
         self._collection = collection
 
         self._encoder = JSONEncoder(default=self._helper, ensure_ascii=False, separators=(',', ':'))
+        logger.info("creating mongo record generator with selector: %s", self._query)
         self._sequencer: AsyncIterator = self._collection.find(self._query)
         self._current = None
 
@@ -72,7 +76,7 @@ class MongoRecordGenerator(AbstractRecordGenerator):
         return await asyncio.sleep(self._delay, result=self._create_payload(self._current))
 
     # specialized type converters for arbitrary BSON->JSON data transition
-    _m = {
+    _type_converters: Dict[type, Callable[[Any], Any]] = {
         bson.ObjectId: str,
         uuid.UUID: str,
         datetime: isoformat,
@@ -82,7 +86,7 @@ class MongoRecordGenerator(AbstractRecordGenerator):
     def _helper(cls, o: Any):
         t = type(o)
         try:
-            return cls._m[t](o)
+            return cls._type_converters[t](o)
         except KeyError:
             return str(o)
 

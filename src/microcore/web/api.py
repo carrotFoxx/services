@@ -161,7 +161,7 @@ class JsonMiddlewareSet:
                     status=e.status,
                     reason=e.reason,
                     data={
-                        'error': e.reason,
+                        'error': e.reason + ' (%s)' % e.text if e.text else '',
                         'data': e.data if isinstance(e, InformativeHTTPException) else None,
                         '_trace': cls._format_traceback(e),
                         '_class': FQN.get_fqn(e)
