@@ -28,6 +28,7 @@ kubernetes = "*"
 aiohttp-cors = "*"
 
 [dev-packages]
+coverage = "*"
 pytest = ">=3.4"
 pytest-asyncio = ">=0.8"
 pytest-dependency = ">=0.3.2"

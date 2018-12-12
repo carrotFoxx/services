@@ -6,10 +6,13 @@ from aiohttp import hdrs
 from aiohttp.web_exceptions import HTTPBadRequest, HTTPConflict, HTTPNoContent, HTTPNotFound
 from aiohttp.web_request import Request
 from aiohttp.web_urldispatcher import UrlDispatcher
+from motor.core import AgnosticDatabase
 
 from microcore.base.application import Routable
 from microcore.entity.encoders import json_response
-from sampling.generator import SampleRecordGenerator
+from microcore.web.owned_api import OwnedReadWriteStorageAPI
+from sampling.adapters import Retrospective
+from sampling.generator import MongoRecordGenerator, SampleRecordGenerator
 from sampling.producer import LoadGeneratorProducerManager
 
 
@@ -51,11 +54,11 @@ class SamplerAPI(Routable):
         self._gen_map: Dict[str, SampleRecordGenerator] = {}
 
     def set_routes(self, router: UrlDispatcher):
-        root = router.add_resource('/sampler')
+        root = router.add_resource('/sampler/test')
         root.add_route(hdrs.METH_POST, self.add)
         root.add_route(hdrs.METH_GET, self.list)
 
-        item = router.add_resource('/sampler/{id}')
+        item = router.add_resource('/sampler/test/{id}')
         item.add_route(hdrs.METH_GET, self.get)
         item.add_route(hdrs.METH_DELETE, self.delete)
 
@@ -106,3 +109,48 @@ class SamplerAPI(Routable):
             gen.kill()
             raise HTTPNoContent
         raise HTTPNotFound
+
+
+class RetrospectiveGeneratorAPI(OwnedReadWriteStorageAPI, Routable):
+    entity_type = Retrospective
+
+    def __init__(self,
+                 manager: LoadGeneratorProducerManager,
+                 source_db: AgnosticDatabase,
+                 **kwargs):
+        super().__init__(**kwargs)
+        self.source_db = source_db
+        self.manager = manager
+
+    def set_routes(self, router: UrlDispatcher):
+        root = router.add_resource('/sampler/retrospective')
+        root.add_route(hdrs.METH_GET, self.list)
+        root.add_route(hdrs.METH_POST, self.post)
+
+        item = router.add_resource('/sampler/retrospective/{id}')
+        item.add_route(hdrs.METH_GET, self.get)
+        item.add_route(hdrs.METH_DELETE, self.delete)
+
+    async def _post(self, entity: entity_type):
+        if self.manager.has_producer(entity.dst_topic):
+            raise HTTPConflict(text="generator for selected topic already exists and running")
+
+        start = int(entity.start.timestamp() * 1000)
+        end = int(entity.end.timestamp() * 1000)
+
+        await super()._post(entity)
+        self.manager.add_producer(
+            topic=entity.dst_topic,
+            sampler_func=MongoRecordGenerator(
+                collection=self.source_db.get_collection(entity.src_collection),
+                query={
+                    **entity.query,
+                    # fixme: remove this and rely on UI to pass full MQL with range
+                    'extensions.rt': {'$gte': start, '$lt': end}
+                }).generate
+        )
+
+    async def _get(self, request: Request):
+        o: Retrospective = await super()._get(request)
+        o.running = self.manager.has_producer(o.dst_topic)
+        return o
