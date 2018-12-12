@@ -60,6 +60,6 @@ class RegisteredEntityJSONEncoder(RegisteredEntityJSONEncoderBase):
 
     @staticmethod
     def pack(o) -> dict:
-        if attr.has(o):
+        if attr.has(type(o)):
             return attr.asdict(o)
         return public_attributes(o)

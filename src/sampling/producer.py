@@ -35,6 +35,9 @@ class LoadGeneratorProducerManager:
         logger.info('add consumer for topic=%s', topic)
         self._tm.add(topic, topic=topic, sampler_func=sampler_func)
 
+    def has_producer(self, topic: str) -> bool:
+        return self._tm.get(topic) is not None
+
     def _create_producer(self) -> AIOKafkaProducer:
         return AIOKafkaProducer(
             bootstrap_servers=self.servers,

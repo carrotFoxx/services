@@ -1,6 +1,10 @@
 from common.application_mixin import CommonAppMixin
 from config import KAFKA_DSN, ROOT_LOG
-from sampling.api import SamplerAPI
+from microcore.base.repository import Repository
+from microcore.storage.mongo import motor
+from microcore.web.owned_api import OwnedMiddlewareSet
+from sampling.adapters import RetrospectiveMongoStorageAdapter
+from sampling.api import RetrospectiveGeneratorAPI, SamplerAPI
 from sampling.producer import LoadGeneratorProducerManager
 
 
@@ -16,7 +20,15 @@ class SamplerApplication(CommonAppMixin):
         self.add_routes_from(SamplerAPI(
             manager=self.lgm
         ))
+        self.add_routes_from(RetrospectiveGeneratorAPI(
+            manager=self.lgm,
+            source_db=motor().events,
+            repository=Repository(RetrospectiveMongoStorageAdapter())
+        ))
+
         self.cors_add_all()
+
+        self.server.middlewares.append(OwnedMiddlewareSet.extract_owner)
 
     async def _shutdown(self):
         await super()._shutdown()
