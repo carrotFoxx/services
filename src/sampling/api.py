@@ -134,9 +134,10 @@ class RetrospectiveGeneratorAPI(OwnedReadWriteStorageAPI, Routable):
     async def _post(self, entity: entity_type):
         if self.manager.has_producer(entity.dst_topic):
             raise HTTPConflict(text="generator for selected topic already exists and running")
-
-        start = int(entity.start.timestamp() * 1000)
-        end = int(entity.end.timestamp() * 1000)
+        # fixme: horrible fix to operate on STRING timestamps (as extensions.rt are string in the data)
+        #   should as well be removed as below fix-me states
+        start = str(int(entity.start.timestamp() * 1000))
+        end = str(int(entity.end.timestamp() * 1000))
 
         await super()._post(entity)
         self.manager.add_producer(
