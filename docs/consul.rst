@@ -137,7 +137,7 @@ Strategy Indicators
 
         .. code-block:: bash
 
-            /gis/topic-manager/desired-version: {int}
+            /gis/topic-manager/desired_version: {int}
 
 Topic configs
     individual topic configs are stored under config path
