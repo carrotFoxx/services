@@ -51,7 +51,9 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinxcontrib.plantuml',
-    'sphinxcontrib.httpdomain'
+    'sphinxcontrib.httpdomain',
+
+    'sphinxpapyrus.docxbuilder'
 ]
 
 # PlantUML command:
@@ -176,6 +178,28 @@ texinfo_documents = [
 ]
 
 # -- Extension configuration -------------------------------------------------
+
+# -- Options for Papirus DOCX output -----------------------------------------
+
+# get styles from:
+# docx_style = 'mystyle.docx'
+
+docx_coreproperties = {
+    'title': 'Buldozer Platform Documentation',
+    'author': author,
+}
+
+# Grouping the document tree into Docx files. List of tuples
+# (source start file, target name, {coreproperties}).
+docx_documents = [
+    (master_doc, 'Buldozer.docx', docx_coreproperties),
+]
+
+# insert page break before each heading 1, 2 and title
+# docx_pagebreak_level = 2
+
+# 'left', 'center', or 'right'
+docx_imagetable_align = 'center'
 
 # -- Options for todo extension ----------------------------------------------
 

@@ -40,6 +40,8 @@ sphinx_rtd_theme = ">=0.2.4"
 tavern = "*"
 sphinx-intl = "*"
 sphinxcontrib-httpdomain = "*"
+sphinxpapyrus-docxbuilder = "*"
+python-docx = "*"
 
 [requires]
 python_version = "3.7"

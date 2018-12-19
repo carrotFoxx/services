@@ -30,6 +30,33 @@ MongoDB
         --namespace gis \
         -f ./mongodb.config.helm.yaml
 
+    kubectl create -f ../kubernetes/mongodb-external.service.yaml
+
+Kafka+Zookeeper
+---------------
+
+.. code-block:: bash
+
+    cd ./kubernetes
+
+    kubectl create -f ./kafka.deployment.yaml
+
+Kafka-Manager
+~~~~~~~~~~~~~
+
+Optionally you could install a control panel for Kafka
+
+.. warning::
+    Kafka-Manager has some control over Kafka and may expose
+    security risks if installed on production system exposed
+    to open networks
+
+.. code-block:: bash
+
+    cd ./kubernetes
+
+    kubectl create -f ./kafka-manager.deployment.yaml
+
 Consul
 ------
 
