@@ -20,6 +20,18 @@ Cluster-Wide services install
 MongoDB
 -------
 
+To provide persistent storage to MongoDB on SSD if you dont have "fast" class volumes provided by your platform
+and Kubernetes via "dynamic-provisioning" you may need to setup SSD-backed NFS share.
+
+When done, announce it to Kubernetes using following manifest and command (alter as necessary):
+
+.. code-block::
+
+    cd ./kubernetes-setup
+    kubectl create -f nfs.pv.yaml
+
+After, you can provision MondoDB itself:
+
 .. code-block:: bash
 
     cd ./kubernetes-setup
