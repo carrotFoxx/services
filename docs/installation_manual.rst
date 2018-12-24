@@ -15,7 +15,7 @@ Prerequisites:
 Hardware/Platform Requirements
 ==============================
 
-requirements for a hardware platform
+Requirements for a hardware platform.
 
 Minimal (Single Node)
 ---------------------
@@ -24,7 +24,7 @@ Minimal (Single Node)
 - 24Gb RAM
 - 100Gb Storage
 
-this will be sufficient to get system up and running to poke around.
+This will be sufficient to get system up and running to poke around.
 
 Optimal (Single or Multi Node)
 ------------------------------
@@ -37,7 +37,7 @@ Optimal (Single or Multi Node)
 Logical Layout Requirements
 ===========================
 
-above mentioned resources should be presented to system in following
+Above mentioned resources should be presented to system in following
 way (multi-node installation)
 
 Table:
@@ -55,7 +55,7 @@ Node Software Requirements
 
 - OS: Ubuntu 16.04 LTS
 
-no other basic requirements enforced.
+No other basic requirements enforced.
 
 Node setup
 ==========
@@ -63,7 +63,7 @@ Node setup
 Your machine setup
 ------------------
 
-We use `ansible` to manage node software, recipes (playbooks)
+We use `Ansible` to manage node software, recipes (playbooks) are
 contained in the repo.
 
 To setup it on your machine - follow it's installation instructions,
@@ -235,12 +235,12 @@ Make sure to alter settings, credentials and URL for OpenStack API under
 `cloud_provider.openstackCloudProvider.**` to your installation details.
 
 More info on options represented and how to setup them you can find in
-`Rancher/RKE Documentation`__
+`Rancher/RKE Documentation`__.
 
 __ https://rancher.com/docs/rke/v0.1.x/en/config-options/cloud-providers/openstack/
 
 
-you can use following command to quickly launch node registration
+You can use following command to quickly launch node registration
 process on all/selected nodes:
 
 .. code-block:: bash

@@ -133,7 +133,7 @@ crashlytics-build.properties
 fabric.properties
 
 # project specific
-docs/
+docs/_build
 apidocs/
 tests/
 docker/*-data
