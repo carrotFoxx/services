@@ -4,9 +4,9 @@ from typing import Awaitable
 
 import kubernetes as k8s
 from kubernetes.client import V1Container, V1DeleteOptions, V1Deployment, V1DeploymentCondition, V1DeploymentList, \
-    V1DeploymentSpec, V1DeploymentStatus, V1DeploymentStrategy, V1EnvVar, V1LabelSelector, V1LocalObjectReference, \
-    V1NFSVolumeSource, V1Namespace, V1NamespaceList, V1ObjectMeta, V1PodSpec, V1PodTemplateSpec, V1Scale, V1ScaleSpec, \
-    V1Status, V1Volume, V1VolumeMount
+    V1DeploymentSpec, V1DeploymentStatus, V1DeploymentStrategy, V1EnvVar, V1EnvVarSource, V1LabelSelector, \
+    V1LocalObjectReference, V1NFSVolumeSource, V1Namespace, V1NamespaceList, V1ObjectFieldSelector, V1ObjectMeta, \
+    V1PodSpec, V1PodTemplateSpec, V1Scale, V1ScaleSpec, V1Status, V1Volume, V1VolumeMount
 from kubernetes.client.rest import ApiException
 from kubernetes.config import ConfigException
 
@@ -101,6 +101,24 @@ class KubernetesProvider(Provider):
 
     def _create_deployment_definition(self, definition: InstanceDefinition, replicas=0) -> V1Deployment:
         image = self._extract_image(definition.image)
+
+        try:  # remove BDZ_CONSUL_DSN set by WSP manager
+            del definition.environment['BDZ_CONSUL_DSN']
+        except KeyError:
+            pass
+        # define Kubernetes-specific environment injection and calculated "on-host" consul address
+        special_env_injections = [
+            V1EnvVar(name='BDZ_NODE_IP', value_from=V1EnvVarSource(
+                field_ref=V1ObjectFieldSelector(field_path='status.hostIP')
+            )),
+            V1EnvVar(name='BDZ_POD_IP', value_from=V1EnvVarSource(
+                field_ref=V1ObjectFieldSelector(field_path='status.podIP')
+            )),
+            # special inject of consul address
+            # todo: make it configurable (choose between cluster and single-node installations)
+            V1EnvVar(name='BDZ_CONSUL_DSN', value='http://$(BDZ_NODE_IP):8500')
+        ]
+
         return V1Deployment(
             api_version="apps/v1",
             kind="Deployment",
@@ -142,7 +160,7 @@ class KubernetesProvider(Provider):
                             image=image,
                             termination_message_policy='FallbackToLogsOnError',
                             env=[V1EnvVar(name=env_key, value=env_val)
-                                 for env_key, env_val in definition.environment.items()],
+                                 for env_key, env_val in definition.environment.items()] + special_env_injections,
                             volume_mounts=[V1VolumeMount(
                                 name=VOL_NAME_TPL % definition.uid,
                                 mount_path=mount,
