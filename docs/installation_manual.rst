@@ -179,12 +179,14 @@ Also you need to setup shared storage node(s), to do so, apply next playbook:
 .. code-block:: bash
 
     cd ./ansible
+
+    ansible-galaxy install geerlingguy.nfs
     ansible-playbook -i inventory.ini ./rancher-nfs.ans.yml
 
 Outcome:
     - you have nodes software set up
     - rancher server software is running on the `control` node
-    - you can access it via https://rancher-server:8443
+    - you can access it via https://<rancher-server-ip-addr>:8443
 
 Setup Rancher
 ~~~~~~~~~~~~~
@@ -222,38 +224,65 @@ Prerequisites:
     - you have running Racher and Racher UI ready
     - you have nodes set up and ready
     - you have infrastructure provider ready (openstack or similar, supported by Rancher)
+    - OpenStack API is reachable from all nodes
 
-Follow `this guide`__ to create a cluster and register your nodes.
+#. Go to Rancher UI (`https://<rancher-server-ip-addr>:8443`)
+#. From the **Clusters** page, click **Add Cluster**.
+#. Choose **Custom**.
+#. Enter a **Cluster Name**.
+#. Edit the **Cluster Options**, switch to **Edit as YAML** view,
+   and paste the contents of `rancher/rancher-cloud.conf.yaml` instead of
+   text contained there. Make sure to alter settings, credentials and
+   URL for OpenStack API under `cloud_provider.openstackCloudProvider.**`
+   to your installation details.
 
-__ https://rancher.com/docs/rancher/v2.x/en/quick-start-guide/deployment/quickstart-manual-setup/#4-create-the-cluster
+   .. note::
+     More info on options represented and how to setup them you can find in
+     `Rancher/RKE Documentation`__.
 
-While editing the cluster options, switch to "Edit as YAML" view,
-and paste the contents of `rancher/rancher-cloud.conf.yaml` instead of
-text contained where.
+   __ https://rancher.com/docs/rke/v0.1.x/en/config-options/cloud-providers/openstack/
 
-Make sure to alter settings, credentials and URL for OpenStack API under
-`cloud_provider.openstackCloudProvider.**` to your installation details.
+   Afterwards, switch back to form with **Edit as Form**
+   button, and then select **Kubernetes version** = `1.11.x...`
+   (some flavor of 1.11)
 
-More info on options represented and how to setup them you can find in
-`Rancher/RKE Documentation`__.
+#. Click **Next**.
+#. From **Node Role**, select all the roles:
+   **etcd**, **Control**, and **Worker**.
+#. **Optional**: Rancher auto-detects the IP addresses used
+   for Rancher communication and cluster communication.
+   You can override these using `Public Address` and `Internal Address`
+   in the **Node Address** section.
+#. Skip the **Labels** stuff. It’s not important for now.
+#. Copy the command displayed on screen to your clipboard.
+#. Log in to your Linux host(s) using your preferred shell,
+   such as PuTTy or a remote Terminal connection.
+   Run the command copied to your clipboard.
 
-__ https://rancher.com/docs/rke/v0.1.x/en/config-options/cloud-providers/openstack/
+   **OR**
 
+   You can use following command to quickly launch node registration
+   process on all/selected nodes:
 
-You can use following command to quickly launch node registration
-process on all/selected nodes:
+   .. code-block:: bash
 
-.. code-block:: bash
-
-    ansible rancher-slaves \
+      ansible rancher-slaves \
             -i inventory.ini \
             -m shell -b \
             -a '<command you copied from Rancher UI>'
 
-.. note::
-    Make sure you register either 1 or 3 nodes with control-plane roles
-    ("etcd" and "control-plane") and all or rest of them as "worker"
+   .. note::
+      Make sure you register either 1 or 3 nodes with control-plane roles
+      (both **etcd** and **control-plane**/**Control**) and
+      all or rest of them as **worker**
 
+
+#. When you finish running the command on your Linux host(s), click **Done**.
+
+.. note::
+    Up-to-date official manual on that part could be located `here`__
+
+__ https://rancher.com/docs/rancher/v2.x/en/quick-start-guide/deployment/quickstart-manual-setup/#4-create-the-cluster
 
 .. note::
     You can use other options provided by Rancher to setup Kubernetes Cluster,
@@ -270,9 +299,9 @@ process on all/selected nodes:
 
 __ https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes
 
-Once you have done with that - wait for cluster to become available
+Once you have done with that - wait for cluster to become **Available**
 in Rancher UI (you will see its status either on main page or looking
-at "Nodes" tab inside created cluster entry).
+at **Nodes** tab inside created cluster entry).
 
 Outcome:
     - you have Kubernetes cluster ready and running
