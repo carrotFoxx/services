@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Buldozer Services 0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-17 17:53+0300\n"
+"POT-Creation-Date: 2018-12-27 18:30+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,33 +18,38 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
 
-#: ../../index.rst:2
-msgid ""
-"sphinx-quickstart on Wed Mar 14 11:04:41 2018. You can adapt this file "
-"completely to your liking, but it should at least contain the root "
-"`toctree` directive."
-msgstr ""
-
 #: ../../index.rst:7
 msgid "Welcome to Buldozer Platform's documentation!"
 msgstr ""
 
-#: ../../index.rst:18
-msgid "Indices and tables"
+#: ../../index.rst:9
+msgid "Contents:"
 msgstr ""
 
 #: ../../index.rst:20
-msgid ":ref:`genindex`"
-msgstr ""
-
-#: ../../index.rst:21
-msgid ":ref:`modindex`"
+msgid "Indices and tables"
 msgstr ""
 
 #: ../../index.rst:22
+msgid ":ref:`genindex`"
+msgstr ""
+
+#: ../../index.rst:23
+msgid ":ref:`modindex`"
+msgstr ""
+
+#: ../../index.rst:24
 msgid ":ref:`search`"
 msgstr ""
 
 #~ msgid "Contents:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "sphinx-quickstart on Wed Mar 14 "
+#~ "11:04:41 2018. You can adapt this "
+#~ "file completely to your liking, but "
+#~ "it should at least contain the "
+#~ "root `toctree` directive."
 #~ msgstr ""
 

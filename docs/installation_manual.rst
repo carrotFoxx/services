@@ -168,10 +168,10 @@ and wait for it to finish.
     setup it and lookup options for `ansible-playbook` command required
     to make it work.
 
-    Also take a look at this article_, explaining how to setup ansible
+    Also take a look at this article__, explaining how to setup ansible
     to access nodes through jump host or bastion
 
-.. _article: https://blog.scottlowe.org/2015/12/24/running-ansible-through-ssh-bastion-host/
+__ https://blog.scottlowe.org/2015/12/24/running-ansible-through-ssh-bastion-host/
 .. _docs.ansible.com: https://docs.ansible.com
 
 Also you need to setup shared storage node(s), to do so, apply next playbook:
@@ -240,13 +240,14 @@ Prerequisites:
       to your installation details.
 
       Pay special attention to:
+
       - `cloud_provider.openstackCloudProvider.tenant-id`
         (project id in OpenStack)
       - `cloud_provider.openstackCloudProvider.load_balancer.subnet-id`
         (network id there your hosts are located)
       - `cloud_provider.openstackCloudProvider.route.router-id`
         (router id - primary router to which existing and new instances
-         are/should be attached)
+        are/should be attached)
 
    .. note::
       More info on options represented and how to setup them you can find in
