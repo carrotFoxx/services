@@ -232,13 +232,25 @@ Prerequisites:
 #. Enter a **Cluster Name**.
 #. Edit the **Cluster Options**, switch to **Edit as YAML** view,
    and paste the contents of `rancher/rancher-cloud.conf.yaml` instead of
-   text contained there. Make sure to alter settings, credentials and
-   URL for OpenStack API under `cloud_provider.openstackCloudProvider.**`
-   to your installation details.
+   text contained there.
+
+   .. warning::
+      Make sure to alter settings, credentials and
+      URL for OpenStack API under `cloud_provider.openstackCloudProvider.**`
+      to your installation details.
+
+      Pay special attention to:
+      - `cloud_provider.openstackCloudProvider.tenant-id`
+        (project id in OpenStack)
+      - `cloud_provider.openstackCloudProvider.load_balancer.subnet-id`
+        (network id there your hosts are located)
+      - `cloud_provider.openstackCloudProvider.route.router-id`
+        (router id - primary router to which existing and new instances
+         are/should be attached)
 
    .. note::
-     More info on options represented and how to setup them you can find in
-     `Rancher/RKE Documentation`__.
+      More info on options represented and how to setup them you can find in
+      `Rancher/RKE Documentation`__.
 
    __ https://rancher.com/docs/rke/v0.1.x/en/config-options/cloud-providers/openstack/
 
@@ -378,7 +390,13 @@ Run following command to setup Tiller in your cluster:
 
 .. code-block:: bash
 
-    helm init
+    kubectl create serviceaccount tiller -n kube-system
+
+    kubectl create clusterrolebinding tiller \
+        --clusterrole=cluster-admin \
+        --serviceaccount=kube-system:tiller
+
+    helm init --service-account tiller
 
 Outcome:
     - Tiller installed in your cluster
