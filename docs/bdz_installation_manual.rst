@@ -280,53 +280,57 @@ Kubernetes layer, which should be referenced in **buldozer helm values**.
 
   * - shared_fs.nfs_server
     - host IP or DNS name of NFS node
-
       should be accessible from all nodes in the cluster
 
   * - shared_fs.nfs_path
     - exported directory of NFS node
-
       should be r/w accessible for NFS client
 
   * - env-manager.environment.K8S_NFS_SHARE_SERVER
     - host IP or DNS name of NFS node
-
       should be accessible from all nodes
-
       in the cluster, must match `shared_fs.nfs_server`
 
   * - env-manager.environment.K8S_NFS_SHARE_PATH
     - exported directory of NFS node
-
       should be r/w accessible for NFS client
-
       must match `shared_fs.nfs_path`
 
   * - environment.*
     - these variables are provided to all pods of Buldozer
-
       and hold common DSNs for related services
 
   * - environment.MONGODB_DSN
     - DSN of mongodb there services store their data
-
       (usually it is deployed in-cluster as mentioned above)
 
   * - environment.CONSUL_DSN
     - DSN of consul there workspaces store their runtime
       configuration and post their healthchecks to.
-
       (usually it is deployed in-cluster as mentioned above)
 
   * - environment.KAFKA_DSN
     - DSN of kafka installation which processes all
       event-streams between workspaces
-
       (usually it is deployed in-cluster as mentioned above)
 
   * - environment.SENTRY_DSN:
     - DSN for Sentry error reporting, optional.
-
       (Sentry could be installed in-cluster or elsewhere).
-
       use "legacy" DSN format here (see Sentry UI to retrieve it)
+
+
+GIS Services Installation
+=========================
+
+.. code-block:: bash
+
+    cd kubernetes/
+
+    helm install ./gis-addon/backend-layer
+
+    helm install ./gis-addon/data-manager
+
+.. note::
+    Make sure you reviewed values.yml and applied custom values
+    to adjust the installation to your cluster.
