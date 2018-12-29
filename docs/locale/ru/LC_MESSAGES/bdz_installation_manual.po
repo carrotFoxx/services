@@ -20,7 +20,7 @@ msgstr ""
 
 #: ../../bdz_installation_manual.rst:3
 msgid "Buldozer Installation Manual"
-msgstr ""
+msgstr "Руководство по установке Buldozer"
 
 #: ../../bdz_installation_manual.rst:9 ../../bdz_installation_manual.rst:85
 msgid "Prerequisites:"
