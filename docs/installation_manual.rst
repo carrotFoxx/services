@@ -319,43 +319,6 @@ at **Nodes** tab inside created cluster entry).
 Outcome:
     - you have Kubernetes cluster ready and running
 
-Segmenting your cluster
------------------------
-
-Prerequisites:
-    - you have Kubernetes cluster ready and running
-    - you have kubectl tool configured to access your cluster
-
-In order to distribute load over the cluster and prevent conflicting
-interest over resources certain components have additional scheduling
-requirements which are based on labels of nodes and pods inside Kubernetes.
-
-To get it working you should label some of the nodes according to
-following table:
-
-===================   ===========   ======
-label                 value         amount
-===================   ===========   ======
-ru.crplab/dedicated   persistence   1
-ru.crplab/dedicated   processing    1+
-===================   ===========   ======
-
-To list all nodes registered in Kubernetes:
-
-.. code-block:: bash
-
-    kubectl get nodes
-
-
-To label node use following command:
-
-.. code-block:: bash
-
-    kubectl label nodes <node-name> <label-name>=<label-value>
-
-Outcome:
-    - you have nodes labeled in Kubernetes according to recommendations
-
 
 Setup tooling
 -------------
@@ -403,4 +366,60 @@ Outcome:
     - Tiller installed in your cluster
     - helm is ready to install charts to your cluster
 
+Segmenting your cluster
+-----------------------
 
+Prerequisites:
+    - you have Kubernetes cluster ready and running
+    - you have kubectl tool configured to access your cluster
+
+In order to distribute load over the cluster and prevent conflicting
+interest over resources certain components have additional scheduling
+requirements which are based on labels of nodes and pods inside Kubernetes.
+
+To get it working you should label some of the nodes according to
+following table:
+
+===================   ===========   ======
+label                 value         amount
+===================   ===========   ======
+ru.crplab/dedicated   persistence   1
+ru.crplab/dedicated   processing    1+
+===================   ===========   ======
+
+To list all nodes registered in Kubernetes:
+
+.. code-block:: bash
+
+    kubectl get nodes
+
+
+To label node use following command:
+
+.. code-block:: bash
+
+    kubectl label nodes <node-name> <label-name>=<label-value>
+
+Outcome:
+    - you have nodes labeled in Kubernetes according to recommendations
+
+Enabling automatic dynamic PV provisioning
+-------------------------------------------
+
+Prerequisites:
+    - you have Kubernetes cluster ready and running
+    - you have kubectl tool configured to access your cluster
+
+In order to make things work for services which store state in a
+persistence manner in Kubernetes, you need to enable dynamic PV
+(Persistent Volumes) provisioning on the platform you deployed
+Kubernetes on. We use OpenStack, so following instructions are
+to enable dynamic PV provisioning using OpenStack Cinder.
+
+.. code-block:: bash
+
+    kubectl create -f kubernetes-setup/openstack.storageclass.yaml
+
+Outcome:
+    - you have dynamic PV provisioning baked by cinder volumes enabled
+      for your Kubernetes cluster
