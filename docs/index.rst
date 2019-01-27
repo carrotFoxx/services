@@ -16,6 +16,7 @@ Welcome to Buldozer Platform's documentation!
     installation_manual
     bdz_installation_manual
     consul
+    supervisor_manual
 
 Indices and tables
 ==================
