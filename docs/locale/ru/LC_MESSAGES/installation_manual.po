@@ -1,0 +1,767 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2018, CRPLab LLC
+# This file is distributed under the same license as the Buldozer Services
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Buldozer Services 0.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-12-27 20:50+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: ../../installation_manual.rst:3
+msgid "Infrastructure Installation Manual"
+msgstr "Руководство по настройке инфраструктуры"
+
+#: ../../installation_manual.rst:8 ../../installation_manual.rst:149
+#: ../../installation_manual.rst:196 ../../installation_manual.rst:227
+#: ../../installation_manual.rst:327 ../../installation_manual.rst:368
+#: ../../installation_manual.rst:388
+msgid "Prerequisites:"
+msgstr "Предусловия:"
+
+#: ../../installation_manual.rst:6
+msgid "you have git and ssh installed"
+msgstr "git и ssh установлены"
+
+#: ../../installation_manual.rst:7
+msgid "download the infrastructure repository from git"
+msgstr ""
+"репозиторий с исходными кодами и конфигурациями инфарструктуры скачан из "
+"git"
+
+#: ../../installation_manual.rst:8
+msgid "you have OpenStack cluster up and running"
+msgstr "кластер OpenStack готов к работе"
+
+#: ../../installation_manual.rst:11
+msgid ""
+"All commands described in this manual are expected to be run stating at "
+"the root of infrastructure repository."
+msgstr ""
+"Все команды описаннные в данном мануале предпологается выполнять в "
+"корневой папке репозитория"
+
+#: ../../installation_manual.rst:16
+msgid "Hardware/Platform Requirements"
+msgstr "Требования к оборудованию"
+
+#: ../../installation_manual.rst:18
+msgid "Requirements for a hardware platform."
+msgstr "Требования к оборудованию"
+
+#: ../../installation_manual.rst:21
+msgid "Minimal (Single Node)"
+msgstr "Минимальные (Однонодовая исталяция)"
+
+#: ../../installation_manual.rst:23
+msgid "8 logical CPUs"
+msgstr ""
+
+#: ../../installation_manual.rst:24
+msgid "24Gb RAM"
+msgstr ""
+
+#: ../../installation_manual.rst:25
+msgid "100Gb Storage"
+msgstr ""
+
+#: ../../installation_manual.rst:27
+msgid "This will be sufficient to get system up and running to poke around."
+msgstr "Этого достаточно для запуска системы \"для экспериментов\""
+
+#: ../../installation_manual.rst:30
+msgid "Optimal (Single or Multi Node)"
+msgstr "Оптимальные"
+
+#: ../../installation_manual.rst:32
+msgid "48 logical CPUs"
+msgstr ""
+
+#: ../../installation_manual.rst:33
+msgid "64 Gb RAM"
+msgstr ""
+
+#: ../../installation_manual.rst:34
+msgid "500 Gb Storage (HDD will do)"
+msgstr ""
+
+#: ../../installation_manual.rst:35
+msgid "200-500 Gb Fast Storage (SDD or comparable)"
+msgstr ""
+
+#: ../../installation_manual.rst:38
+msgid "Logical Layout Requirements"
+msgstr "Требования к логическим ресурсам"
+
+#: ../../installation_manual.rst:40
+msgid ""
+"Above mentioned resources should be presented to system in following way "
+"(multi-node installation)"
+msgstr ""
+"Физические ресурсы описаные выше должны быть представлены системе "
+"следующим образов (много-нодовая инсталяция)"
+
+#: ../../installation_manual.rst:43
+msgid "Table:"
+msgstr ""
+
+#: ../../installation_manual.rst:46
+msgid "Node Type"
+msgstr "Тип ноды"
+
+#: ../../installation_manual.rst:46
+msgid "LCPUs"
+msgstr "Логических CPU"
+
+#: ../../installation_manual.rst:46
+msgid "RAM(Gb)"
+msgstr ""
+
+#: ../../installation_manual.rst:46
+msgid "Storage(Gb)"
+msgstr ""
+
+#: ../../installation_manual.rst:48
+msgid "control"
+msgstr ""
+
+#: ../../installation_manual.rst:48 ../../installation_manual.rst:50
+msgid "4"
+msgstr ""
+
+#: ../../installation_manual.rst:48 ../../installation_manual.rst:49
+#: ../../installation_manual.rst:50
+msgid "8"
+msgstr ""
+
+#: ../../installation_manual.rst:48
+msgid "50 HDD"
+msgstr ""
+
+#: ../../installation_manual.rst:49
+msgid "worker"
+msgstr ""
+
+#: ../../installation_manual.rst:49
+msgid "16"
+msgstr ""
+
+#: ../../installation_manual.rst:49
+msgid "100 HDD"
+msgstr ""
+
+#: ../../installation_manual.rst:50
+msgid "storage"
+msgstr ""
+
+#: ../../installation_manual.rst:50
+msgid "200 HDD, 200 SSD"
+msgstr ""
+
+#: ../../installation_manual.rst:54
+msgid "Node Software Requirements"
+msgstr ""
+
+#: ../../installation_manual.rst:56
+msgid "OS: Ubuntu 16.04 LTS"
+msgstr ""
+
+#: ../../installation_manual.rst:58
+msgid "No other basic requirements enforced."
+msgstr "Иных базовых требований не предъявляется"
+
+#: ../../installation_manual.rst:61
+msgid "Node setup"
+msgstr "Подготовка нод к работе"
+
+#: ../../installation_manual.rst:64
+msgid "Your machine setup"
+msgstr "Подготовка к работе исходной машины"
+
+#: ../../installation_manual.rst:66
+msgid ""
+"We use `Ansible` to manage node software, recipes (playbooks) are "
+"contained in the repo."
+msgstr ""
+"Мы используем `Ansible` для менеджмента ПО на нодах, все рецепты "
+"(playbooks) находятся в инфраструктурном репозитории"
+
+#: ../../installation_manual.rst:69
+msgid ""
+"To setup it on your machine - follow it's installation instructions, "
+"which could be found at `docs.ansible.com`__"
+msgstr ""
+"Чтобы исталировать его на вашей машине - обратитесь к руководству по "
+"инсталяции на сайте `docs.ansible.com`__"
+
+#: ../../installation_manual.rst:74
+msgid ""
+"We use kubectl and helm to control deployment of services and supporting "
+"software."
+msgstr "Мы используем kubectl и helm для установки ПО в Kubernetes"
+
+#: ../../installation_manual.rst:77
+msgid "To setup kubectl - follow installation guide from `kubernetes.io`__"
+msgstr ""
+"Для установки kubectl - обратитесь к руководству по инсталяции на "
+"`kubernetes.io`__"
+
+#: ../../installation_manual.rst:81
+msgid "To setup helm - follow installation guide from `docs.helm.sh`__"
+msgstr ""
+"Для установки helm - обратитесь к руководству по инсталяции на "
+"`docs.helm.sh`__"
+
+#: ../../installation_manual.rst:86
+msgid "Setup nodes"
+msgstr "Подготовка нод кластера"
+
+#: ../../installation_manual.rst:89
+msgid "Preparing your machine"
+msgstr "Подготовка на исходной машине"
+
+#: ../../installation_manual.rst:91
+msgid ""
+"To begin, you need to enlist all nodes provisioned in the ansible "
+"inventory file."
+msgstr ""
+"Чтобы начать вам необходимо составить инвентарь ваших нод в файле для "
+"`ansible`."
+
+#: ../../installation_manual.rst:94
+msgid ""
+"Refer to `inventory documentation at docs.ansible.com`__ for advanced "
+"usage."
+msgstr "Обратитесь к `документации инвентаря`__ для продвинутого использования."
+
+#: ../../installation_manual.rst:99
+msgid "Below is an example inventory configuration for setup of"
+msgstr "Ниже - пример файла инвентаря для:"
+
+#: ../../installation_manual.rst:101
+msgid "1 control server"
+msgstr ""
+
+#: ../../installation_manual.rst:102
+msgid "4 worker nodes"
+msgstr ""
+
+#: ../../installation_manual.rst:103
+msgid "1 storage node"
+msgstr ""
+
+#: ../../installation_manual.rst:105
+msgid ""
+"You should enlist nodes with aliases as in the example to make sure that "
+"all works as expected"
+msgstr ""
+"Вам следует использовать алиасы нод как в примере, чтобы все работало как"
+" ожидается."
+
+#: ../../installation_manual.rst:132
+msgid ""
+"Make sure all nodes are reachable from your machine use key-based ssh "
+"auth, and are registered in your machines `known_hosts`."
+msgstr ""
+"Убедитесь в том что все ноды доступны с исходной машины используя "
+"ключевую (без-парольную) авторизацию SSH, и зарегистрированы на исходной "
+"машине в `~/.ssh/known_hosts`."
+
+#: ../../installation_manual.rst:136
+msgid "You can make sure of it by simply logging in on each of them via:"
+msgstr "Вы можете убедится в этом просто зайдя на каждую машину вручную:"
+
+#: ../../installation_manual.rst:142
+msgid "and accepting node's key as known."
+msgstr "и приняв ключ ноды как известный."
+
+#: ../../installation_manual.rst:145
+msgid "Setting up nodes and deploying Rancher"
+msgstr "Установка необходимого ПО и Rancher на ноды"
+
+#: ../../installation_manual.rst:148
+msgid "you have ansible, kubectl and helm installed"
+msgstr "ansible, kubectl и helm установлены"
+
+#: ../../installation_manual.rst:149
+msgid "you have inventory.ini file with nodes you set up"
+msgstr "у вас есть inventory.ini со всеми вашими нодами"
+
+#: ../../installation_manual.rst:151
+msgid ""
+"To setup required software on the nodes, make sure all of them have "
+"access to the internet and then execute following from your machine:"
+msgstr ""
+"Для установки всего необходимого ПО на ноды, убедитесь что все они имеют "
+"доступ в интернет и тогда - выполните команды ниже на исходной машине:"
+
+#: ../../installation_manual.rst:160
+msgid "and wait for it to finish."
+msgstr "подождите пока все закончится."
+
+#: ../../installation_manual.rst:163
+msgid "if something failed, run it again - it is idempotent"
+msgstr ""
+"если чтото упало, попробуйте запустить снова - процесс инсталяции "
+"идемпотентный"
+
+#: ../../installation_manual.rst:166
+msgid ""
+"if you use non-default private key or non-direct network access to nodes,"
+" refer to `docs.ansible.com`_ to setup it and lookup options for "
+"`ansible-playbook` command required to make it work."
+msgstr ""
+"Если вы используете не стандартный ключ или ноды не доступны напрямую с "
+"вашей исходной машины, обратитесь к `docs.ansible.com`_ чтобы настроить "
+"ansible для работы в вашей конфигурации."
+
+#: ../../installation_manual.rst:171
+msgid ""
+"Also take a look at this article__, explaining how to setup ansible to "
+"access nodes through jump host or bastion"
+msgstr "Так же посмотрите эту статью__, объясняющую как настроить ansible для работы через бастион"
+
+#: ../../installation_manual.rst:177
+msgid ""
+"Also you need to setup shared storage node(s), to do so, apply next "
+"playbook:"
+msgstr ""
+"Еще необходимо настроить разделяемую ноду хранилище, чтобы сделать это - примените следующий рецепт:"
+
+#: ../../installation_manual.rst:189 ../../installation_manual.rst:218
+#: ../../installation_manual.rst:320 ../../installation_manual.rst:358
+#: ../../installation_manual.rst:405
+msgid "Outcome:"
+msgstr "Результат:"
+
+#: ../../installation_manual.rst:187
+msgid "you have nodes software set up"
+msgstr "вы установили на ноды все нужное ПО"
+
+#: ../../installation_manual.rst:188
+msgid "rancher server software is running on the `control` node"
+msgstr "ПО Rancher Server установлено и работает на `control` ноде"
+
+#: ../../installation_manual.rst:189
+msgid "you can access it via https://<rancher-server-ip-addr>:8443"
+msgstr "вы можете получить к нему доступ `через https://<rancher-server-ip-addr>:8443`"
+
+#: ../../installation_manual.rst:192
+msgid "Setup Rancher"
+msgstr "Настройка Rancher"
+
+#: ../../installation_manual.rst:195
+msgid "you have nodes running and set up"
+msgstr "ваши ноды подготовлены к работе"
+
+#: ../../installation_manual.rst:196
+msgid "rancher server software is running and accessible"
+msgstr "ПО Rancher установлено и доступно"
+
+#: ../../installation_manual.rst:198
+msgid "Follow `this manual on rancher.com`__ to log in and setup Rancher."
+msgstr "Следуйте `руководству на rancher.com`__ чтобы войти и инициализировать Rancher"
+
+#: ../../installation_manual.rst:200
+msgid "In short:"
+msgstr "Если коротко:"
+
+#: ../../installation_manual.rst:202
+msgid ""
+"Open a web browser and enter the IP address of rancher-server: `https"
+"://rancher-server:8443` (replace `rancher-server` with IP if needed)"
+msgstr ""
+"Откройте веб-браузер и наберите адрес по которому у вас доступно ПО Rancher: "
+"`https://rancher-server:8443` (замените rancher-server на IP если необходимо)"
+
+#: ../../installation_manual.rst:205
+msgid "When prompted, create a password for the default admin account."
+msgstr "Когда спросят, задайте пароль для записи администратора."
+
+#: ../../installation_manual.rst:207
+msgid ""
+"Set the Rancher server URL, the URL can either be an IP address or a host"
+" name. However, each node added to your cluster must be able to connect "
+"to this URL."
+msgstr ""
+"Сконфигурируйте URL сервера Rancher, этот URL может быть либо IP адресом либо DNS именем, "
+"но каждая нода кластера должна иметь возможность присоедениться по этому адресу."
+
+#: ../../installation_manual.rst:212
+msgid ""
+"If you use a hostname in the URL, this hostname must be resolvable by DNS"
+" on the nodes you want to add to you cluster."
+msgstr ""
+"Если вы используете имя хоста или DNS - имейте ввиду что оно должно быть разрешаемо (решения с /etc/hosts не достаточно!)"
+
+#: ../../installation_manual.rst:218
+msgid "you have Rancher UI fully operating"
+msgstr "вы инициализировали Rancher UI"
+
+#: ../../installation_manual.rst:221
+msgid "Setup Kubernetes cluster via Rancher"
+msgstr "Развертывание и настройка кластера Kubernetes через Rancher"
+
+#: ../../installation_manual.rst:224
+msgid "you have running Racher and Racher UI ready"
+msgstr "Rancher/UI настроены и готовы к работе"
+
+#: ../../installation_manual.rst:225
+msgid "you have nodes set up and ready"
+msgstr "ноды подготовлены к работе"
+
+#: ../../installation_manual.rst:226
+msgid ""
+"you have infrastructure provider ready (openstack or similar, supported "
+"by Rancher)"
+msgstr ""
+"провайдер инфраструктуры готов и настроен (openstack или другое решение, поддерживаемое Rancher)"
+
+#: ../../installation_manual.rst:227
+msgid "OpenStack API is reachable from all nodes"
+msgstr "API OpenStack доступно со всех машин кластера"
+
+#: ../../installation_manual.rst:229
+msgid "Go to Rancher UI (`https://<rancher-server-ip-addr>:8443`)"
+msgstr "Перейдите к Rancher UI (`https://<rancher-server-ip-addr>:8443`)"
+
+#: ../../installation_manual.rst:230
+msgid "From the **Clusters** page, click **Add Cluster**."
+msgstr "Со страницы **Clusters** выберите **Add Cluster**."
+
+#: ../../installation_manual.rst:231
+msgid "Choose **Custom**."
+msgstr "Выберите **Custom**."
+
+#: ../../installation_manual.rst:232
+msgid "Enter a **Cluster Name**."
+msgstr "Введите **Cluster Name**."
+
+#: ../../installation_manual.rst:233
+msgid ""
+"Edit the **Cluster Options**, switch to **Edit as YAML** view, and paste "
+"the contents of `rancher/rancher-cloud.conf.yaml` instead of text "
+"contained there."
+msgstr ""
+"Отредактируйте **Cluster Options**, переключитесь на **Edit as YAML** и вставте "
+"содержимое файла `rancher/rancher-cloud.conf.yaml` вместо имеющегося текста."
+
+#: ../../installation_manual.rst:238
+msgid ""
+"Make sure to alter settings, credentials and URL for OpenStack API under "
+"`cloud_provider.openstackCloudProvider.**` to your installation details."
+msgstr ""
+"Обязательно отредактируйте опции после вставки, дабы они соответсвовали настройкам вашего кластера "
+"особенно раздел `cloud_provider.openstackCloudProvider.**`"
+
+#: ../../installation_manual.rst:242
+msgid "Pay special attention to:"
+msgstr "Обратите особое внимание на:"
+
+#: ../../installation_manual.rst:244
+msgid ""
+"`cloud_provider.openstackCloudProvider.tenant-id` (project id in "
+"OpenStack)"
+msgstr ""
+
+#: ../../installation_manual.rst:246
+msgid ""
+"`cloud_provider.openstackCloudProvider.load_balancer.subnet-id` (network "
+"id there your hosts are located)"
+msgstr ""
+
+#: ../../installation_manual.rst:248
+msgid ""
+"`cloud_provider.openstackCloudProvider.route.router-id` (router id - "
+"primary router to which existing and new instances are/should be "
+"attached)"
+msgstr ""
+
+#: ../../installation_manual.rst:253
+msgid ""
+"More info on options represented and how to setup them you can find in "
+"`Rancher/RKE Documentation`__."
+msgstr ""
+"Больше информации об опциях конфигурации и о том как их настроить вы можете найти "
+"в документации `Rancher/RKE`__."
+
+#: ../../installation_manual.rst:258
+msgid ""
+"Afterwards, switch back to form with **Edit as Form** button, and then "
+"select **Kubernetes version** = `1.11.x...` (some flavor of 1.11)"
+msgstr ""
+"Затем, переключитесь обратно, нажав **Edit as Form**, и выберите версию Kubernetes "
+"1.11.хх (вариат предложеный селектором)"
+
+#: ../../installation_manual.rst:262
+msgid "Click **Next**."
+msgstr "Нажмите **Next**"
+
+#: ../../installation_manual.rst:263
+msgid ""
+"From **Node Role**, select all the roles: **etcd**, **Control**, and "
+"**Worker**."
+msgstr ""
+"Из **Node Role** выберите все роли: **etcd**, **Control**, и **Worker**."
+
+#: ../../installation_manual.rst:265
+msgid ""
+"**Optional**: Rancher auto-detects the IP addresses used for Rancher "
+"communication and cluster communication. You can override these using "
+"`Public Address` and `Internal Address` in the **Node Address** section."
+msgstr ""
+"**Опционально**: Rancher автоматически определяет IP адреса используемые для коммуникации с Rancher "
+"и для коммуникации внутри кластера Kubernetes, вы можете переопределить их используя поля "
+"`Public Address` и `Internal Address` в секции **Node Address**."
+
+#: ../../installation_manual.rst:269
+msgid "Skip the **Labels** stuff. It’s not important for now."
+msgstr "Пропустите секцию **Labels**. Она сейчас не понадобится."
+
+#: ../../installation_manual.rst:270
+msgid "Copy the command displayed on screen to your clipboard."
+msgstr "Скопируйте команду отображенную на экране."
+
+#: ../../installation_manual.rst:271
+msgid ""
+"Log in to your Linux host(s) using your preferred shell, such as PuTTy or"
+" a remote Terminal connection. Run the command copied to your clipboard."
+msgstr ""
+"Залогинтесь на вашу Linux ноду(ы) через SSH и выполните скопированную команду там."
+
+#: ../../installation_manual.rst:275
+msgid "**OR**"
+msgstr "**ИЛИ**"
+
+#: ../../installation_manual.rst:277
+msgid ""
+"You can use following command to quickly launch node registration process"
+" on all/selected nodes:"
+msgstr ""
+"Вы можете использовать следующую команду ansible для выполнения "
+"скопированной команды Rancher на всех/выбранных нодах:"
+
+#: ../../installation_manual.rst:288
+msgid ""
+"Make sure you register either 1 or 3 nodes with control-plane roles (both"
+" **etcd** and **control-plane**/**Control**) and all or rest of them as "
+"**worker**"
+msgstr ""
+"Убедитесь что зарегистрировали либо 1 либо 3 ноды с ролями управления "
+"(и **etcd** и **control-plane**/**Control**) "
+"и все или оставшиеся ноды зарегистрированы с ролью **Worker**"
+
+#: ../../installation_manual.rst:293
+msgid "When you finish running the command on your Linux host(s), click **Done**."
+msgstr "После того как вы запустили команду на всех нужных ностах, нажмите **Done**."
+
+#: ../../installation_manual.rst:296
+msgid "Up-to-date official manual on that part could be located `here`__"
+msgstr "Официальное руководство по этой части можно увидеть здесь__."
+
+#: ../../installation_manual.rst:301
+msgid ""
+"You can use other options provided by Rancher to setup Kubernetes "
+"Cluster, or even dont use Rancher at all, provision Kubernetes on bare-"
+"metal or using services like Istio, AWS EKS or Microsoft/Asure AKS."
+msgstr ""
+"Вы можете использовать иные опции поддерживаемые Rancher чтобы развернуть Kubernetes, "
+"или же не использовать Rancher вовсе, развернуть Kubernetes вручную или используя "
+"других провайдеров - таких как Istio, AWS EKS или Microsoft/Asure AKS."
+
+#: ../../installation_manual.rst:305
+msgid "Rancher is not required for Buldozer to operate."
+msgstr ""
+"Rancher не является необходимым компонентом для функционирования Buldozer."
+
+#: ../../installation_manual.rst:307
+msgid ""
+"However make sure Kubernetes has access to dynamically provisioned "
+"volumes (in case of openstack they are baked by openstack-cinder, other "
+"options could be: glusterfs, ceph, etc.. for full list of options head to"
+" `kubernetes documentation`__ and look for drivers supporting \"dynamic "
+"provisioning\")"
+msgstr ""
+"Тем не менее имейте ввиду что Kubernetes должен иметь возможность "
+"динамически аллоцировать простраства хранения (в случае с openstack "
+"это обеспечивается через openstack-cinder, другими вариантами могут быть:"
+"glusterfs, ceph и прочие системы хранения, полный список поддерживаемых вариантов "
+"вы найдете в `документации Kubernetes`__, из всех представленных подходят те что "
+"поддерживают \"динамическое аллоцирование\")"
+
+#: ../../installation_manual.rst:315
+msgid ""
+"Once you have done with that - wait for cluster to become **Available** "
+"in Rancher UI (you will see its status either on main page or looking at "
+"**Nodes** tab inside created cluster entry)."
+msgstr ""
+"После, дождитесь пока статус кластера станет **Active/Available** в Rancher UI"
+
+#: ../../installation_manual.rst:320 ../../installation_manual.rst:326
+msgid "you have Kubernetes cluster ready and running"
+msgstr "Kubernetes готов к работе"
+
+#: ../../installation_manual.rst:323
+msgid "Segmenting your cluster"
+msgstr "Сегментация кластера"
+
+#: ../../installation_manual.rst:327
+msgid "you have kubectl tool configured to access your cluster"
+msgstr "kubectl установлен и настроен на доступ к вашенму кластеру Kubernetes"
+
+#: ../../installation_manual.rst:329
+msgid ""
+"In order to distribute load over the cluster and prevent conflicting "
+"interest over resources certain components have additional scheduling "
+"requirements which are based on labels of nodes and pods inside "
+"Kubernetes."
+msgstr ""
+"Чтобы более точно распределять нагрузку по кластеру и предотврать гонку за ресурсами внутри кластера, "
+"некоторые компоненты используют дополнительные правила распределения которые базируются "
+"на том как помечены ноды кластера"
+
+#: ../../installation_manual.rst:333
+msgid ""
+"To get it working you should label some of the nodes according to "
+"following table:"
+msgstr ""
+"Вам следует пометить ноды кластера соответственно следующей таблице:"
+
+#: ../../installation_manual.rst:337
+msgid "label"
+msgstr "метка"
+
+#: ../../installation_manual.rst:337
+msgid "value"
+msgstr "значение"
+
+#: ../../installation_manual.rst:337
+msgid "amount"
+msgstr "колличество нод"
+
+#: ../../installation_manual.rst:339 ../../installation_manual.rst:340
+msgid "ru.crplab/dedicated"
+msgstr ""
+
+#: ../../installation_manual.rst:339
+msgid "persistence"
+msgstr ""
+
+#: ../../installation_manual.rst:339
+msgid "1"
+msgstr ""
+
+#: ../../installation_manual.rst:340
+msgid "processing"
+msgstr ""
+
+#: ../../installation_manual.rst:340
+msgid "1+"
+msgstr ""
+
+#: ../../installation_manual.rst:343
+msgid "To list all nodes registered in Kubernetes:"
+msgstr "Чтобы вывести все ноды известные Kubernetes:"
+
+#: ../../installation_manual.rst:350
+msgid "To label node use following command:"
+msgstr "Чтобы отметить ноду, используйте следующую команду:"
+
+#: ../../installation_manual.rst:357
+msgid "you have nodes labeled in Kubernetes according to recommendations"
+msgstr "ноды отмечены соответствующим образом."
+
+#: ../../installation_manual.rst:361
+msgid "Setup tooling"
+msgstr "Настройка утилит"
+
+#: ../../installation_manual.rst:364
+msgid "kubectl"
+msgstr ""
+
+#: ../../installation_manual.rst:367 ../../installation_manual.rst:386
+msgid "Kubernetes cluster up and running"
+msgstr "Kubernetes готов к работе"
+
+#: ../../installation_manual.rst:368
+msgid "Rancher/UI up and running"
+msgstr "Rancher/UI готов к работе"
+
+#: ../../installation_manual.rst:370
+msgid ""
+"Get configuration for kubectl from Rancher UI by heading to cluster you "
+"have created in Rancher UI and selecting:"
+msgstr ""
+"Чтобы получить конфигурацию kubectl из Rancher UI перейдите к вашему кластеру и выберите:"
+
+#: ../../installation_manual.rst:373
+msgid "> [You cluster] > [Kubeconfig File]"
+msgstr ""
+
+#: ../../installation_manual.rst:375
+msgid ""
+"then follow instructions on the UI and put contents presented to "
+"`~/.kube/config`"
+msgstr ""
+"Следуйте инструкции в Rancher UI и поместите содержимое конфигурации в файл `~/.kube/config` на вашей(исходной) машине"
+
+#: ../../installation_manual.rst:378
+msgid ""
+"If you are not using Rancher/UI, you have to obtain kube-config manually,"
+" and if you setup Kubernetes by other means, it is assumable that you now"
+" how to do this at that point"
+msgstr ""
+"Если вы не используете Rancher/UI вы должны написать/раздобыть конфигурацию kubectl самостоятельно, "
+"и раз уж вы дошли до этого момента - для вас это не должно быть сложно."
+
+#: ../../installation_manual.rst:383
+msgid "Helm and Tiller"
+msgstr "Helm и Tiller"
+
+#: ../../installation_manual.rst:387
+msgid "kubectl configured to access your cluster"
+msgstr "kubectl настроен на работу с вашим кластером Kubernetes"
+
+#: ../../installation_manual.rst:388
+msgid "helm installed on your machine"
+msgstr "helm установлен на вашей машине"
+
+#: ../../installation_manual.rst:390
+msgid "Run following command to setup Tiller in your cluster:"
+msgstr "Выполните следующие команды чтобы установить Tiller в вашем кластере:"
+
+#: ../../installation_manual.rst:403
+msgid "Tiller installed in your cluster"
+msgstr "Tiller установлен в вашем кластере"
+
+#: ../../installation_manual.rst:404
+msgid "helm is ready to install charts to your cluster"
+msgstr "helm готов к работе и исталяции чартов в ваш кластер"
+
+#~ msgid ""
+#~ "Pay special attention to: - "
+#~ "`cloud_provider.openstackCloudProvider.tenant-id`"
+#~ msgstr ""
+
+#~ msgid "(project id in OpenStack)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "`cloud_provider.openstackCloudProvider.route.router-id` "
+#~ "(router id - primary router to "
+#~ "which existing and new instances"
+#~ msgstr ""
+
+#~ msgid "are/should be attached)"
+#~ msgstr ""
+

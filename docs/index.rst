@@ -11,10 +11,12 @@ Welcome to Buldozer Platform's documentation!
     :caption: Contents:
 
     arch
+    project_components
     quickstart_manual
-    consul
     installation_manual
     bdz_installation_manual
+    consul
+    supervisor_manual
 
 Indices and tables
 ==================

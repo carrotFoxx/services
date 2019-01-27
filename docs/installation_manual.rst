@@ -15,7 +15,7 @@ Prerequisites:
 Hardware/Platform Requirements
 ==============================
 
-requirements for a hardware platform
+Requirements for a hardware platform.
 
 Minimal (Single Node)
 ---------------------
@@ -24,7 +24,7 @@ Minimal (Single Node)
 - 24Gb RAM
 - 100Gb Storage
 
-this will be sufficient to get system up and running to poke around.
+This will be sufficient to get system up and running to poke around.
 
 Optimal (Single or Multi Node)
 ------------------------------
@@ -37,7 +37,7 @@ Optimal (Single or Multi Node)
 Logical Layout Requirements
 ===========================
 
-above mentioned resources should be presented to system in following
+Above mentioned resources should be presented to system in following
 way (multi-node installation)
 
 Table:
@@ -55,7 +55,7 @@ Node Software Requirements
 
 - OS: Ubuntu 16.04 LTS
 
-no other basic requirements enforced.
+No other basic requirements enforced.
 
 Node setup
 ==========
@@ -63,7 +63,7 @@ Node setup
 Your machine setup
 ------------------
 
-We use `ansible` to manage node software, recipes (playbooks)
+We use `Ansible` to manage node software, recipes (playbooks) are
 contained in the repo.
 
 To setup it on your machine - follow it's installation instructions,
@@ -168,10 +168,10 @@ and wait for it to finish.
     setup it and lookup options for `ansible-playbook` command required
     to make it work.
 
-    Also take a look at this article_, explaining how to setup ansible
+    Also take a look at this article__, explaining how to setup ansible
     to access nodes through jump host or bastion
 
-.. _article: https://blog.scottlowe.org/2015/12/24/running-ansible-through-ssh-bastion-host/
+__ https://blog.scottlowe.org/2015/12/24/running-ansible-through-ssh-bastion-host/
 .. _docs.ansible.com: https://docs.ansible.com
 
 Also you need to setup shared storage node(s), to do so, apply next playbook:
@@ -179,12 +179,14 @@ Also you need to setup shared storage node(s), to do so, apply next playbook:
 .. code-block:: bash
 
     cd ./ansible
+
+    ansible-galaxy install geerlingguy.nfs
     ansible-playbook -i inventory.ini ./rancher-nfs.ans.yml
 
 Outcome:
     - you have nodes software set up
     - rancher server software is running on the `control` node
-    - you can access it via https://rancher-server:8443
+    - you can access it via https://<rancher-server-ip-addr>:8443
 
 Setup Rancher
 ~~~~~~~~~~~~~
@@ -222,38 +224,78 @@ Prerequisites:
     - you have running Racher and Racher UI ready
     - you have nodes set up and ready
     - you have infrastructure provider ready (openstack or similar, supported by Rancher)
+    - OpenStack API is reachable from all nodes
 
-Follow `this guide`__ to create a cluster and register your nodes.
+#. Go to Rancher UI (`https://<rancher-server-ip-addr>:8443`)
+#. From the **Clusters** page, click **Add Cluster**.
+#. Choose **Custom**.
+#. Enter a **Cluster Name**.
+#. Edit the **Cluster Options**, switch to **Edit as YAML** view,
+   and paste the contents of `rancher/rancher-cloud.conf.yaml` instead of
+   text contained there.
 
-__ https://rancher.com/docs/rancher/v2.x/en/quick-start-guide/deployment/quickstart-manual-setup/#4-create-the-cluster
+   .. warning::
+      Make sure to alter settings, credentials and
+      URL for OpenStack API under `cloud_provider.openstackCloudProvider.**`
+      to your installation details.
 
-While editing the cluster options, switch to "Edit as YAML" view,
-and paste the contents of `rancher/rancher-cloud.conf.yaml` instead of
-text contained where.
+      Pay special attention to:
 
-Make sure to alter settings, credentials and URL for OpenStack API under
-`cloud_provider.openstackCloudProvider.**` to your installation details.
+      - `cloud_provider.openstackCloudProvider.tenant-id`
+        (project id in OpenStack)
+      - `cloud_provider.openstackCloudProvider.load_balancer.subnet-id`
+        (network id there your hosts are located)
+      - `cloud_provider.openstackCloudProvider.route.router-id`
+        (router id - primary router to which existing and new instances
+        are/should be attached)
 
-More info on options represented and how to setup them you can find in
-`Rancher/RKE Documentation`__
+   .. note::
+      More info on options represented and how to setup them you can find in
+      `Rancher/RKE Documentation`__.
 
-__ https://rancher.com/docs/rke/v0.1.x/en/config-options/cloud-providers/openstack/
+   __ https://rancher.com/docs/rke/v0.1.x/en/config-options/cloud-providers/openstack/
 
+   Afterwards, switch back to form with **Edit as Form**
+   button, and then select **Kubernetes version** = `1.11.x...`
+   (some flavor of 1.11)
 
-you can use following command to quickly launch node registration
-process on all/selected nodes:
+#. Click **Next**.
+#. From **Node Role**, select all the roles:
+   **etcd**, **Control**, and **Worker**.
+#. **Optional**: Rancher auto-detects the IP addresses used
+   for Rancher communication and cluster communication.
+   You can override these using `Public Address` and `Internal Address`
+   in the **Node Address** section.
+#. Skip the **Labels** stuff. It’s not important for now.
+#. Copy the command displayed on screen to your clipboard.
+#. Log in to your Linux host(s) using your preferred shell,
+   such as PuTTy or a remote Terminal connection.
+   Run the command copied to your clipboard.
 
-.. code-block:: bash
+   **OR**
 
-    ansible rancher-slaves \
+   You can use following command to quickly launch node registration
+   process on all/selected nodes:
+
+   .. code-block:: bash
+
+      ansible rancher-slaves \
             -i inventory.ini \
             -m shell -b \
             -a '<command you copied from Rancher UI>'
 
-.. note::
-    Make sure you register either 1 or 3 nodes with control-plane roles
-    ("etcd" and "control-plane") and all or rest of them as "worker"
+   .. note::
+      Make sure you register either 1 or 3 nodes with control-plane roles
+      (both **etcd** and **control-plane**/**Control**) and
+      all or rest of them as **worker**
 
+
+#. When you finish running the command on your Linux host(s), click **Done**.
+
+.. note::
+    Up-to-date official manual on that part could be located `here`__
+
+__ https://rancher.com/docs/rancher/v2.x/en/quick-start-guide/deployment/quickstart-manual-setup/#4-create-the-cluster
 
 .. note::
     You can use other options provided by Rancher to setup Kubernetes Cluster,
@@ -270,14 +312,13 @@ process on all/selected nodes:
 
 __ https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes
 
-Once you have done with that - wait for cluster to become available
+Once you have done with that - wait for cluster to become **Available**
 in Rancher UI (you will see its status either on main page or looking
-at "Nodes" tab inside created cluster entry).
+at **Nodes** tab inside created cluster entry).
 
 Outcome:
     - you have Kubernetes cluster ready and running
 
-.. todo label nodes
 
 Setup tooling
 -------------
@@ -313,10 +354,72 @@ Run following command to setup Tiller in your cluster:
 
 .. code-block:: bash
 
-    helm init
+    kubectl create serviceaccount tiller -n kube-system
+
+    kubectl create clusterrolebinding tiller \
+        --clusterrole=cluster-admin \
+        --serviceaccount=kube-system:tiller
+
+    helm init --service-account tiller
 
 Outcome:
     - Tiller installed in your cluster
     - helm is ready to install charts to your cluster
 
+Segmenting your cluster
+-----------------------
 
+Prerequisites:
+    - you have Kubernetes cluster ready and running
+    - you have kubectl tool configured to access your cluster
+
+In order to distribute load over the cluster and prevent conflicting
+interest over resources certain components have additional scheduling
+requirements which are based on labels of nodes and pods inside Kubernetes.
+
+To get it working you should label some of the nodes according to
+following table:
+
+===================   ===========   ======
+label                 value         amount
+===================   ===========   ======
+ru.crplab/dedicated   persistence   1
+ru.crplab/dedicated   processing    1+
+===================   ===========   ======
+
+To list all nodes registered in Kubernetes:
+
+.. code-block:: bash
+
+    kubectl get nodes
+
+
+To label node use following command:
+
+.. code-block:: bash
+
+    kubectl label nodes <node-name> <label-name>=<label-value>
+
+Outcome:
+    - you have nodes labeled in Kubernetes according to recommendations
+
+Enabling automatic dynamic PV provisioning
+-------------------------------------------
+
+Prerequisites:
+    - you have Kubernetes cluster ready and running
+    - you have kubectl tool configured to access your cluster
+
+In order to make things work for services which store state in a
+persistence manner in Kubernetes, you need to enable dynamic PV
+(Persistent Volumes) provisioning on the platform you deployed
+Kubernetes on. We use OpenStack, so following instructions are
+to enable dynamic PV provisioning using OpenStack Cinder.
+
+.. code-block:: bash
+
+    kubectl create -f kubernetes-setup/openstack.storageclass.yaml
+
+Outcome:
+    - you have dynamic PV provisioning baked by cinder volumes enabled
+      for your Kubernetes cluster

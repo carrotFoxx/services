@@ -1,0 +1,486 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2018, CRPLab LLC
+# This file is distributed under the same license as the Buldozer Services
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Buldozer Services 0.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-12-27 18:30+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: ../../bdz_installation_manual.rst:3
+msgid "Buldozer Installation Manual"
+msgstr "Руководство по установке Buldozer"
+
+#: ../../bdz_installation_manual.rst:9 ../../bdz_installation_manual.rst:85
+msgid "Prerequisites:"
+msgstr "Предусловия:"
+
+#: ../../bdz_installation_manual.rst:6
+msgid "git, ssh, kubectl and helm installed"
+msgstr "git, ssh, kubectl и helm установлены"
+
+#: ../../bdz_installation_manual.rst:7
+msgid "downloaded the infrastructure repository from git"
+msgstr "репозиторий с исходными кодами и конфигурациями инфарструктуры скачан из git"
+
+#: ../../bdz_installation_manual.rst:8
+msgid "openstack cluster up and running"
+msgstr "кластер OpenStack готов к работе"
+
+#: ../../bdz_installation_manual.rst:9
+msgid "kubernetes cluster up and running"
+msgstr "кластер Kubernetes готов к работе"
+
+#: ../../bdz_installation_manual.rst:12
+msgid ""
+"All commands described in this manual are expected to be run stating at "
+"the root of infrastructure repository."
+msgstr ""
+"Все команды описаннные в данном мануале предпологается выполнять "
+"в корневой папке репозитория"
+
+#: ../../bdz_installation_manual.rst:17
+msgid "Preparations"
+msgstr "Приготовления"
+
+#: ../../bdz_installation_manual.rst:20
+msgid "Docker Registry"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:22
+msgid ""
+"We wont cover how to host Docker registry in this manual, but consider "
+"following options:"
+msgstr ""
+"Хостинг репозитория Docker выходит за рамки данного руководства, "
+"но мы предлагаем вам ознакомится со следующими опциями"
+
+
+#: ../../bdz_installation_manual.rst:25
+msgid "host manually, see `Docker Registry Docs`__ for info"
+msgstr "настройте самостоятельно, см. `Docker Registry Docs`__"
+
+#: ../../bdz_installation_manual.rst:29
+msgid "registry is included in latest releases of GitLab CE/EE (see docs__)"
+msgstr "репозиторий Docker является встроенной функциональностю в последних релизах"
+"GitLab CE/EE (см. `документацию`__)"
+
+#: ../../bdz_installation_manual.rst:33
+msgid "you can buy private registry hosting from:"
+msgstr "Также вы можете купить услугу хостинга приватных репозиториев Docker у провайдеров:"
+
+#: ../../bdz_installation_manual.rst:35
+msgid "Docker Hub"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:36
+msgid "AWS"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:37
+msgid "Azure"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:39
+msgid ""
+"Or you can rely on CRPLab infrastructure and pull images from our own "
+"registry (default)"
+msgstr "Или вы можете использовать инфраструктуру CRPLab для загрузки образов систем от разработчиков."
+
+#: ../../bdz_installation_manual.rst:42
+msgid ""
+"To proceed you need to add your docker registry credentials to "
+"Kubernetes, so images could be pulled and containers/services could be "
+"launched."
+msgstr "Чтобы продолжить вам необходимо добавить секрет доступа к docker registry в Kubernetes "
+"для того что бы Kubernetes мог загрузить образы и запустить основанные на них контейнеры/сервисы"
+
+#: ../../bdz_installation_manual.rst:46
+msgid ""
+"Airgapped (physically isolated) installations are not covered by this "
+"manual."
+msgstr ""
+"Изолированная устанока системы не рассматривается в данном руководстве"
+
+#: ../../bdz_installation_manual.rst:49
+msgid ""
+"To setup credentials to your registry of choice, first you need to obtain"
+" them from the registry provider, in case of registry hosted by CRPLab "
+"LLC you can receive credentials by mailing your manager."
+msgstr ""
+"Чтобы добавить секрет доступа к выбранному вами Docker registry в Kubernetes, "
+"его необходимо получить у поставщиков сервиса, для этого обратитесь к соотвествующей документации "
+"вашего поставщика. В случае если вы пользуетесь сервисами CRPLab - вы можете получить доступ обратившись "
+"к вашему менеджеру."
+
+#: ../../bdz_installation_manual.rst:53
+msgid ""
+"Once you have acquired credentials from respective provider create a "
+"secret in Kubernetes using following command:"
+msgstr ""
+"После того как секрет у вас, выполните следующие команды чтобы добавить его в Kubernetes:"
+
+#: ../../bdz_installation_manual.rst:64
+msgid ""
+"OR refer to this documentation__ for other options how to setup access to"
+" private registry in Kubernetes"
+msgstr ""
+"Или обратитесь к документации__ для иных способов настройки доступа в приватный репозиторий Docker"
+
+#: ../../bdz_installation_manual.rst:70
+msgid ""
+"Make sure to name secret \"crplab\", otherwise you will have to supply "
+"different secret name to all custom helm charts below"
+msgstr ""
+"Удостоверьтесь что задали имя секрета \"crplab\", иначе вам придется передавать новое имя секрета во все "
+"конфигурации сервисов (helm chart) используемые далее"
+
+#: ../../bdz_installation_manual.rst:74
+msgid "Building images"
+msgstr ""
+"Сборка образов ПО"
+
+#: ../../bdz_installation_manual.rst:77
+msgid ""
+"This section is of interest only if you have been provided with access to"
+" source codes and wish to build artifacts (docker images) yourself. "
+"Otherwise - stick with images provided by developers of the system"
+msgstr ""
+"Данная секция будет интересна только в случае если у вас есть доступ к исходным кодам "
+"и желание/необходимость собирать образа самостоятельно. "
+"В противном случае - используйте образа поставляемые разработчиком ПО."
+
+#: ../../bdz_installation_manual.rst:83
+msgid "docker installed"
+msgstr "docker установлен"
+
+#: ../../bdz_installation_manual.rst:84
+msgid "access to docker registry configured on your host"
+msgstr "доступ к docker registry сконфигурирован на вашей машине"
+
+#: ../../bdz_installation_manual.rst:85
+msgid "access to docker registry configured in Kubernetes"
+msgstr "доступ к docker registry сконфигурирован в Kubernetes"
+
+#: ../../bdz_installation_manual.rst:87
+msgid ""
+"The only images you need to build are these of custom services developed "
+"at CRPLab LLC, these are included in charts:"
+msgstr ""
+"Только образа сервисов созданных CRPLab нуждаются в сборке, остальные образа "
+"публичны. Образа нуждающиеся в сборке входят в следующие конфигурации:"
+
+#: ../../bdz_installation_manual.rst:90
+msgid "buldozer-platform"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:91
+msgid "gis-addon/data-manager"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:92
+msgid "gis-addon/backend-layer"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:94
+msgid "In general to build images you need to execute following commands:"
+msgstr "В целом все образы строятся одинаково, вам необходимо выполнить следующие команды:"
+
+#: ../../bdz_installation_manual.rst:104
+msgid "An example, how images are built in our CI:"
+msgstr "Пример того, как собираются образы в нашем CI:"
+
+#: ../../bdz_installation_manual.rst:112
+msgid ""
+"You'll find exact instructions on how to build specific images in "
+"README's located with the source-codes of respective services."
+msgstr ""
+"Вы найдете точные команды для сборки конкретных образов в "
+"README соответствующих репозиториях."
+
+
+#: ../../bdz_installation_manual.rst:115
+msgid ""
+"Also, some services contain a `gitlab-ci.yaml` - configuration for GitLab"
+" CI which builds images continuously, you can use it as a reference to "
+"understand how images are built."
+msgstr ""
+"Так же в некоторых репозиториях присутствует файл `gitlab-ci.yaml` - конфигурация GitLab CI "
+"исполуемая нами для сборки образов, вы можете использовать ее как пример чтобы понять "
+"как строятся образы конкретных сервисов"
+
+#: ../../bdz_installation_manual.rst:121
+msgid "Cluster-Wide services install"
+msgstr "Исталяция общих сервисов"
+
+#: ../../bdz_installation_manual.rst:124
+msgid "MongoDB"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:126
+msgid ""
+"To provide persistent storage to MongoDB on SSD if you dont have \"fast\""
+" class volumes provided by your platform and Kubernetes via \"dynamic-"
+"provisioning\" you may need to setup SSD-backed NFS share."
+msgstr ""
+"Чтобы предоставить персистентное хранилище для MongoDB на SSD дисках, если "
+"у вас нет volume'ов базирующихся на SSD в OpenStack и доступных для автомонтирования "
+"в Kubernetes, вам необходимо огранизовать NFS шеринг SSD диска."
+
+#: ../../bdz_installation_manual.rst:129
+msgid ""
+"When done, announce it to Kubernetes using following manifest and command"
+" (alter as necessary):"
+msgstr ""
+"Когда сделаете это, анносируйте NFS export в Kubernetes используя следующий манифест и команду "
+"(измените содержимое манифеста чтобы он соответствовал вашему NFS export'у)"
+
+#: ../../bdz_installation_manual.rst:136
+msgid "After, you can provision MondoDB itself:"
+msgstr "После этого вы можете развернуть MongoDB, используя команды:"
+
+#: ../../bdz_installation_manual.rst:151
+msgid "Kafka+Zookeeper"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:160
+msgid "Kafka-Manager"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:162
+msgid "Optionally you could install a control panel for Kafka"
+msgstr "Опционально вы можете установить панель управления очередями Kafka"
+
+#: ../../bdz_installation_manual.rst:165
+msgid ""
+"Kafka-Manager has some control over Kafka and may expose security risks "
+"if installed on production system exposed to open networks"
+msgstr ""
+"Kafka-Manager имеет весьма широкий контроль над Kafka и может представлять "
+"риски безопастности если доступ к нему не закрыт в продакшен системах"
+
+#: ../../bdz_installation_manual.rst:176
+msgid "Consul"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:179
+msgid "Download consul helm git repo prior execution"
+msgstr "Загрузите helm конфигурацию для Consul из репозитория перед тем как начать."
+
+#: ../../bdz_installation_manual.rst:187
+msgid "Install helm chart"
+msgstr "Установите helm chart"
+
+#: ../../bdz_installation_manual.rst:201
+msgid "Traefik Kubernetes ingress-controller"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:213
+msgid "Weave-Scope"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:215
+msgid ""
+"Installation of this component is completely optional as it serves only "
+"as informational panel."
+msgstr ""
+"Исталяция данного компонента полностью опциональна, так как он служит исключительно информационным целям."
+
+#: ../../bdz_installation_manual.rst:225
+msgid "Kubernetes Dashboard"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:227
+msgid "Installation of this component is optional."
+msgstr "Инсталяция данного компонента опциональна."
+
+#: ../../bdz_installation_manual.rst:230
+msgid ""
+"Be careful if you choose to install this component, as it has admin "
+"privileges over cluster and can expose potential security risks."
+msgstr ""
+"Будьте осторожны устанавливая данный компонент, он имеет привилегии администратора кластера "
+"и может вызвать угрозу безопастности инсталяции."
+
+#: ../../bdz_installation_manual.rst:246
+msgid "Buldozer services installation"
+msgstr "Установка Buldozer"
+
+#: ../../bdz_installation_manual.rst:248
+msgid ""
+"In fact it is pretty simple, all you have to do is install buldozer-"
+"platform chart as you did with the rest of them"
+msgstr ""
+"Все что необходимо сделать - это поставить следующую конфигурацию helm chart:"
+
+#: ../../bdz_installation_manual.rst:258
+msgid ""
+"Make sure you reviewed values.yml and applied custom values to adjust the"
+" installation to your cluster (see below)."
+msgstr ""
+"Убедитесь что значения в values.yaml соответствуют вашей инсталяции, или измените их соответствующе (см. ниже)."
+
+#: ../../bdz_installation_manual.rst:262
+msgid "Buldozer Helm configuration"
+msgstr "Конфигурация helm chart для Buldozer"
+
+#: ../../bdz_installation_manual.rst:264
+msgid ""
+"Things you should pre-configure yourself or note during the installation "
+"of other components, such services, DNS names of in-cluster components "
+"and IPs for infrastructure services located \"below\" Kubernetes layer, "
+"which should be referenced in **buldozer helm values**."
+msgstr ""
+"Компоненты которые вы должны настроить самостоятельно, или отметить при исталяции согласно руководству выше, "
+"такие как имена сервисов, DNS-имена, IP адреса инфраструктурных элементов ниже уровня Kubernetes, "
+"что необходимо передать в конфигурацию helm chart для  Buldozer"
+
+#: ../../bdz_installation_manual.rst:270
+msgid ""
+"Examine values.yaml for formats and other useful comments on how that "
+"should be configured"
+msgstr ""
+"Обратитесь к values.yaml для того чтобы посмотреть примеры, формат значений и полезные коментарии "
+"о том как эти значения должны быть сконфигурированы."
+
+#: ../../bdz_installation_manual.rst:273
+msgid "Important Values"
+msgstr "Важные элементы"
+
+#: ../../bdz_installation_manual.rst:275
+msgid "value ref"
+msgstr "переменная"
+
+#: ../../bdz_installation_manual.rst:276
+msgid "description"
+msgstr "описание"
+
+#: ../../bdz_installation_manual.rst:278
+msgid "shared_fs.*"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:279
+msgid "configures NFS volume pod-lifetime binding"
+msgstr "настраивает временные биндинги NFS для разделяемого хранилища моделей"
+
+#: ../../bdz_installation_manual.rst:281
+msgid "shared_fs.nfs_server"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:282
+msgid ""
+"host IP or DNS name of NFS node should be accessible from all nodes in "
+"the cluster"
+msgstr ""
+"IP адрес хоста или DNS имя ноды хостящей NFS, должна быть доступна со всех нод кластера. "
+
+#: ../../bdz_installation_manual.rst:285
+msgid "shared_fs.nfs_path"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:286
+msgid "exported directory of NFS node should be r/w accessible for NFS client"
+msgstr "директория экспортируемая NFS (имя экспорта) - должна быть доступна на чтение и запись."
+
+#: ../../bdz_installation_manual.rst:289
+msgid "env-manager.environment.K8S_NFS_SHARE_SERVER"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:290
+msgid ""
+"host IP or DNS name of NFS node should be accessible from all nodes in "
+"the cluster, must match `shared_fs.nfs_server`"
+msgstr ""
+"IP адрес хоста или DNS имя ноды хостящей NFS, должна быть доступна со всех нод кластера. "
+"должно совпадать с `shared_fs.nfs_server`"
+
+#: ../../bdz_installation_manual.rst:294
+msgid "env-manager.environment.K8S_NFS_SHARE_PATH"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:295
+msgid ""
+"exported directory of NFS node should be r/w accessible for NFS client "
+"must match `shared_fs.nfs_path`"
+msgstr ""
+"директория экспортируемая NFS (имя экспорта) - должна быть доступна на чтение и запись. "
+"должно совпадать с `shared_fs.nfs_path`"
+
+#: ../../bdz_installation_manual.rst:299
+msgid "environment.*"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:300
+msgid ""
+"these variables are provided to all pods of Buldozer and hold common DSNs"
+" for related services"
+msgstr ""
+"переменные окружения передаваемые всем подам сервисов Buldozer, содержат общие настройки доступа"
+
+#: ../../bdz_installation_manual.rst:303
+msgid "environment.MONGODB_DSN"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:304
+msgid ""
+"DSN of mongodb there services store their data (usually it is deployed "
+"in-cluster as mentioned above)"
+msgstr ""
+"DSN для доступа к MongoDB"
+
+#: ../../bdz_installation_manual.rst:307
+msgid "environment.CONSUL_DSN"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:308
+msgid ""
+"DSN of consul there workspaces store their runtime configuration and post"
+" their healthchecks to. (usually it is deployed in-cluster as mentioned "
+"above)"
+msgstr ""
+"DSN для доступа к Consul"
+
+#: ../../bdz_installation_manual.rst:312
+msgid "environment.KAFKA_DSN"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:313
+msgid ""
+"DSN of kafka installation which processes all event-streams between "
+"workspaces (usually it is deployed in-cluster as mentioned above)"
+msgstr ""
+"DSN для доступа к Kafka"
+
+#: ../../bdz_installation_manual.rst:317
+msgid "environment.SENTRY_DSN:"
+msgstr ""
+
+#: ../../bdz_installation_manual.rst:318
+msgid ""
+"DSN for Sentry error reporting, optional. (Sentry could be installed in-"
+"cluster or elsewhere). use \"legacy\" DSN format here (see Sentry UI to "
+"retrieve it)"
+msgstr ""
+"DSN для доступа к Sentry (опционально)"
+
+#: ../../bdz_installation_manual.rst:324
+msgid "GIS Services Installation"
+msgstr "Исталяция сервисов ГИС"
+
+#: ../../bdz_installation_manual.rst:335
+msgid ""
+"Make sure you reviewed values.yml and applied custom values to adjust the"
+" installation to your cluster."
+msgstr ""
+"Убедитесь что значения в values.yaml соответствуют вашей инсталяции, или измените их соответствующе."
