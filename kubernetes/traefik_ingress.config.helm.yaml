@@ -18,3 +18,9 @@ deployment:
     httpEnabled: true
     dashboardEnabled: true
 
+rbac:
+  enabled: true
+kubernetes:
+  ingressEndpoint:
+    publishedService: "kube-system/traefik"
+
