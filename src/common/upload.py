@@ -23,9 +23,9 @@ async def accept_upload(request: Request, path_tpl: str = '/opt/data/%s'):
     if request.content_type.startswith('multipart/'):
         reader = await request.multipart()
         async for part in reader:  # type: Union[BodyPartReader,MultipartReader]
-            if part.headers.get(hdrs.CONTENT_TYPE) == 'application/json':
-                metadata = await part.json()
-                continue
+            # if part.headers.get(hdrs.CONTENT_TYPE) == 'application/json':
+            #     metadata = await part.json()
+            #     continue
             if part.filename is not None:
                 metadata[hdrs.CONTENT_TYPE] = part.headers.get(hdrs.CONTENT_TYPE) or 'application/binary'
                 metadata[FIELD_FILENAME] = filename = path_tpl % str(uuid4()) + part.filename
