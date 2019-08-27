@@ -155,6 +155,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ModelDetailsResponse'
+  /models/{modelId}/versions/{versionId}/download:
+    parameters:
+      - $ref: '#/components/parameters/modelId'
+      - $ref: '#/components/parameters/versionId'
+    get:
+      description: get model attachment
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Disposition:
+              description: the value is `attachment; filename="fileuid.txt"`
 
   /workspaces:
     get:

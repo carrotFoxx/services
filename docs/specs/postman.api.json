@@ -666,14 +666,66 @@
 							"file": {}
 						},
 						"url": {
-							"raw": "{{http-api}}/models/{{app-mgr.last-created-uid}}/upload",
+							"raw": "{{http-api}}/models/{{model-mgr.last-created-uid}}/upload",
 							"host": [
 								"{{http-api}}"
 							],
 							"path": [
 								"models",
-								"{{app-mgr.last-created-uid}}",
+								"{{model-mgr.last-created-uid}}",
 								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "download model artifact",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3d82bec0-538a-45fc-ad51-14aba45b3570",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'app-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"tests[\"ETag is present\"] = postman.getResponseHeader(ETAG);",
+									"tests[\"ETag is numeric\"] = /^\\d+$/.test(postman.getResponseHeader(ETAG));",
+									"",
+									"etag_version = parseInt(postman.getResponseHeader(ETAG))",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Etag is greater then 0\"] = etag_version > 0;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"url": {
+							"raw": "{{http-api}}/models/{{model-mgr.last-created-uid}}/versions/{{model-mgr.last-created-ver}}/download",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"models",
+								"{{model-mgr.last-created-uid}}",
+                                "versions",
+                                "{{model-mgr.last-created-ver}}",
+								"download"
 							]
 						}
 					},
