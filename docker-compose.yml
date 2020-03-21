@@ -46,6 +46,8 @@ services:
 
   pst_manager:
     <<: *x-build
+    depends_on:
+     - kafka
     environment:
       - SERVICE_NAME=persister
       - TRAEFIK_ENABLE=false
@@ -79,6 +81,8 @@ services:
   registrator:
     <<: *x-logging
     image: gliderlabs/registrator:latest
+    depends_on:
+      - consul
     command:
       - '-internal'
       - '-resync=30'
