@@ -30,6 +30,8 @@ services:
       - '27017:27017'
 
   kafka:
+    depends_on: 
+      - traefik
     volumes:
       - ./docker/kafka-data:/kafka
     ports:
