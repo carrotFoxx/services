@@ -76,17 +76,29 @@ class SimpleMongoStorageAdapter(StorageAdapter):
 
     @staticmethod
     def _extract_limit_argument(properties):
-        return properties.pop('_limit', 100)
+        return int(properties.pop('_limit', 100))
+
+    @staticmethod
+    def _extract_offset_argument(properties):
+        return int(properties.pop('_offset', 0))
 
     async def find(self, properties: dict = None) -> List:
         properties = properties or {}
         lst = []
         limit = self._extract_limit_argument(properties)
+        offset = self._extract_offset_argument(properties)
         sort = self._extract_sort_argument(properties)
-        cursor = self._collection.find(properties, sort=sort, limit=limit)
+        cursor = self._collection.find(properties, skip=offset, sort=sort, limit=limit)
         async for document in cursor:
             lst.append(self._encoder.decoder_object_hook(document))
         return lst
+
+    async def count(self, properties: {}) -> int:
+        properties = properties or {}
+        self._extract_limit_argument(properties)
+        self._extract_offset_argument(properties)
+        self._extract_sort_argument(properties)
+        return await self._collection.count_documents(properties)
 
     async def find_one(self, eid=None, **kwargs) -> object:
         document = await self._load_existing(eid, **kwargs)

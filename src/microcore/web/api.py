@@ -15,6 +15,7 @@ from microcore.base.utils import FQN
 from microcore.entity.abstract import Identifiable
 from microcore.entity.encoders import json_response, proxy_encoder_instance
 from microcore.entity.model import JSON_TYPE_FIELD
+from microcore.web.pagination import Pagination
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,20 @@ class ReadOnlyStorageAPI:
         except AttributeError as e:
             raise HTTPBadRequest() from e
         return lst
+
+    @json_response
+    async def list_pageable(self, request: Request):
+        countRecord = await self.repository.count(await self._list_query(request))
+        p = Pagination(request, total=countRecord)
+        try:
+            lst = await self._list(await self._list_query(request))
+        except AttributeError as e:
+            raise HTTPBadRequest() from e
+        return {
+            'meta': p.meta(),
+            'records': lst,
+            'links': p.links()
+        }
 
     @json_response
     async def head_list(self, request: Request):

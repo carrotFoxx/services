@@ -21,6 +21,12 @@ x-build: &x-build
 
 version: '3.7'
 services:
+
+  images_manager:
+    <<: *x-build
+    environment:
+      - SERVICE_NAME=images
+
   app_manager:
     <<: *x-build
     environment:

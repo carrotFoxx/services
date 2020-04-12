@@ -43,6 +43,9 @@ class CommonDataManagerInterface:
     async def find(self, properties: {}) -> []:
         raise NotImplemented
 
+    async def count(self, properties: {}) -> int:
+        raise NotImplemented
+
     async def find_one(self, eid=None, **kwargs):
         raise NotImplemented
 
@@ -79,6 +82,9 @@ class Repository(CommonDataManagerInterface):
 
     def find(self, properties: {}) -> []:
         return self.adapter.find(properties)
+
+    def count(self, properties: {}):
+        return self.adapter.count(properties)
 
     def find_one(self, eid=None, **kwargs):
         return self.adapter.find_one(eid=eid, **kwargs)

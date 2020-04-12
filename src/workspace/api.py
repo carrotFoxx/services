@@ -28,7 +28,7 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
     def set_routes(self, router: UrlDispatcher):
         root = router.add_resource('/workspaces')
         root.add_route(hdrs.METH_HEAD, self.head_list)
-        root.add_route(hdrs.METH_GET, self.list)
+        root.add_route(hdrs.METH_GET, self.list_pageable)
         root.add_route(hdrs.METH_POST, self.post)
 
         item = router.add_resource('/workspaces/{id}')

@@ -54,6 +54,7 @@ KAFKA_DSN = os.environ.get('KAFKA_DSN', 'kafka:9092')
 
 KAFKA_DEFAULT_INCOMING_TOPIC = 'events'
 KAFKA_DEFAULT_OUTGOING_TOPIC = 'bdz_wsp_results'
+KAFKA_DEFAULT_PAUSE_STREAM = 'false'
 
 # supervisor settings
 SPV_STATE_RESYNC_INTERVAL = 60
