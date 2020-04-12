@@ -60,7 +60,7 @@ class VersionedAPI(OwnedReadWriteStorageAPI, Routable):
         resources = []
 
         root = router.add_resource('')
-        root.add_route(hdrs.METH_GET, self.list)
+        root.add_route(hdrs.METH_GET, self.list_pageable)
         root.add_route(hdrs.METH_POST, self.post)
         resources.append(root)
 

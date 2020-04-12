@@ -1,7 +1,7 @@
 import attr
 
 from common.versioning import VersionedObject
-from config import KAFKA_DEFAULT_INCOMING_TOPIC, KAFKA_DEFAULT_OUTGOING_TOPIC
+from config import KAFKA_DEFAULT_INCOMING_TOPIC, KAFKA_DEFAULT_OUTGOING_TOPIC, KAFKA_DEFAULT_PAUSE_STREAM
 from mco.entities import ObjectBase, OwnedObject, RegisteredEntityJSONEncoder, TrackedObject
 from microcore.entity.model import public_attributes
 from microcore.storage.mongo import StorageEntityJSONEncoderBase
@@ -95,6 +95,8 @@ class RouteConfig:
     incoming_stream: str = KAFKA_DEFAULT_INCOMING_TOPIC
     outgoing_stream: str = KAFKA_DEFAULT_OUTGOING_TOPIC
 
+    pause_stream: str = KAFKA_DEFAULT_PAUSE_STREAM
+
 
 class RouteConfigJSONEncoder(RegisteredEntityJSONEncoder):
     entity_type = RouteConfig
@@ -124,3 +126,45 @@ class WorkspaceJSONEncoder(RegisteredEntityJSONEncoder):
 
 class WorkspaceStorageEncoder(StorageEntityJSONEncoderBase):
     entity_type = Workspace
+
+
+@attr.s(auto_attribs=True)
+class Image(VersionedObject, TrackedObject):
+    name: str = None
+
+    app_id: str = None
+    app_ver: int = None
+
+    model_id: str = None
+    model_ver: str = None
+
+    description: str = None
+    tags: list = None
+
+    params: dict = attr.Factory(dict)
+
+
+class ImageJSONEncoder(RegisteredEntityJSONEncoder):
+    entity_type = Image
+
+
+class ImageStorageEncoder(StorageEntityJSONEncoderBase):
+    entity_type = Image
+
+
+class ImageArchiveStorageEncoder(StorageEntityJSONEncoderBase):
+    entity_type = Image
+
+    @staticmethod
+    def unpack(dct: dict, cls: type) -> object:
+        dct.pop('_id', None)
+        return cls(
+            **dct
+        )
+
+    @staticmethod
+    def pack(o: Image) -> dict:
+        return {
+            '_id': f'{o.uid}/{o.version}',
+            **public_attributes(o)
+        }
