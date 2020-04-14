@@ -13,3 +13,7 @@ class ProviderKind(Enum):
     File = 'file'
     Docker = 'docker'
     VirtualMachine = 'vm'
+
+
+class VmProviderKind(Enum):
+    Openstack = 'openstack'

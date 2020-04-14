@@ -5,12 +5,13 @@ from kubernetes.client import V1NFSVolumeSource
 
 from common.application_mixin import CommonAppMixin
 from config import ROOT_LOG, SHARED_FS_MOUNT_PATH
-from container_manager import ProviderKind
+from container_manager import ProviderKind, VmProviderKind
 from container_manager.api import ContainerManagerRPCAPI
 from container_manager.docker import DockerProvider
 from container_manager.kubernetes import KubernetesProvider
 from container_manager.manager import ContainerManager
 from container_manager.provider import Provider
+from container_manager.vm import VmProvider
 from injector import configure_injector
 from mco.rpc import RPCServerApplication
 
@@ -23,6 +24,7 @@ class EnvironmentManagerApp(RPCServerApplication, CommonAppMixin):
         data = {
             'docker-enabled': bool(os.getenv('PROVIDER_DOCKER_ENABLE', False)),
             'kubernetes-enabled': bool(os.getenv('PROVIDER_KUBERNETES_ENABLE', False)),
+            'vm-enabled': bool(os.getenv('PROVIDER_VM_ENABLE', False)),
             'user-space-name': os.getenv('USER_SPACE_NAME', 'default'),
             'k8s': {
                 'nfs-path': os.getenv('K8S_NFS_SHARE_PATH'),
@@ -55,6 +57,26 @@ class EnvironmentManagerApp(RPCServerApplication, CommonAppMixin):
                     read_only=True
                 ),
                 image_pull_secrets=data['k8s']['pull-secrets']
+            )
+        if data['vm-enabled']:
+            provider_map[ProviderKind.VirtualMachine] = VmProvider(
+                vm_provider=os.getenv('PROVIDER_VM_KIND', VmProviderKind.Openstack),
+                vm_provider_cred={
+                    'auth_url': os.getenv('OPENSTACK_AUTH_URL', 'http://192.168.116.195:5000/v3/'),
+                    'username': os.getenv('OPENSTACK_USERNAME', 'gis_service_user'),
+                    'password': os.getenv('OPENSTACK_PASSWORD', 'a01mr73ncyq'),
+                    'project_name': os.getenv('OPENSTACK_PROJECT_NAME', 'gis'),
+                    'user_domain_id': os.getenv('OPENSTACK_USER_DOMAIN_ID', 'default'),
+                    'project_domain_id': os.getenv('OPENSTACK_PROJECT_DOMAIN_ID', 'default'),
+                },
+                vm_instance_definitions={
+                    'security_groups': os.getenv('OPENSTACK_SECURITY_GROUPS', 'default, gis_sg'),
+                    'availability_zone': os.getenv('OPENSTACK_AVAILABILITY_ZONE', 'nova'),
+                    'key_name': os.getenv('OPENSTACK_KEY_NAME', 'devops'),
+                    'networks': os.getenv('OPENSTACK_NETWORKS', 'bc9d2afc-c565-4f86-bd1d-3aa156963065'),
+                    'bdz_kafka_dsn': os.getenv('BDZ_KAFKA_DSN', None),
+                    'bdz_consul_dsn': os.getenv('BDZ_CONSUL_DSN', None),
+                }
             )
         ROOT_LOG.info("acquired configuration:\n%s\n%s", provider_map, data)
         return provider_map
