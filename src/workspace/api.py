@@ -4,10 +4,10 @@ from typing import List
 
 from aiohttp import hdrs
 from aiohttp.web import UrlDispatcher
-from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent, HTTPNotFound
+from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent, HTTPNotFound, HTTPInternalServerError
 from aiohttp.web_request import Request
 
-from common.entities import RouteConfig, Workspace
+from common.entities import RouteConfigWorkspace, RouteConfigConsumer,RouteConfigProducer, Workspace
 from mco.rpc import RPCRoutable, rpc_expose
 from microcore.base.application import Routable
 from microcore.base.repository import DoesNotExist
@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 
 class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
     entity_type = Workspace
+
 
     def __init__(self, manager: WorkspaceManager, **kwargs):
         super().__init__(**kwargs)
@@ -70,12 +71,33 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
 
     async def set_route(self, request: Request):
         entity: Workspace = await self._get(request)
-        try:
-            data = RouteConfig(wsp_uid=entity.uid, **await request.json())
-        except (TypeError, ValueError) as e:
-            raise HTTPBadRequest() from e
-        await self.manager.reroute(workspace=entity, route=data)
+
+        if entity.type == "consumer":
+            try:
+                data = RouteConfigConsumer(wsp_uid=entity.uid, **await request.json())
+            except (TypeError, ValueError) as e:
+                raise HTTPBadRequest() from e
+            await self.manager.reroute(workspace=entity, route=data)
+
+        elif entity.type == "producer":
+            try:
+                data = RouteConfigProducer(wsp_uid=entity.uid, **await request.json())
+            except (TypeError, ValueError) as e:
+                raise HTTPBadRequest() from e
+            await self.manager.reroute(workspace=entity, route=data)
+
+        elif entity.type == "workspace":
+            try:
+                data = RouteConfigWorkspace(wsp_uid=entity.uid, **await request.json())
+            except (TypeError, ValueError) as e:
+                raise HTTPBadRequest() from e
+            await self.manager.reroute(workspace=entity, route=data)
+        else:
+            raise HTTPInternalServerError()
+
         raise HTTPNoContent()
+
+
 
     @json_response
     async def get_route(self, request: Request):
@@ -83,11 +105,29 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
             entity: Workspace = await self._get(request)
         except DoesNotExist:
             raise HTTPNotFound
-        try:
-            data: RouteConfig = await self.manager.get_route_config(entity)
-        except self.manager.consul.InteractionError:
-            data = RouteConfig(wsp_uid=entity.uid)
-        return data
+
+        if entity.type == "consumer":
+            try:
+                data: RouteConfigConsumer = await self.manager.get_route_config(entity)
+            except self.manager.consul.InteractionError:
+                data = RouteConfigConsumer(wsp_uid=entity.uid)
+            return data
+
+        elif entity.type == "producer":
+            try:
+                data: RouteConfigProducer = await self.manager.get_route_config(entity)
+            except self.manager.consul.InteractionError:
+                data = RouteConfigProducer(wsp_uid=entity.uid)
+            return data
+
+        elif entity.type == "workspace":
+            try:
+                data: RouteConfigWorkspace = await self.manager.get_route_config(entity)
+            except self.manager.consul.InteractionError:
+                data = RouteConfigWorkspace(wsp_uid=entity.uid)
+            return data
+        else:
+            raise HTTPInternalServerError()
 
     @json_response
     async def health(self, request: Request):

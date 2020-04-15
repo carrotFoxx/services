@@ -7,7 +7,7 @@ import inject
 from aiohttp_json_rpc import RpcGenericServerDefinedError
 
 from common.consul import ConsulClient
-from common.entities import App, Model, RouteConfig, Workspace
+from common.entities import App, Model, Workspace
 from config import CONSUL_DSN, KAFKA_DSN
 from container_manager.attachment import AttachmentPrefix
 from container_manager.definitions import Instance, InstanceDefinition
@@ -54,7 +54,7 @@ class WorkspaceManager:
             attachments = {
                 '/var/model': model.attachment
             }
-        instance_id = self._get_hashed_id(workspace.uid, app.uid, app.version, model.uid, model.version)
+        instance_id = self._get_hashed_id(workspace.uid, workspace.type, app.uid, app.version, model.uid, model.version)
 
         return InstanceDefinition(
             uid=instance_id,
@@ -68,6 +68,7 @@ class WorkspaceManager:
             },
             labels={
                 'wsp_id': workspace.uid,
+                'type': workspace.type,
                 'app_id': app.uid,
                 'app_ver': app.version,
                 'model_id': model.uid,
@@ -80,10 +81,11 @@ class WorkspaceManager:
         definition = self._create_definition(workspace=workspace, app=app, model=model)
         return definition
 
-    def get_route_config(self, workspace: Workspace) -> Awaitable[RouteConfig]:
-        return self.configurator.read(workspace.uid)
 
-    def reroute(self, workspace: Workspace, route: RouteConfig):
+    def get_route_config(self, workspace: Workspace):
+        return self.configurator.read(workspace)
+
+    def reroute(self, workspace: Workspace, route):
         route.wsp_uid = workspace.uid
         return self.configurator.write(route)
 
