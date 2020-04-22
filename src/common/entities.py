@@ -86,32 +86,18 @@ class ModelArchiveStorageEncoder(StorageEntityJSONEncoderBase):
 
 
 @attr.s(auto_attribs=True)
-class RouteConfigWorkspace:
+class RouteConfig:
     wsp_uid: str
 
     desired_version: int = 0
     adopted_version: int = 0
 
-    incoming_stream: str = KAFKA_DEFAULT_INCOMING_TOPIC
-    outgoing_stream: str = KAFKA_DEFAULT_OUTGOING_TOPIC
-
     pause_stream: str = KAFKA_DEFAULT_PAUSE_STREAM
-
-
-class RouteConfigJSONEncoderWorkspace(RegisteredEntityJSONEncoder):
-    entity_type = RouteConfigWorkspace
 
 
 @attr.s(auto_attribs=True)
-class RouteConfigConsumer:
-    wsp_uid: str
-
-    desired_version: int = 0
-    adopted_version: int = 0
-
+class RouteConfigConsumer(RouteConfig):
     incoming_stream: str = KAFKA_DEFAULT_INCOMING_TOPIC
-
-    pause_stream: str = KAFKA_DEFAULT_PAUSE_STREAM
 
 
 class RouteConfigJSONEncoderConsumer(RegisteredEntityJSONEncoder):
@@ -119,19 +105,22 @@ class RouteConfigJSONEncoderConsumer(RegisteredEntityJSONEncoder):
 
 
 @attr.s(auto_attribs=True)
-class RouteConfigProducer:
-    wsp_uid: str
-
-    desired_version: int = 0
-    adopted_version: int = 0
-
+class RouteConfigProducer(RouteConfig):
     outgoing_stream: str = KAFKA_DEFAULT_OUTGOING_TOPIC
-
-    pause_stream: str = KAFKA_DEFAULT_PAUSE_STREAM
 
 
 class RouteConfigJSONEncoderProducer(RegisteredEntityJSONEncoder):
     entity_type = RouteConfigProducer
+
+
+@attr.s(auto_attribs=True)
+class RouteConfigWorkspace(RouteConfig):
+    incoming_stream: str = KAFKA_DEFAULT_INCOMING_TOPIC
+    outgoing_stream: str = KAFKA_DEFAULT_OUTGOING_TOPIC
+
+
+class RouteConfigJSONEncoderWorkspace(RegisteredEntityJSONEncoder):
+    entity_type = RouteConfigWorkspace
 
 
 @attr.s(auto_attribs=True)

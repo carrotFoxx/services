@@ -5,9 +5,9 @@ from typing import Awaitable
 import attr
 
 from common.consul import ConsulClient, consul_key
-from common.entities import RouteConfigWorkspace, RouteConfigConsumer, RouteConfigProducer
+from common.entities import RouteConfig, RouteConfigWorkspace, RouteConfigConsumer, RouteConfigProducer, Workspace
 from config import CONSUL_SUBORDINATE_DIR, CONSUL_TOPICS_CTL, CONSUL_TOPICS_DIR, SPV_STATE_KEY_ADOPTED_VERSION, \
-    SPV_STATE_KEY_DESIRED_VERSION
+    SPV_STATE_KEY_DESIRED_VERSION, WSP_TYPE_WORKSPACE, WSP_TYPE_PRODUCER, WSP_TYPE_CONSUMER
 
 log = logging.getLogger(__name__)
 
@@ -31,21 +31,21 @@ class Configurator:
             default=0
         ))
 
-    async def read(self, workspace):
+    async def read(self, workspace: Workspace) -> RouteConfig:
         data: dict = await self.consul.kv.get_all(
             prefix=consul_key(CONSUL_SUBORDINATE_DIR, workspace.uid, ''),
             raw=True
         )
-        if workspace.type == "consumer":
+        if workspace.type == WSP_TYPE_CONSUMER:
             return RouteConfigConsumer(wsp_uid=workspace.uid, **data)
-        elif workspace.type == "producer":
+        elif workspace.type == WSP_TYPE_PRODUCER:
             return RouteConfigProducer(wsp_uid=workspace.uid, **data)
-        elif workspace.type == "workspace":
+        elif workspace.type == WSP_TYPE_WORKSPACE:
             return RouteConfigWorkspace(wsp_uid=workspace.uid, **data)
         else:
             return None
 
-    async def write(self, route: RouteConfigWorkspace):
+    async def write(self, route: RouteConfig):
         """
         this is client part of supervisor.state.StateMonitor
 
