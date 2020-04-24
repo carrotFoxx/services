@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c596169b-928e-4ae5-8645-2c906663206f",
+		"_postman_id": "05d5da5f-fcce-4e8f-a933-0334f4e707b3",
 		"name": "Buldozer",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -37,6 +37,7 @@
 							"listen": "test",
 							"script": {
 								"id": "e99c49de-9e84-417a-9bef-94bff8c933c6",
+								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'app-mgr.last-created-'",
@@ -56,8 +57,7 @@
 									"",
 									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);",
 									"postman.setEnvironmentVariable(ENV_PREFIX + \"ver\", scn_version);"
-								],
-								"type": "text/javascript"
+								]
 							}
 						}
 					],
@@ -75,7 +75,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"busybox:latest\",\n\t\"attachment\":\"docker://registry.crplab.ru/buldozer/excavator/supervised:latest\"\n}"
+							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"busybox:latest\"\n}"
 						},
 						"url": {
 							"raw": "{{http-api}}/applications",
@@ -718,6 +718,274 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "images",
+			"item": [
+				{
+					"name": "create analyzer image",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'img-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"tests[\"ETag is present\"] = postman.getResponseHeader(ETAG);",
+									"tests[\"ETag is numeric\"] = /^\\d+$/.test(postman.getResponseHeader(ETAG));",
+									"",
+									"scn_version = parseInt(postman.getResponseHeader(ETAG))",
+									"",
+									"tests[\"Etag is greater then 0 or equal\"] = scn_version >= 0;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"ver\", scn_version);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\",\n\t\n\t\"description\":\"\",\n\t\"tags\":[\n\t\t\"test_tag_1\",\"test_tag_2\"\n\t\t],\n\t\"params\":[\n\t\t{\n\t\t\t\"name\":\"param1\",\n\t\t\t\"type\":\"type1\",\n\t\t\t\"value\":\"value1\"\n\t\t}\n\t\t]\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/images",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete analyzer image",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "X-If-Version",
+								"value": "{{img-mgr.last-created-ver}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{http-api}}/images/{{img-mgr.last-created-uid}}",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"images",
+								"{{img-mgr.last-created-uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list analyzer images",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'img-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{http-api}}/images",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get analyzer image",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"url": {
+							"raw": "{{http-api}}/images/{{img-mgr.last-created-uid}}",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"images",
+								"{{img-mgr.last-created-uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update analyzer image",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Name changed\"] = jsonData.name == \"test_updated\";",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-If-Version",
+								"value": "{{img-mgr.last-created-ver}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test_updated\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\",\n\t\n\t\"description\":\"\",\n\t\"tags\":[\n\t\t\"test_tag_1\",\"test_tag_2\"\n\t\t],\n\t\"params\":[\n\t\t{\n\t\t\t\"name\":\"param1\",\n\t\t\t\"type\":\"type1\",\n\t\t\t\"value\":\"value1\"\n\t\t}\n\t\t]\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/images/{{img-mgr.last-created-uid}}",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"images",
+								"{{img-mgr.last-created-uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "commit analyzer image to archive",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a5d72973-8c53-4236-8cd6-b0505813629c",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'img-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"scn_version = jsonData.version;",
+									"",
+									"tests[\"Etag is greater or equal than 0\"] = scn_version >= 0;",
+									"",
+									"tests[\"Version is greater than 0\"] = scn_version > postman.getEnvironmentVariable(ENV_PREFIX + \"ver\");",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"ver\", scn_version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-If-Version",
+								"value": "{{img-mgr.last-created-ver}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/images/{{img-mgr.last-created-uid}}/commit",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"images",
+								"{{img-mgr.last-created-uid}}",
+								"commit"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "workspaces",
 			"item": [
 				{
@@ -1001,7 +1269,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"outgoing_stream\": \"231\",\n\t\"pause_stream\": \"true\"\n}"
+							"raw": "{\n\t\"outgoing_stream\": \"outgoing\",\n\t\"pause_stream\": \"true\"\n}"
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
@@ -1033,7 +1301,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"incoming_stream\": \"231\",\n\t\"pause_stream\": \"true\"\n}"
+							"raw": "{\n\t\"incoming_stream\": \"incoming\",\n\t\"pause_stream\": \"true\"\n}"
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
@@ -1065,7 +1333,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"incoming_stream\": \"231\", \n\t\"outgoing_stream\": \"231\",\n\t\"pause_stream\": \"false\"\n}"
+							"raw": "{\n\t\"incoming_stream\": \"incoming\", \n\t\"outgoing_stream\": \"outgoing\",\n\t\"pause_stream\": \"false\"\n}"
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",

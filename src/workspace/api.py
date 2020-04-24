@@ -100,7 +100,7 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
             else:
                 raise HTTPInternalServerError()
         except self.manager.consul.InteractionError:
-            data = RouteConfigConsumer(wsp_uid=entity.uid)
+            data = RouteConfigWorkspace(wsp_uid=entity.uid)
         return data
 
     @json_response
