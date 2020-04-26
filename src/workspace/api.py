@@ -148,7 +148,7 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
     @json_response
     async def get_chain(self, request: Request):
 
-        producerRoute: RouteConfigWorkspace
+        producerRoute: RouteConfigWorkspace = None
         producerWsp: Workspace
         routesList = dict()
         graph = dict()
@@ -167,10 +167,10 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
 
         envWrspList = list()
         for workspace in lst:
-            if workspace.type != WSP_TYPE_PRODUCER and producerRoute.outgoing_stream == routesList.get(workspace.uid).incoming_stream:
+            if producerRoute != None and workspace.type != WSP_TYPE_PRODUCER and producerRoute.outgoing_stream == routesList.get(workspace.uid).incoming_stream:
                 envWrspList.append(workspace.uid)
-
-        graph.update({producerWsp.uid: envWrspList})
+        if (producerRoute != None):
+            graph.update({producerWsp.uid: envWrspList})
 
         for nodeWorkspace in lst:
             if nodeWorkspace.type != WSP_TYPE_PRODUCER and nodeWorkspace.type != WSP_TYPE_CONSUMER:
