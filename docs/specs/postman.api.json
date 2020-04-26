@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "05d5da5f-fcce-4e8f-a933-0334f4e707b3",
+		"_postman_id": "ca2e29c4-9f34-4848-ab98-234b1c8b7b20",
 		"name": "Buldozer",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -36,7 +36,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e99c49de-9e84-417a-9bef-94bff8c933c6",
+								"id": "385233f6-ebf3-41ba-9c6d-6e333f4d8a68",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -95,7 +95,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "31252779-e882-4675-9127-ef9c1f968da9",
+								"id": "f90e5c7f-49fb-4ded-9c41-549a63af8026",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -144,7 +144,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "31252779-e882-4675-9127-ef9c1f968da9",
+								"id": "39866186-7bf6-4f2f-af16-8dde04f05947",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -205,7 +205,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a9161e8c-84e8-4cc5-8d61-976b52039b12",
+								"id": "b5ba6014-be11-430c-b337-3a4cbeed5f3f",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -246,7 +246,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8c79a02c-3405-4b55-b5a8-9ccfa68fd03f",
+								"id": "49af0bb0-70b2-4172-bffa-dd5f8ad5be73",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -307,7 +307,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a9a7f46c-74f2-43a3-ac0d-866e08c5c1c6",
+								"id": "557f9bd1-0e49-4fcf-acec-1722505d7593",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -352,7 +352,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8c79a02c-3405-4b55-b5a8-9ccfa68fd03f",
+								"id": "18fdaaad-227c-4714-ba5f-3393c716cced",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -441,7 +441,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1d7c16c0-7591-44d1-ba1b-3433141cf961",
+								"id": "08da28bc-bd5e-4ee1-8e9e-bf992e861b7d",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -500,7 +500,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "60d0690b-2506-400e-8332-02a7cdca6c13",
+								"id": "e82bf4df-114a-4d8e-8e28-16cab354afa9",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -549,7 +549,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8c9bd821-b7e8-4a93-b8a8-871503ef4b64",
+								"id": "4c5ab6de-2f6b-4bae-ba5e-fe5a22797ff6",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -610,7 +610,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "531a556e-d325-495d-b2df-be99add83baf",
+								"id": "c3440921-ccb2-4502-b601-90a7a1855ef0",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -668,7 +668,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3d82bec0-538a-45fc-ad51-14aba45b3570",
+								"id": "a16cac57-d986-4acd-bf76-d092858d65d8",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'app-mgr.last-created-'",
@@ -745,7 +745,8 @@
 									"",
 									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);",
 									"postman.setEnvironmentVariable(ENV_PREFIX + \"ver\", scn_version);"
-								]
+								],
+								"id": "4bef9c6f-10cf-4d78-8086-9d2f99a3c8ca"
 							}
 						}
 					],
@@ -821,7 +822,8 @@
 									"",
 									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
 									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');"
-								]
+								],
+								"id": "337f1449-5f1d-4f5e-bc2b-75e76d1a624e"
 							}
 						}
 					],
@@ -883,7 +885,8 @@
 									"var jsonData = JSON.parse(responseBody);",
 									"tests[\"Name changed\"] = jsonData.name == \"test_updated\";",
 									""
-								]
+								],
+								"id": "4b032806-dddd-48c5-a98b-758cf78f2e4e"
 							}
 						}
 					],
@@ -926,7 +929,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a5d72973-8c53-4236-8cd6-b0505813629c",
+								"id": "66c1e213-3363-4658-b3db-2d80cdef7837",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'img-mgr.last-created-'",
@@ -994,7 +997,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d8e3349f-7ece-4024-9627-ff36667f90ec",
+								"id": "0ca96663-6c5f-486b-8cd9-7944ec183d77",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1025,7 +1028,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"type\":\"producer\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
+							"raw": "{\n\t\"name\":\"A\",\n\t\n\t\"type\":\"producer\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces",
@@ -1045,7 +1048,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d8e3349f-7ece-4024-9627-ff36667f90ec",
+								"id": "0058c6a7-d84e-4079-95dc-caea8dcca388",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1076,7 +1079,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"type\":\"consumer\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
+							"raw": "{\n\t\"name\":\"H\",\n\t\n\t\"type\":\"consumer\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces",
@@ -1096,7 +1099,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d8e3349f-7ece-4024-9627-ff36667f90ec",
+								"id": "834e9cc7-749b-4211-b6fe-2bbd866b88b2",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1127,7 +1130,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"type\":\"workspace\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
+							"raw": "{\n\t\"name\":\"M\",\n\t\n\t\"type\":\"workspace\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces",
@@ -1170,15 +1173,15 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "aab69509-e07c-4ea7-8af4-aae5a7d8ec8a",
-								"type": "text/javascript",
+								"id": "3f4279c1-5b42-4820-995d-44948fbf4dcd",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
 									"",
 									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
 									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1208,6 +1211,9 @@
 				},
 				{
 					"name": "get workspace",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1216,6 +1222,10 @@
 								"value": "{{user-id}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}",
 							"host": [
@@ -1231,6 +1241,9 @@
 				},
 				{
 					"name": "get workspace route conf",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1239,6 +1252,10 @@
 								"value": "{{user-id}}"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
 							"host": [
@@ -1248,6 +1265,53 @@
 								"workspaces",
 								"{{wsp-mgr.last-created-uid}}",
 								"route"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get workspace neighbors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"url": {
+							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/neighbors",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces",
+								"{{wsp-mgr.last-created-uid}}",
+								"neighbors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get workspaces chain",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"url": {
+							"raw": "{{http-api}}/workspaces/chain",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces",
+								"chain"
 							]
 						}
 					},
@@ -1333,7 +1397,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"incoming_stream\": \"incoming\", \n\t\"outgoing_stream\": \"outgoing\",\n\t\"pause_stream\": \"false\"\n}"
+							"raw": "{\n\t\"incoming_stream\": \"3\", \n\t\"outgoing_stream\": \"4\",\n\t\"pause_stream\": \"false\"\n}"
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",

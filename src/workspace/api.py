@@ -7,7 +7,8 @@ from aiohttp.web import UrlDispatcher
 from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent, HTTPNotFound, HTTPInternalServerError
 from aiohttp.web_request import Request
 
-from common.entities import RouteConfigWorkspace, RouteConfigConsumer, RouteConfigProducer, Workspace
+from common.entities import RouteConfigWorkspace, RouteConfigConsumer, RouteConfigProducer, Workspace, \
+    WorkspaceNeighbors, WorkspacesChain
 from config import WSP_TYPE_PRODUCER, WSP_TYPE_WORKSPACE, WSP_TYPE_CONSUMER
 from mco.rpc import RPCRoutable, rpc_expose
 from microcore.base.application import Routable
@@ -32,6 +33,9 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         root.add_route(hdrs.METH_GET, self.list_pageable)
         root.add_route(hdrs.METH_POST, self.post)
 
+        chain = router.add_resource('/workspaces/chain')
+        chain.add_route(hdrs.METH_GET, self.get_chain)
+
         item = router.add_resource('/workspaces/{id}')
         item.add_route(hdrs.METH_GET, self.get)
         item.add_route(hdrs.METH_PUT, self.put)
@@ -43,6 +47,9 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
 
         health = router.add_resource('/workspaces/{id}/health')
         health.add_route(hdrs.METH_GET, self.health)
+
+        neighbors = router.add_resource('/workspaces/{id}/neighbors')
+        neighbors.add_route(hdrs.METH_GET, self.get_neighbors)
 
     def set_methods(self) -> List[callable]:
         return [
@@ -83,7 +90,6 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         await self.manager.reroute(workspace=entity, route=data)
         raise HTTPNoContent()
 
-
     @json_response
     async def get_route(self, request: Request):
         try:
@@ -110,3 +116,71 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         except DoesNotExist:
             raise HTTPNotFound
         return await self.manager.healthcheck(entity)
+
+    @json_response
+    async def get_neighbors(self, request: Request):
+        try:
+            centerWrks: Workspace = await self._get(request)
+        except DoesNotExist:
+            raise HTTPNotFound
+
+        try:
+            lst = await self._list(await self._list_query(request))
+        except AttributeError as e:
+            raise HTTPBadRequest() from e
+
+        centerWorkspRoutes: RouteConfigWorkspace = await self.manager.get_route_config(centerWrks)
+
+        incomingNeighbors = list()
+        outgoingNeighbors = list()
+        for workspace in lst:
+            routes: RouteConfigWorkspace = await self.manager.get_route_config(workspace)
+            if workspace.type != WSP_TYPE_CONSUMER and centerWrks.type!=WSP_TYPE_PRODUCER:
+                if centerWorkspRoutes.incoming_stream == routes.outgoing_stream and centerWrks.uid != workspace.uid:
+                    incomingNeighbors.append(workspace.uid)
+            if workspace.type != WSP_TYPE_PRODUCER and centerWrks.type!=WSP_TYPE_CONSUMER:
+                if centerWorkspRoutes.outgoing_stream == routes.incoming_stream and centerWrks.uid != workspace.uid:
+                    outgoingNeighbors.append(workspace.uid)
+
+        data = WorkspaceNeighbors(incomingNeighbors, outgoingNeighbors)
+        return data
+
+    @json_response
+    async def get_chain(self, request: Request):
+
+        producerRoute: RouteConfigWorkspace
+        producerWsp: Workspace
+        routesList = dict()
+        graph = dict()
+
+        try:
+            lst = await self._list(await self._list_query(request))
+        except AttributeError as e:
+            raise HTTPBadRequest() from e
+
+        for workspace in lst:
+            routes: RouteConfigWorkspace = await self.manager.get_route_config(workspace)
+            routesList.update({workspace.uid: routes})
+            if workspace.type == WSP_TYPE_PRODUCER:
+                producerRoute = routes
+                producerWsp = workspace
+
+        envWrspList = list()
+        for workspace in lst:
+            if workspace.type != WSP_TYPE_PRODUCER and producerRoute.outgoing_stream == routesList.get(workspace.uid).incoming_stream:
+                envWrspList.append(workspace.uid)
+
+        graph.update({producerWsp.uid: envWrspList})
+
+        for nodeWorkspace in lst:
+            if nodeWorkspace.type != WSP_TYPE_PRODUCER and nodeWorkspace.type != WSP_TYPE_CONSUMER:
+                envWrspList = list()
+                nodeRoutes: RouteConfigWorkspace = routesList.get(nodeWorkspace.uid)
+                for envWorkspace in lst:
+                    if envWorkspace.type != WSP_TYPE_PRODUCER:
+                        if nodeRoutes.outgoing_stream == routesList.get(envWorkspace.uid).incoming_stream:
+                            envWrspList.append(envWorkspace.uid)
+                graph.update({nodeWorkspace.uid: envWrspList})
+
+        data = WorkspacesChain(graph)
+        return data
