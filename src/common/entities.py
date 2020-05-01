@@ -155,7 +155,7 @@ class WorkspaceNeighborsJSONEncoder(RegisteredEntityJSONEncoder):
 
 @attr.s(auto_attribs=True)
 class WorkspacesChain:
-    workspacesChain: dict = None
+    workspacesChainOutgoings: dict = None
 
 
 class WorkspaceChainJSONEncoder(RegisteredEntityJSONEncoder):
