@@ -45,6 +45,10 @@ MONGO_DB: AgnosticDatabase = motor().buldozer
 WSP_GC_COLLECT_DELAY = timedelta(seconds=int(os.getenv('WSP_GC_COLLECT_DELAY', 60 * 60)))
 WSP_GC_INTERVAL = int(os.getenv('WSP_GC_INTERVAL', 600))
 
+WSP_TYPE_WORKSPACE = "workspace"
+WSP_TYPE_PRODUCER = "producer"
+WSP_TYPE_CONSUMER = "consumer"
+
 CONSUL_DSN = os.environ.get('CONSUL_DSN', 'http://consul:8500')
 CONSUL_SUBORDINATE_DIR = '/buldozer/subordinate/'
 CONSUL_TOPICS_DIR = '/gis/topic_manager/topics'

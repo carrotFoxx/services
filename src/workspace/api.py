@@ -4,10 +4,11 @@ from typing import List
 
 from aiohttp import hdrs
 from aiohttp.web import UrlDispatcher
-from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent, HTTPNotFound
+from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent, HTTPNotFound, HTTPInternalServerError
 from aiohttp.web_request import Request
 
-from common.entities import RouteConfig, Workspace
+from common.entities import RouteConfigWorkspace, RouteConfigConsumer, RouteConfigProducer, Workspace
+from config import WSP_TYPE_PRODUCER, WSP_TYPE_WORKSPACE, WSP_TYPE_CONSUMER
 from mco.rpc import RPCRoutable, rpc_expose
 from microcore.base.application import Routable
 from microcore.base.repository import DoesNotExist
@@ -71,11 +72,17 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
     async def set_route(self, request: Request):
         entity: Workspace = await self._get(request)
         try:
-            data = RouteConfig(wsp_uid=entity.uid, **await request.json())
+            if entity.type == WSP_TYPE_CONSUMER:
+                data = RouteConfigConsumer(wsp_uid=entity.uid, **await request.json())
+            elif entity.type == WSP_TYPE_PRODUCER:
+                data = RouteConfigProducer(wsp_uid=entity.uid, **await request.json())
+            elif entity.type == WSP_TYPE_WORKSPACE:
+                data = RouteConfigWorkspace(wsp_uid=entity.uid, **await request.json())
         except (TypeError, ValueError) as e:
             raise HTTPBadRequest() from e
         await self.manager.reroute(workspace=entity, route=data)
         raise HTTPNoContent()
+
 
     @json_response
     async def get_route(self, request: Request):
@@ -84,9 +91,16 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         except DoesNotExist:
             raise HTTPNotFound
         try:
-            data: RouteConfig = await self.manager.get_route_config(entity)
+            if entity.type == WSP_TYPE_CONSUMER:
+                data: RouteConfigConsumer = await self.manager.get_route_config(entity)
+            elif entity.type == WSP_TYPE_PRODUCER:
+                data: RouteConfigProducer = await self.manager.get_route_config(entity)
+            elif entity.type == WSP_TYPE_WORKSPACE:
+                data: RouteConfigWorkspace = await self.manager.get_route_config(entity)
+            else:
+                raise HTTPInternalServerError()
         except self.manager.consul.InteractionError:
-            data = RouteConfig(wsp_uid=entity.uid)
+            data = RouteConfigWorkspace(wsp_uid=entity.uid)
         return data
 
     @json_response

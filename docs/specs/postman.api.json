@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4e17dbd2-a63b-4706-8762-1784c0bf254f",
+		"_postman_id": "05d5da5f-fcce-4e8f-a933-0334f4e707b3",
 		"name": "Buldozer",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -18,7 +18,6 @@
 								"value": "{{user-id}}"
 							}
 						],
-						"body": {},
 						"url": {
 							"raw": "{{http-api}}/applications",
 							"host": [
@@ -126,10 +125,6 @@
 								"value": "{{user-id}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"TensorFlow\"\n}"
-						},
 						"url": {
 							"raw": "{{http-api}}/applications/{{app-mgr.last-created-uid}}",
 							"host": [
@@ -231,10 +226,6 @@
 								"value": "{{user-id}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"TensorFlow\"\n}"
-						},
 						"url": {
 							"raw": "{{http-api}}/applications/{{app-mgr.last-created-uid}}/versions",
 							"host": [
@@ -340,10 +331,6 @@
 								"value": "{{user-id}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"TensorFlow\"\n}"
-						},
 						"url": {
 							"raw": "{{http-api}}/applications/{{app-mgr.last-created-uid}}/versions/{{app-mgr.last-created-ver}}",
 							"host": [
@@ -420,7 +407,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "models",
@@ -435,7 +423,6 @@
 								"value": "{{user-id}}"
 							}
 						],
-						"body": {},
 						"url": {
 							"raw": "{{http-api}}/models",
 							"host": [
@@ -543,10 +530,6 @@
 								"value": "{{user-id}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"TensorFlow\"\n}"
-						},
 						"url": {
 							"raw": "{{http-api}}/models/{{model-mgr.last-created-uid}}",
 							"host": [
@@ -723,8 +706,8 @@
 							"path": [
 								"models",
 								"{{model-mgr.last-created-uid}}",
-                                "versions",
-                                "{{model-mgr.last-created-ver}}",
+								"versions",
+								"{{model-mgr.last-created-ver}}",
 								"download"
 							]
 						}
@@ -1006,13 +989,12 @@
 			"name": "workspaces",
 			"item": [
 				{
-					"name": "create workspace",
+					"name": "create workspace Producer",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"id": "d8e3349f-7ece-4024-9627-ff36667f90ec",
-								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1024,7 +1006,8 @@
 									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
 									"",
 									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -1042,7 +1025,109 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
+							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"type\":\"producer\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/workspaces",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create workspace Consumer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d8e3349f-7ece-4024-9627-ff36667f90ec",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"type\":\"consumer\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/workspaces",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create workspace Workspace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d8e3349f-7ece-4024-9627-ff36667f90ec",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"type\":\"workspace\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces",
@@ -1066,7 +1151,6 @@
 								"value": "{{user-id}}"
 							}
 						],
-						"body": {},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}",
 							"host": [
@@ -1110,10 +1194,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
-						},
 						"url": {
 							"raw": "{{http-api}}/workspaces",
 							"host": [
@@ -1136,7 +1216,6 @@
 								"value": "{{user-id}}"
 							}
 						],
-						"body": {},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}",
 							"host": [
@@ -1160,7 +1239,6 @@
 								"value": "{{user-id}}"
 							}
 						],
-						"body": {},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
 							"host": [
@@ -1176,7 +1254,7 @@
 					"response": []
 				},
 				{
-					"name": "put workspace route conf",
+					"name": "put workspace route conf Producer",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -1191,7 +1269,71 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n}"
+							"raw": "{\n\t\"outgoing_stream\": \"outgoing\",\n\t\"pause_stream\": \"true\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces",
+								"{{wsp-mgr.last-created-uid}}",
+								"route"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put workspace route conf Consumer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"incoming_stream\": \"incoming\",\n\t\"pause_stream\": \"true\"\n}"
+						},
+						"url": {
+							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces",
+								"{{wsp-mgr.last-created-uid}}",
+								"route"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put workspace route conf Workspace",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"incoming_stream\": \"incoming\", \n\t\"outgoing_stream\": \"outgoing\",\n\t\"pause_stream\": \"false\"\n}"
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
@@ -1207,7 +1349,9 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }

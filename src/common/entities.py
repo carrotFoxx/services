@@ -92,19 +92,42 @@ class RouteConfig:
     desired_version: int = 0
     adopted_version: int = 0
 
-    incoming_stream: str = KAFKA_DEFAULT_INCOMING_TOPIC
-    outgoing_stream: str = KAFKA_DEFAULT_OUTGOING_TOPIC
-
     pause_stream: str = KAFKA_DEFAULT_PAUSE_STREAM
 
 
-class RouteConfigJSONEncoder(RegisteredEntityJSONEncoder):
-    entity_type = RouteConfig
+@attr.s(auto_attribs=True)
+class RouteConfigConsumer(RouteConfig):
+    incoming_stream: str = KAFKA_DEFAULT_INCOMING_TOPIC
+
+
+class RouteConfigJSONEncoderConsumer(RegisteredEntityJSONEncoder):
+    entity_type = RouteConfigConsumer
+
+
+@attr.s(auto_attribs=True)
+class RouteConfigProducer(RouteConfig):
+    outgoing_stream: str = KAFKA_DEFAULT_OUTGOING_TOPIC
+
+
+class RouteConfigJSONEncoderProducer(RegisteredEntityJSONEncoder):
+    entity_type = RouteConfigProducer
+
+
+@attr.s(auto_attribs=True)
+class RouteConfigWorkspace(RouteConfig):
+    incoming_stream: str = KAFKA_DEFAULT_INCOMING_TOPIC
+    outgoing_stream: str = KAFKA_DEFAULT_OUTGOING_TOPIC
+
+
+class RouteConfigJSONEncoderWorkspace(RegisteredEntityJSONEncoder):
+    entity_type = RouteConfigWorkspace
 
 
 @attr.s(auto_attribs=True)
 class Workspace(ObjectBase, OwnedObject, TrackedObject):
     name: str = None
+
+    type: str = None
 
     app_id: str = None
     app_ver: int = None
