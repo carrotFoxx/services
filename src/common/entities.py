@@ -143,6 +143,25 @@ class Workspace(ObjectBase, OwnedObject, TrackedObject):
         self.owner = other.owner
 
 
+@attr.s(auto_attribs=True)
+class WorkspaceNeighbors:
+    incomingNeighbors: list = None
+    outgoingNeighbors: list = None
+
+
+class WorkspaceNeighborsJSONEncoder(RegisteredEntityJSONEncoder):
+    entity_type = WorkspaceNeighbors
+
+
+@attr.s(auto_attribs=True)
+class WorkspacesChain:
+    workspacesChainOutgoings: dict = None
+
+
+class WorkspaceChainJSONEncoder(RegisteredEntityJSONEncoder):
+    entity_type = WorkspacesChain
+
+
 class WorkspaceJSONEncoder(RegisteredEntityJSONEncoder):
     entity_type = Workspace
 
