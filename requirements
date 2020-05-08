@@ -39,6 +39,7 @@ pyjwt==1.7.1
 pymongo==3.7.2
 python-consul==1.1.0
 python-dateutil==2.7.5
+python-novaclient==16.0.0
 pytz==2018.7
 pyyaml==3.13
 raven-aiohttp==0.7.0
