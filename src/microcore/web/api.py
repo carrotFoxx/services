@@ -119,6 +119,15 @@ class ReadWriteStorageAPI(ReadOnlyStorageAPI):
             raise HTTPInternalServerError() from e
         return HTTPCreated(text=json.dumps({'uid': entity.uid}))
 
+    @staticmethod
+    async def post_stat(self, request: Request):
+        entity = await self._catch_input(request=request, transformer=self._post_transformer)
+        try:
+            await self._post(entity)
+        except StorageException as e:
+            raise HTTPInternalServerError() from e
+        return HTTPCreated(text=json.dumps({'uid': entity.uid}))
+
     async def put(self, request: Request):
         entity = await self._catch_input(request=request, transformer=self._put_transformer)
         try:
