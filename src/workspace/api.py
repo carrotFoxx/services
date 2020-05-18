@@ -31,7 +31,7 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         root = router.add_resource('/workspaces')
         root.add_route(hdrs.METH_HEAD, self.head_list)
         root.add_route(hdrs.METH_GET, self.list_pageable)
-        root.add_route(hdrs.METH_POST, self.post)
+        root.add_route(hdrs.METH_POST, self.postWsp)
 
         chain = router.add_resource('/workspaces/chain')
         chain.add_route(hdrs.METH_GET, self.get_chain)
@@ -75,6 +75,15 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         except:
             log.exception('provisioning failed, deleting workspace')
             await self.repository.delete(workspace.uid)
+
+    @json_response
+    async def postWsp(self, request: Request):
+        entity = await self._catch_input(request=request, transformer=self._post_transformer)
+        if not isinstance(entity, Workspace):
+            raise HTTPBadRequest()
+        if entity.type != WSP_TYPE_PRODUCER and entity.type != WSP_TYPE_WORKSPACE and entity.type != WSP_TYPE_CONSUMER:
+            raise HTTPBadRequest()
+        return await self.post_stat(self, request)
 
     async def set_route(self, request: Request):
         entity: Workspace = await self._get(request)
