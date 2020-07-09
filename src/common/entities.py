@@ -158,6 +158,18 @@ class WorkspacesChain:
     workspacesChainOutgoings: dict = None
 
 
+@attr.s(auto_attribs=True)
+class Chain(ObjectBase, OwnedObject, TrackedObject):
+    name: str = None
+    wr: list = None  # wsp + routes
+    instance_id: str = None
+
+    def preserve_from(self, other: 'Chain'):
+        super().preserve_from(other)
+        self.uid = other.uid
+        self.owner = other.owner
+
+
 class WorkspaceChainJSONEncoder(RegisteredEntityJSONEncoder):
     entity_type = WorkspacesChain
 
@@ -168,6 +180,14 @@ class WorkspaceJSONEncoder(RegisteredEntityJSONEncoder):
 
 class WorkspaceStorageEncoder(StorageEntityJSONEncoderBase):
     entity_type = Workspace
+
+
+class ChainJSONEncoder(RegisteredEntityJSONEncoder):
+    entity_type = Chain
+
+
+class ChainStorageEncoder(StorageEntityJSONEncoderBase):
+    entity_type = Chain
 
 
 @attr.s(auto_attribs=True)

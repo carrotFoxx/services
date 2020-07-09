@@ -13,6 +13,7 @@ from config import WSP_TYPE_PRODUCER, WSP_TYPE_WORKSPACE, WSP_TYPE_CONSUMER
 from mco.rpc import RPCRoutable, rpc_expose
 from microcore.base.application import Routable
 from microcore.base.repository import DoesNotExist
+from microcore.entity.abstract import Owned
 from microcore.entity.encoders import json_response
 from microcore.web.owned_api import OwnedReadWriteStorageAPI
 from workspace.manager import WorkspaceManager
@@ -53,7 +54,10 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
 
     def set_methods(self) -> List[callable]:
         return [
-            rpc_expose(self.repository.load, name='get')
+            rpc_expose(self.repository.load, name='get'),
+            rpc_expose(self.rpc_post, name='post'),
+            rpc_expose(self.repository.delete, name='delete'),
+            rpc_expose(self.manager.reroute, name='reroute')
         ]
 
     async def _delete(self, stored: entity_type):
@@ -193,3 +197,9 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
 
         data = WorkspacesChain(graph)
         return data
+
+    async def rpc_post(self, workspace, owner_id) -> object:
+        entity: Owned = self._decode_payload(workspace)
+        entity.set_owner(owner_id)
+        await self.repository.save(entity)
+        return entity

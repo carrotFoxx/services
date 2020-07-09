@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ca2e29c4-9f34-4848-ab98-234b1c8b7b20",
+		"_postman_id": "d2e8a7e4-80b7-4b0b-be1e-c6d99f0576d7",
 		"name": "Buldozer",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -36,7 +36,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "385233f6-ebf3-41ba-9c6d-6e333f4d8a68",
+								"id": "5f0c67fd-0567-4090-9b0f-1faf3a225a92",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -95,7 +95,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f90e5c7f-49fb-4ded-9c41-549a63af8026",
+								"id": "53bd1548-89c9-4839-9aa0-aec62e4de790",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -144,7 +144,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "39866186-7bf6-4f2f-af16-8dde04f05947",
+								"id": "d029403f-b3d7-4bfa-a4c8-9ecca097e4c8",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -205,7 +205,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b5ba6014-be11-430c-b337-3a4cbeed5f3f",
+								"id": "3ae9a2a8-aa39-496c-9dab-2516df977e75",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -246,7 +246,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "49af0bb0-70b2-4172-bffa-dd5f8ad5be73",
+								"id": "1a329927-d34c-4124-8a08-09f4c4c71c7a",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -307,7 +307,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "557f9bd1-0e49-4fcf-acec-1722505d7593",
+								"id": "c67a1ef6-f629-46aa-b393-c4be9c06d9b2",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -352,7 +352,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "18fdaaad-227c-4714-ba5f-3393c716cced",
+								"id": "ffd51238-09f5-4311-aa4f-3a913cb3a5fb",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -441,7 +441,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "08da28bc-bd5e-4ee1-8e9e-bf992e861b7d",
+								"id": "261bc557-049f-43d8-8632-abfb4c75dfb4",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -500,7 +500,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e82bf4df-114a-4d8e-8e28-16cab354afa9",
+								"id": "64565240-1641-4edd-8517-28c17edf18ca",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -549,7 +549,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4c5ab6de-2f6b-4bae-ba5e-fe5a22797ff6",
+								"id": "55a65acc-b1f8-449c-875f-595692bca22c",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -610,7 +610,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c3440921-ccb2-4502-b601-90a7a1855ef0",
+								"id": "0b7cf649-babf-4dbc-9a7c-06641f7ce917",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -668,7 +668,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a16cac57-d986-4acd-bf76-d092858d65d8",
+								"id": "38ec7321-16e6-49ab-bfa5-bcff9411c5fa",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'app-mgr.last-created-'",
@@ -746,7 +746,7 @@
 									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);",
 									"postman.setEnvironmentVariable(ENV_PREFIX + \"ver\", scn_version);"
 								],
-								"id": "4bef9c6f-10cf-4d78-8086-9d2f99a3c8ca"
+								"id": "6f2812f0-5ec0-441a-b55f-ebeb637bb9b5"
 							}
 						}
 					],
@@ -823,7 +823,7 @@
 									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
 									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');"
 								],
-								"id": "337f1449-5f1d-4f5e-bc2b-75e76d1a624e"
+								"id": "7ae6eec2-bdf7-4b56-8f48-98aa19c92618"
 							}
 						}
 					],
@@ -886,7 +886,7 @@
 									"tests[\"Name changed\"] = jsonData.name == \"test_updated\";",
 									""
 								],
-								"id": "4b032806-dddd-48c5-a98b-758cf78f2e4e"
+								"id": "e69766e0-f97d-47cd-abd4-bc4b9a5423cd"
 							}
 						}
 					],
@@ -929,7 +929,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "66c1e213-3363-4658-b3db-2d80cdef7837",
+								"id": "2598f1c5-605f-4e87-875d-8c19693f6635",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'img-mgr.last-created-'",
@@ -997,7 +997,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0ca96663-6c5f-486b-8cd9-7944ec183d77",
+								"id": "8a4cd5ce-4d3b-486b-a75a-82e2186bb916",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1048,7 +1048,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0058c6a7-d84e-4079-95dc-caea8dcca388",
+								"id": "12c47edc-b343-49bc-a8e1-51692088274e",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1099,7 +1099,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "834e9cc7-749b-4211-b6fe-2bbd866b88b2",
+								"id": "24857fd5-6d5a-491c-b830-fb91030561cd",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1173,7 +1173,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3f4279c1-5b42-4820-995d-44948fbf4dcd",
+								"id": "b606ef9c-f0a9-4af0-83e8-c43749200131",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1408,6 +1408,301 @@
 								"workspaces",
 								"{{wsp-mgr.last-created-uid}}",
 								"route"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "script",
+			"item": [
+				{
+					"name": "create chain",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "aa595660-f088-47b3-b666-44438e5a4b7d",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"uid\": \"5adf2f66272a4f4792c39da5835f0e1d\",\n\t\"name\":\"A\",\n\t\"wr\":\n\t[{\"workspace\":\n\t\t{\n\t\t\"name\":\"A\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82131\",\n\t\t\n\t\t\"type\":\"producer\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\n\t\t\t\n\t\t\"name\":\"B\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82132\",\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"C\",\n\t\t\n\t\t\"type\":\"consumer\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82133\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\n\t\t\"incoming_stream\": \"2\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
+						},
+						"url": {
+							"raw": "{{http-api}}/script/chain",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"script",
+								"chain"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create without uid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d5d34956-ea71-4ae6-8a06-903f9c706636",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"wr\":\n\t\n\t[{\"workspace\":\n\t\t{\"name\":\"A\",\n\t\t\n\t\t\"type\":\"producer\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"B\",\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\t\"incoming_stream\": \"2\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"C\",\n\t\t\n\t\t\"type\":\"consumer\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"incoming_stream\": \"2\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
+						},
+						"url": {
+							"raw": "{{http-api}}/script/chain",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"script",
+								"chain"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list chains",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4bd91437-0923-46d3-8e58-fabaaa15a8cb",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{http-api}}/chains",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"chains"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change chain",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f79d5ba7-7fb3-4679-a296-03ac54d37b2c",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"A\",\n\t\n\t\"uid\": \"5adf2f66272a4f4792c39da5835f0e1d\",\n\t\n\t\"wr\":\n\t\n\t[{\"workspace\":\n\t\t{\n\t\t\"name\": \"Aadv\",\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82131\",\n\t\t\"type\":\"workspace\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"222\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"B\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82132\",\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"C\",\n\t\t\n\t\t\"type\":\"consumer\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82133\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\n\t\t\"incoming_stream\": \"2\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
+						},
+						"url": {
+							"raw": "{{http-api}}/script/chain",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"script",
+								"chain"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change chain v2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c21a3ec6-93e4-4d2f-a0e3-6654eed466f5",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"A\",\n\t\n\t\"uid\": \"5adf2f66272a4f4792c39da5835f0e1d\",\n\t\n\t\"wr\":\n\t\n\t[{\"workspace\":\n\t\t{\n\t\t\"name\": \"Aadv\",\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82131\",\n\t\t\"type\":\"workspace\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"222\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"B\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82132\",\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
+						},
+						"url": {
+							"raw": "{{http-api}}/script/chain",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"script",
+								"chain"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete chain",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4a3798eb-3db3-4bc9-b202-fc5e233165f2",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{http-api}}/script/5adf2f66272a4f4792c39da5835f0e1d",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"script",
+								"5adf2f66272a4f4792c39da5835f0e1d"
 							]
 						}
 					},
