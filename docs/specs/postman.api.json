@@ -1456,28 +1456,29 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"uid\": \"5adf2f66272a4f4792c39da5835f0e1d\",\n\t\"name\":\"A\",\n\t\"wr\":\n\t[{\"workspace\":\n\t\t{\n\t\t\"name\":\"A\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82131\",\n\t\t\n\t\t\"type\":\"producer\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\n\t\t\t\n\t\t\"name\":\"B\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82132\",\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"C\",\n\t\t\n\t\t\"type\":\"consumer\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82133\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\n\t\t\"incoming_stream\": \"2\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
+							"raw": "{\t\n\t\"uid\": \"3454f7e41bf14c9f93a44a3f1de6c1b6\",\n\t\"name\":\"A\",\n\t\"wr\":\n\t[{\"workspace\":\n\t\t{\t\t\t\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff270\",\n\t\t\"name\":\"A\",\t\n\t\t\"type\":\"producer\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\t\t\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff271\",\t\t\t\n\n\t\t\"name\":\"B\",\t\t\t\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\t\"incoming_stream\": \"2\",\t\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\t\n\t{\"workspace\":\n\t\t{\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff272\",\n\t\t\"name\":\"C\",\n\t\t\"type\":\"consumer\",\t\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\n\t\t\"incoming_stream\": \"2\",\t\t\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
 						},
 						"url": {
-							"raw": "{{http-api}}/script/chain",
+							"raw": "{{http-api}}:/script/",
 							"host": [
 								"{{http-api}}"
 							],
+							"port": "",
 							"path": [
 								"script",
-								"chain"
+								""
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "create without uid",
+					"name": "create chain (without uid)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "d5d34956-ea71-4ae6-8a06-903f9c706636",
+								"id": "acf0b548-89bb-4928-9cd8-eaffa8799a43",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1508,16 +1509,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"wr\":\n\t\n\t[{\"workspace\":\n\t\t{\"name\":\"A\",\n\t\t\n\t\t\"type\":\"producer\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"B\",\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\t\"incoming_stream\": \"2\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"C\",\n\t\t\n\t\t\"type\":\"consumer\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"incoming_stream\": \"2\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
+							"raw": "{\t\n\t\"name\":\"A\",\n\t\"wr\":\n\t[{\"workspace\":\n\t\t{\t\t\t\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff270\",\n\t\t\"name\":\"A\",\t\n\t\t\"type\":\"producer\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\t\n\t{\"workspace\":\n\t\t{\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff271\",\t\t\t\n\n\t\t\"name\":\"B\",\t\t\t\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\t\"incoming_stream\": \"2\",\t\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\t\n\t{\"workspace\":\n\t\t{\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff273\",\n\t\t\"name\":\"C\",\n\t\t\"type\":\"consumer\",\t\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\t\t\n\t\t\"incoming_stream\": \"2\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
 						},
 						"url": {
-							"raw": "{{http-api}}/script/chain",
+							"raw": "{{http-api}}:/script/",
 							"host": [
 								"{{http-api}}"
 							],
+							"port": "",
 							"path": [
 								"script",
-								"chain"
+								""
 							]
 						}
 					},
@@ -1554,19 +1556,21 @@
 							}
 						],
 						"url": {
-							"raw": "{{http-api}}/chains",
+							"raw": "{{http-api}}:/script/",
 							"host": [
 								"{{http-api}}"
 							],
+							"port": "",
 							"path": [
-								"chains"
+								"script",
+								""
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "change chain",
+					"name": "change chain (adding wsp)",
 					"event": [
 						{
 							"listen": "test",
@@ -1602,28 +1606,29 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"A\",\n\t\n\t\"uid\": \"5adf2f66272a4f4792c39da5835f0e1d\",\n\t\n\t\"wr\":\n\t\n\t[{\"workspace\":\n\t\t{\n\t\t\"name\": \"Aadv\",\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82131\",\n\t\t\"type\":\"workspace\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"222\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"B\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82132\",\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"C\",\n\t\t\n\t\t\"type\":\"consumer\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82133\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\n\t\t\"incoming_stream\": \"2\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
+							"raw": "{\n\t\"name\":\"A\",\t\t\n\t\"wr\":\n\t\n\t[{\"workspace\":\n\t\t{\n\t\t\"name\": \"A\",\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff270\",\n\t\t\"type\":\"producer\",\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"222\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"new B\",\n\t\t\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff271\",\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\t\"incoming_stream\": \"222\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"C\",\n\t\t\n\t\t\"type\":\"consumer\",\n\t\t\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff272\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\n\t\t\"incoming_stream\": \"2\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t{\"workspace\":\n\t\t{\"name\":\"D\",\n\t\t\n\t\t\"type\":\"consumer\",\n\t\t\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff273\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\n\t\t\"incoming_stream\": \"2\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
 						},
 						"url": {
-							"raw": "{{http-api}}/script/chain",
+							"raw": "{{http-api}}:/script/3454f7e41bf14c9f93a44a3f1de6c1b6",
 							"host": [
 								"{{http-api}}"
 							],
+							"port": "",
 							"path": [
 								"script",
-								"chain"
+								"3454f7e41bf14c9f93a44a3f1de6c1b6"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "change chain v2",
+					"name": "change chain (remove wsp)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "c21a3ec6-93e4-4d2f-a0e3-6654eed466f5",
+								"id": "dd110be4-06aa-4730-9e7c-09b937345aab",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1654,16 +1659,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"A\",\n\t\n\t\"uid\": \"5adf2f66272a4f4792c39da5835f0e1d\",\n\t\n\t\"wr\":\n\t\n\t[{\"workspace\":\n\t\t{\n\t\t\"name\": \"Aadv\",\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82131\",\n\t\t\"type\":\"workspace\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"222\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"B\",\n\t\t\n\t\t\"uid\": \"813b56020dbb4282a24a5050b3e82132\",\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
+							"raw": "{\n\t\"name\":\"A\",\n\t\n\t\"wr\":\n\t\n\t[{\"workspace\":\n\t\t{\n\t\t\"name\": \"A\",\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff270\",\n\t\t\"type\":\"producer\",\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"222\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t},\n\t\n\t{\"workspace\":\n\t\t{\"name\":\"BBB\",\n\t\t\n\t\t\"uid\": \"8709d7235c4b4ff8b1a6c7bd2b4ff271\",\n\t\t\n\t\t\"type\":\"workspace\",\n\t\t\n\t\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\t\"app_ver\":\"1\",\n\t\t\n\t\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\t\"model_ver\":\"1\"\n\t\t},\n\t\"routes\":\n\t\t{\n\t\t\"outgoing_stream\": \"1\",\n\t\t\"incoming_stream\": \"222\",\n\t\t\"pause_stream\": \"true\"\n\t\t}\n\t}\n\t]\n}\n"
 						},
 						"url": {
-							"raw": "{{http-api}}/script/chain",
+							"raw": "{{http-api}}:/script/3454f7e41bf14c9f93a44a3f1de6c1b6",
 							"host": [
 								"{{http-api}}"
 							],
+							"port": "",
 							"path": [
 								"script",
-								"chain"
+								"3454f7e41bf14c9f93a44a3f1de6c1b6"
 							]
 						}
 					},
@@ -1696,13 +1702,14 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{http-api}}/script/5adf2f66272a4f4792c39da5835f0e1d",
+							"raw": "{{http-api}}:/script/3454f7e41bf14c9f93a44a3f1de6c1b6",
 							"host": [
 								"{{http-api}}"
 							],
+							"port": "",
 							"path": [
 								"script",
-								"5adf2f66272a4f4792c39da5835f0e1d"
+								"3454f7e41bf14c9f93a44a3f1de6c1b6"
 							]
 						}
 					},

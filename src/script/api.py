@@ -8,9 +8,10 @@ from aiohttp.web import UrlDispatcher, HTTPCreated
 from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent, HTTPNotFound, HTTPInternalServerError
 from aiohttp.web_request import Request
 
-from common.entities import RouteConfigWorkspace, RouteConfigConsumer, RouteConfigProducer, Workspace, Chain, RouteConfig
+from common.entities import RouteConfigWorkspace, RouteConfigConsumer, RouteConfigProducer, Workspace, Chain, \
+    RouteConfig
 from config import WSP_TYPE_PRODUCER, WSP_TYPE_WORKSPACE, WSP_TYPE_CONSUMER
-from mco.rpc import RPCRoutable, rpc_expose, RPCClient
+from mco.rpc import RPCRoutable, RPCClient
 from microcore.base.application import Routable
 from microcore.base.repository import DoesNotExist, StorageException
 from microcore.entity.encoders import json_response
@@ -30,159 +31,133 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
 
     def set_routes(self, router: UrlDispatcher):
 
-        root = router.add_resource('/chains')
+        root = router.add_resource('/script/')
         root.add_route(hdrs.METH_GET, self.list_pageable)
-
-        crChain = router.add_resource('/script/chain')
-        crChain.add_route(hdrs.METH_POST, self.post_chain)
-        crChain.add_route(hdrs.METH_PUT, self.change_chain)
+        root.add_route(hdrs.METH_POST, self.post_chain)
 
         item = router.add_resource('/script/{id}')
         item.add_route(hdrs.METH_GET, self.get_chain)
-        item.add_route(hdrs.METH_DELETE, self.delete)
-
+        item.add_route(hdrs.METH_DELETE, self.delete_chain)
+        item.add_route(hdrs.METH_PUT, self.change_chain)
 
     def set_methods(self) -> List[callable]:
         return [
-            rpc_expose(self.repository.load, name='get')
         ]
 
     @json_response
     async def post_chain(self, request: Request):
+        check = await self.check_request(request)
+        if check != "ok":
+            return HTTPBadRequest(reason=check)
+
         entity: Chain = await self._catch_input(request=request, transformer=self._post_transformer)
-        wrList = entity.wr #wr - workspace + routes
-        tmpWspList = list()
-        tmpWrList = list()
-        for wr in wrList:
+        wr_list = entity.wr  # wr - workspace + routes
+        tmp_wsp_list = list()
+        tmp_wr_list = list()
+        for wr in wr_list:
             try:
-                wspEntity = await self.wsp_manager.post(wr["workspace"], request["owner_id"])
-                tmpWspList.append(wspEntity)
-                tmpWr = dict()
-                tmpWr["workspace"] = wspEntity
-                tmpWr["routes"] = wr["routes"]
-                tmpWrList.append(tmpWr)
+                wsp_entity = await self.wsp_manager.post(wr["workspace"], request["owner_id"])
+                tmp_wsp_list.append(wsp_entity)
+                tmp_wr = dict()
+                tmp_wr["workspace"] = wsp_entity
+                tmp_wr["routes"] = wr["routes"]
+                tmp_wr_list.append(tmp_wr)
             except:
-                for wsp in tmpWspList:
+                for wsp in tmp_wsp_list:
                     await self.wsp_manager.delete(wsp.uid)
                 return HTTPBadRequest()
 
-            wspType = wr["workspace"].get("type")
+            wsp_type = wr["workspace"].get("type")
             try:
-                if wspType == WSP_TYPE_CONSUMER:
-                    data: RouteConfig = RouteConfigConsumer(wsp_uid=wspEntity.uid, **wr["routes"])
-                elif wspType == WSP_TYPE_PRODUCER:
-                    data: RouteConfig = RouteConfigProducer(wsp_uid=wspEntity.uid, **wr["routes"])
-                elif wspType == WSP_TYPE_WORKSPACE:
-                    data: RouteConfig = RouteConfigWorkspace(wsp_uid=wspEntity.uid, **wr["routes"])
-                await self.wsp_manager.reroute(workspace=wspEntity, route=data)
+                if wsp_type == WSP_TYPE_CONSUMER:
+                    data: RouteConfig = RouteConfigConsumer(wsp_uid=wsp_entity.uid, **wr["routes"])
+                elif wsp_type == WSP_TYPE_PRODUCER:
+                    data: RouteConfig = RouteConfigProducer(wsp_uid=wsp_entity.uid, **wr["routes"])
+                elif wsp_type == WSP_TYPE_WORKSPACE:
+                    data: RouteConfig = RouteConfigWorkspace(wsp_uid=wsp_entity.uid, **wr["routes"])
+                await self.wsp_manager.reroute(workspace=wsp_entity, route=data)
             except:
-                for wsp in tmpWspList:
+                for wsp in tmp_wsp_list:
                     await self.wsp_manager.delete(wsp.uid)
                 return HTTPBadRequest()
-        entity.wr = tmpWrList
+        entity.wr = tmp_wr_list
         await self.repository.save(entity)
         return HTTPCreated(text=json.dumps({'uid': entity.uid}))
 
     @json_response
     async def change_chain(self, request: Request):
-
-        newChain = Chain(None)
-        putChain = await request.json()
-        if putChain.get("uid") == None:
-            return HTTPBadRequest()
-        newChain.uid = putChain["uid"]
-
-        if putChain.get("name") != None:
-            newChain.name = putChain["name"]
-
-        newWspList = list()
-        wrList = list()
-        workspaces = putChain["wr"]
+        global route
+        check = await self.check_request(request)
+        if check != "ok":
+            return HTTPBadRequest(reason=check)
+        new_chain = Chain()
+        put_chain = await request.json()
+        if put_chain.get("name") is not None:
+            new_chain.name = put_chain["name"]
+        new_chain.uid = request.match_info['id']
+        new_wsp_list = list()
+        wr_list = list()
+        workspaces = put_chain["wr"]
         for element in workspaces:
             try:
                 workspace = element["workspace"]
                 try:
                     tmp_wsp: Workspace = await self.wsp_manager.get(workspace["uid"])
-                    if workspace.get("name") == None:
-                        workspace["name"] = tmp_wsp.name
-
-                    if workspace.get("type") == None:
-                        workspace["type"] = tmp_wsp.type
-
-                    if workspace.get("app_id") == None:
-                        workspace["app_id"] = tmp_wsp.app_id
-
-                    if workspace.get("app_ver") == None:
-                        workspace["app_ver"] = tmp_wsp.app_ver
-
-                    if workspace.get("model_id") == None:
-                        workspace["model_id"] = tmp_wsp.model_id
-
-                    if workspace.get("model_ver") == None:
-                        workspace["model_ver"] = tmp_wsp.model_ver
-
-                    if workspace.get("created") == None:
-                        workspace["created"] = tmp_wsp.created
-
-                    if workspace.get("updated") == None:
-                        workspace["updated"] = self._issue_ts().timestamp()
+                    workspace["created"] = tmp_wsp.created
                 except:
                     pass
-                wspEntity = await self.wsp_manager.post(workspace, request["owner_id"])
-                newWspList.append(wspEntity)
+                wsp_entity = await self.wsp_manager.post(workspace, request["owner_id"])
+                new_wsp_list.append(wsp_entity)
                 wr = dict()
-                wr["workspace"] = wspEntity
+                wr["workspace"] = wsp_entity
             except:
                 return HTTPBadRequest()
 
             routes = element["routes"]
             wr["routes"] = routes
-            wrList.append(wr)
-            try:
-                wspType = workspace["type"]
-                if wspType != WSP_TYPE_PRODUCER and wspType != WSP_TYPE_WORKSPACE and wspType != WSP_TYPE_CONSUMER:
-                    return HTTPBadRequest()
-            except:
-                pass
+            wr_list.append(wr)
+            wspType: '' = workspace["type"]
             try:
                 if wspType == WSP_TYPE_CONSUMER:
-                    data = RouteConfigConsumer(wsp_uid=wspEntity.uid, **routes)
+                    route = RouteConfigConsumer(wsp_uid=wsp_entity.uid, **routes)
                 elif wspType == WSP_TYPE_PRODUCER:
-                    data = RouteConfigProducer(wsp_uid=wspEntity.uid, **routes)
+                    route = RouteConfigProducer(wsp_uid=wsp_entity.uid, **routes)
                 elif wspType == WSP_TYPE_WORKSPACE:
-                    data = RouteConfigWorkspace(wsp_uid=wspEntity.uid, **routes)
+                    route = RouteConfigWorkspace(wsp_uid=wsp_entity.uid, **routes)
             except:
-                for wsp in newWspList:
+                for wsp in new_wsp_list:
                     try:
                         await self.wsp_manager.delete(wsp.uid)
                     except:
                         pass
                 return HTTPBadRequest()
-            await self.wsp_manager.reroute(workspace=wspEntity, route=data)
-        origChain = await self.repository.load(putChain.get("uid"))
-        for wr in origChain.wr:
+            await self.wsp_manager.reroute(workspace=wsp_entity, route=route)
+        orig_chain = await self.repository.load(request.match_info['id'])
+        for wr in orig_chain.wr:
             wsp = wr.get("workspace")
-            deleteFlag = True
-            for newWsp in newWspList:
-                if wsp.uid == newWsp.uid:
-                    deleteFlag = False
+            delete_flag = True
+            for new_wsp in new_wsp_list:
+                if wsp.uid == new_wsp.uid:
+                    delete_flag = False
                     break
-            if deleteFlag == True:
+            if delete_flag is True:
+                if await self.check_workspace_chain_owners(wsp.uid, request):
+                    return HTTPBadRequest(reason="Can't delete workspace, another chains are using it")
                 try:
                     await self.wsp_manager.delete(wsp.uid)
                 except:
                     pass
-        newChain.wr = wrList
-        newChain.created = origChain.created
-        await self.repository.save(newChain)
-        return newChain
+        new_chain.wr = wr_list
+        new_chain.created = orig_chain.created
+        await self.repository.save(new_chain)
+        return new_chain
 
     @json_response
     async def get_chain(self, request: Request):
         return await self.repository.load(request.match_info['id'])
 
     @json_response
-    async def delete(self, request: Request):
+    async def delete_chain(self, request: Request):
         try:
             entity: Chain = await self.repository.load(request.match_info['id'])
         except DoesNotExist:
@@ -192,12 +167,11 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         wrList = entity.wr
         for wr in wrList:
             try:
-                answ = await self.check_worksapce_owners(wr["workspace"].uid,request)
-                if answ == False:
-                    await self.check_worksapce_owners(self, request)
+                check = await self.check_workspace_chain_owners(wr["workspace"].uid, request)
+                if check is False:
                     await self.wsp_manager.delete(wr["workspace"].uid)
-                elif answ == True:
-                    return HTTPBadRequest(reason='workspace used another chains')
+                elif check is True:
+                    return HTTPBadRequest(reason='Workspace using another chains')
 
             except:
                 pass
@@ -207,11 +181,64 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
             raise HTTPNotFound()
         return HTTPNoContent()
 
-    async def check_worksapce_owners(self, workspace_uid, request: Request):
-        chainEntitList = await self._list(await self._list_query(request))
-        for entity in chainEntitList:
+    async def check_workspace_chain_owners(self, workspace_uid, request: Request):
+        chain_entit_list = await self._list(await self._list_query(request))
+        for entity in chain_entit_list:
             if entity.uid != request.match_info['id']:
                 for element in entity.wr:
                     if workspace_uid == element.get("workspace").uid:
                         return True
         return False
+
+    async def check_request(self, request: Request):
+        err_list = list()
+        body: dict = await request.json()
+        if body.get("wr") is None:
+            err_list.append("no workspaces and routes list")
+        wrs: dict = body["wr"]
+        for wr in wrs:
+            if wr.get("workspace") is None or wr.get("routes") is None:
+                err_list.append("no workspace or routes")
+            wsp = wr["workspace"]
+            if wsp.get("uid") is None:
+                err_list.append("no workspace uid")
+            wsp_check = self.check_workspace_body(wsp)
+            if wsp_check != "ok":
+                err_list.append(wsp_check)
+            routes = wr["routes"]
+            if routes.get("pause_stream") is None:
+                err_list.append("no pause_stream")
+            wsp_type = wsp.get("type")
+            if wsp_type == "producer":
+                if routes.get("incoming_stream") is not None or routes.get("outgoing_stream") is None:
+                    err_list.append("wrong producer routes")
+            if wsp_type == "workspace":
+                if routes.get("outgoing_stream") is None or routes.get("incoming_stream") is None:
+                    err_list.append("wrong workspaces routes")
+            if wsp_type == "consumer":
+                if routes.get("outgoing_stream") is not None or routes.get("incoming_stream") is None:
+                    err_list.append("wrong consumer routes")
+        if len(err_list) > 0:
+            return err_list
+        else:
+            return "ok"
+
+    def check_workspace_body(self, wsp):
+        err_list = list()
+        wsp_type = wsp.get("type")
+        if wsp_type is None:
+            err_list.append("no workspace type")
+        if wsp_type != "producer" and wsp_type != "workspace" and wsp_type != "consumer":
+            err_list.append("wrong workspace type")
+        if wsp.get("app_id") is None:
+            err_list.append("no wsp app_id")
+        if wsp.get("app_ver") is None:
+            err_list.append("no wsp app_ver")
+        if wsp.get("model_id") is None:
+            err_list.append("no wsp model_id")
+        if wsp.get("model_ver") is None:
+            err_list.append("no wsp model_ver")
+        if len(err_list) > 0:
+            return err_list
+        else:
+            return "ok"

@@ -32,7 +32,7 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         root = router.add_resource('/workspaces')
         root.add_route(hdrs.METH_HEAD, self.head_list)
         root.add_route(hdrs.METH_GET, self.list_pageable)
-        root.add_route(hdrs.METH_POST, self.postWsp)
+        root.add_route(hdrs.METH_POST, self.post_wsp)
 
         chain = router.add_resource('/workspaces/chain')
         chain.add_route(hdrs.METH_GET, self.get_chain)
@@ -56,7 +56,7 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         return [
             rpc_expose(self.repository.load, name='get'),
             rpc_expose(self.rpc_post, name='post'),
-            rpc_expose(self.repository.delete, name='delete'),
+            rpc_expose(self.rpc_delete, name='delete'),
             rpc_expose(self.manager.reroute, name='reroute')
         ]
 
@@ -81,7 +81,7 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
             await self.repository.delete(workspace.uid)
 
     @json_response
-    async def postWsp(self, request: Request):
+    async def post_wsp(self, request: Request):
         entity = await self._catch_input(request=request, transformer=self._post_transformer)
         if not isinstance(entity, Workspace):
             raise HTTPBadRequest()
@@ -199,7 +199,11 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         return data
 
     async def rpc_post(self, workspace, owner_id) -> object:
-        entity: Owned = self._decode_payload(workspace)
+        entity: Workspace = self._decode_payload(workspace)
         entity.set_owner(owner_id)
-        await self.repository.save(entity)
+        await self._post(entity)
         return entity
+
+    async def rpc_delete(self, uid):
+        stored = await self.repository.load(uid)
+        await self._delete(stored)
