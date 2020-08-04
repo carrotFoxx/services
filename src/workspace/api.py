@@ -57,7 +57,8 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
             rpc_expose(self.repository.load, name='get'),
             rpc_expose(self.rpc_post, name='post'),
             rpc_expose(self.rpc_delete, name='delete'),
-            rpc_expose(self.manager.reroute, name='reroute')
+            rpc_expose(self.manager.reroute, name='reroute'),
+            rpc_expose(self.rpc_health, name='health')
         ]
 
     async def _delete(self, stored: entity_type):
@@ -198,12 +199,18 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         data = WorkspacesChain(graph)
         return data
 
-    async def rpc_post(self, workspace, owner_id) -> object:
+    async def rpc_post_(self, workspace, owner_id) -> object:
         entity: Workspace = self._decode_payload(workspace)
         entity.set_owner(owner_id)
         await self._post(entity)
         return entity
 
+    async def rpc_post(self, workspace: Workspace):
+        await self._post(workspace)
+
     async def rpc_delete(self, uid):
         stored = await self.repository.load(uid)
         await self._delete(stored)
+
+    async def rpc_health(self, workspace: Workspace) -> object:
+        return await self.manager.healthcheck(workspace)

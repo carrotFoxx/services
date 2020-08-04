@@ -1,5 +1,4 @@
 import os
-
 import inject
 
 from common import health_checkers
@@ -10,7 +9,7 @@ from mco.rpc import RPCClient, RPCServerApplication
 from microcore.base.repository import Repository
 from microcore.entity.encoders import ProxyNativeEncoder
 from microcore.web.owned_api import OwnedMiddlewareSet
-from script.adapters import ChainMongoStorageAdapter
+from script.adapters import ManifestMongoStorageAdapter
 from script.api import ScriptAPI
 
 
@@ -34,7 +33,7 @@ class ScriptManagerApp(RPCServerApplication, CommonAppMixin):
     async def _setup(self):
         await super()._setup()
 
-        repository = Repository(ChainMongoStorageAdapter())
+        repository = Repository(ManifestMongoStorageAdapter())
 
         api = ScriptAPI(repository=repository)
         self.add_routes_from(api)  # add REST endpoints

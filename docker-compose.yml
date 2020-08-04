@@ -48,7 +48,12 @@ services:
   wsp_manager:
     <<: *x-build
     environment:
-      - SERVICE_NAME=workspaces
+      - SERVICE_NAME=workspaces      
+            
+  script_manager:
+    <<: *x-build
+    environment:
+      - SERVICE_NAME=scripts
 
   pst_manager:
     <<: *x-build

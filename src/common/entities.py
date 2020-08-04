@@ -159,15 +159,25 @@ class WorkspacesChain:
 
 
 @attr.s(auto_attribs=True)
-class Chain(ObjectBase, OwnedObject, TrackedObject):
-    name: str = None
-    wr: list = None  # wsp + routes
-    instance_id: str = None
+class Manifest(ObjectBase, OwnedObject, TrackedObject):
+    properties: dict = None
+    resources: list = None
 
-    def preserve_from(self, other: 'Chain'):
+
+@attr.s(auto_attribs=True)
+class Resource:
+    label: '' = None
+    clss: '' = "Producer"
+    uid: '' = None
+    properties: dict = None
+    routes: dict = None
+
+    '''
+    def preserve_from(self, other: 'Producer'):
         super().preserve_from(other)
         self.uid = other.uid
         self.owner = other.owner
+    '''
 
 
 class WorkspaceChainJSONEncoder(RegisteredEntityJSONEncoder):
@@ -182,13 +192,15 @@ class WorkspaceStorageEncoder(StorageEntityJSONEncoderBase):
     entity_type = Workspace
 
 
-class ChainJSONEncoder(RegisteredEntityJSONEncoder):
-    entity_type = Chain
+class ManifestJSONEncoder(RegisteredEntityJSONEncoder):
+    entity_type = Manifest
 
 
-class ChainStorageEncoder(StorageEntityJSONEncoderBase):
-    entity_type = Chain
+class ManifestStorageEncoder(StorageEntityJSONEncoderBase):
+    entity_type = Manifest
 
+class ResourceJSONEncoder(RegisteredEntityJSONEncoder):
+    entity_type = Resource
 
 @attr.s(auto_attribs=True)
 class Image(VersionedObject, TrackedObject):

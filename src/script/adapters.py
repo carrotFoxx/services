@@ -1,22 +1,22 @@
-from common.entities import Chain, ChainStorageEncoder
+from common.entities import Manifest, ManifestStorageEncoder
 from config import MONGO_DB
 from microcore.entity.encoders import ProxyNativeEncoder
 from microcore.storage.mongo import SimpleMongoStorageAdapter
 
-_chain_encoder = ProxyNativeEncoder(
+_manifest_encoder = ProxyNativeEncoder(
     force_type_mapping={
-        Chain: ChainStorageEncoder()
+        Manifest: ManifestStorageEncoder()
     }
 )
 
-class ChainMongoStorageAdapter(SimpleMongoStorageAdapter):
+class ManifestMongoStorageAdapter(SimpleMongoStorageAdapter):
     def __init__(self) -> None:
-        super().__init__(MONGO_DB.chains, _chain_encoder)
+        super().__init__(MONGO_DB.manifests, _manifest_encoder)
 
-    def save(self, entity: Chain):
+    def save(self, entity: Manifest):
         entity.date_update()
         return super().save(entity)
 
-    def patch(self, entity: Chain, *args, **kwargs):
+    def patch(self, entity: Manifest, *args, **kwargs):
         entity.date_update()
         return super().patch(entity, *args, **kwargs)
