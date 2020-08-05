@@ -1,10 +1,11 @@
 import asyncio
+import json
 import logging
 from typing import List
 
 from aiohttp import hdrs
 from aiohttp.web import UrlDispatcher
-from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent, HTTPNotFound, HTTPInternalServerError
+from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent, HTTPNotFound, HTTPInternalServerError, HTTPCreated
 from aiohttp.web_request import Request
 
 from common.entities import RouteConfigWorkspace, RouteConfigConsumer, RouteConfigProducer, Workspace, \
@@ -12,7 +13,7 @@ from common.entities import RouteConfigWorkspace, RouteConfigConsumer, RouteConf
 from config import WSP_TYPE_PRODUCER, WSP_TYPE_WORKSPACE, WSP_TYPE_CONSUMER
 from mco.rpc import RPCRoutable, rpc_expose
 from microcore.base.application import Routable
-from microcore.base.repository import DoesNotExist
+from microcore.base.repository import DoesNotExist, StorageException
 from microcore.entity.abstract import Owned
 from microcore.entity.encoders import json_response
 from microcore.web.owned_api import OwnedReadWriteStorageAPI
@@ -33,6 +34,9 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         root.add_route(hdrs.METH_HEAD, self.head_list)
         root.add_route(hdrs.METH_GET, self.list_pageable)
         root.add_route(hdrs.METH_POST, self.post_wsp)
+
+        sync_root = router.add_resource('/workspaces/sync')
+        sync_root.add_route(hdrs.METH_POST, self.sync_post_wsp)
 
         chain = router.add_resource('/workspaces/chain')
         chain.add_route(hdrs.METH_GET, self.get_chain)
@@ -57,6 +61,7 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
             rpc_expose(self.repository.load, name='get'),
             rpc_expose(self.rpc_post, name='post'),
             rpc_expose(self.rpc_delete, name='delete'),
+            rpc_expose(self.rpc_async_delete, name='async_delete'),
             rpc_expose(self.manager.reroute, name='reroute'),
             rpc_expose(self.rpc_health, name='health')
         ]
@@ -74,12 +79,30 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         # noinspection PyAsyncCall
         asyncio.create_task(self._provisioning_task(entity))
 
+    @json_response
+    async def sync_post_wsp(self, request: Request):
+        entity = await self._catch_input(request=request, transformer=self._post_transformer)
+        if not isinstance(entity, Workspace):
+            raise HTTPBadRequest()
+        if entity.type != WSP_TYPE_PRODUCER and entity.type != WSP_TYPE_WORKSPACE and entity.type != WSP_TYPE_CONSUMER:
+            raise HTTPBadRequest()
+        try:
+            await super()._post(entity)
+        except StorageException as e:
+            raise HTTPInternalServerError() from e
+        try:
+            await self._provisioning_task(entity)
+        except Exception as e:
+            return HTTPBadRequest(reason=e)
+        return HTTPCreated(text=json.dumps({'uid': entity.uid}))
+
     async def _provisioning_task(self, workspace: Workspace):
         try:
             await self.manager.provision(workspace)
         except:
             log.exception('provisioning failed, deleting workspace')
-            await self.repository.delete(workspace.uid)
+            asyncio.create_task(self.repository.delete(workspace.uid))
+            raise Exception('provisioning failed, deleting workspace')
 
     @json_response
     async def post_wsp(self, request: Request):
@@ -88,7 +111,7 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
             raise HTTPBadRequest()
         if entity.type != WSP_TYPE_PRODUCER and entity.type != WSP_TYPE_WORKSPACE and entity.type != WSP_TYPE_CONSUMER:
             raise HTTPBadRequest()
-        return await self.post_stat(self, request)
+        return await self.post(request)
 
     async def set_route(self, request: Request):
         entity: Workspace = await self._get(request)
@@ -199,18 +222,16 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         data = WorkspacesChain(graph)
         return data
 
-    async def rpc_post_(self, workspace, owner_id) -> object:
-        entity: Workspace = self._decode_payload(workspace)
-        entity.set_owner(owner_id)
-        await self._post(entity)
-        return entity
-
     async def rpc_post(self, workspace: Workspace):
         await self._post(workspace)
 
     async def rpc_delete(self, uid):
         stored = await self.repository.load(uid)
         await self._delete(stored)
+
+    async def rpc_async_delete(self, uid):
+        stored = await self.repository.load(uid)
+        asyncio.create_task(self._delete(stored))
 
     async def rpc_health(self, workspace: Workspace) -> object:
         return await self.manager.healthcheck(workspace)

@@ -2,7 +2,6 @@ import logging
 from typing import List
 
 import inject
-import json
 from aiohttp import hdrs
 from aiohttp.web import UrlDispatcher, HTTPCreated
 from aiohttp.web_exceptions import HTTPBadRequest, HTTPNoContent, HTTPNotFound, HTTPInternalServerError
@@ -103,7 +102,9 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
                 except Exception as e:
                     await self.delete_wsps(wsps_uid, request)
                     return HTTPBadRequest(reason="invalid link: " + str(e))
-
+            elif resourse_entity.clss != 'channel':
+                await self.delete_wsps(wsps_uid, request)
+                return HTTPBadRequest(reason="invalid workspace type: " + str(resourse_entity.clss))
         manifest.resources = resources
         manifest.set_owner(request[OWNER_ID])
         await self.repository.save(manifest)
@@ -142,7 +143,6 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
                 raise
             else:
                 json_wrsp['name'] = resourse_entity.properties.get('name')
-
             json_wrsp['type'] = resourse_entity.properties.get('clss')
             json_wrsp['app_id'] = resourse_entity.properties.get('application').get('id')
             json_wrsp['app_ver'] = resourse_entity.properties.get('application').get('version')
@@ -172,7 +172,7 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
                 if wsp_uid == busy_uid:
                     delete_flag = False
             if delete_flag == True:
-                await self.wsp_manager.delete(wsp_uid)
+                await self.wsp_manager.async_delete(wsp_uid)
 
     @json_response
     async def get_manifest(self, request: Request):

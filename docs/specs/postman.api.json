@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "74fe17cc-91fa-483b-a89e-24b2b617ea08",
+		"_postman_id": "46d21ca7-f5e8-4a86-be91-c31f9e2330f9",
 		"name": "Buldozer",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -36,7 +36,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e33faaca-eed9-406e-b553-6868bfcbf1fb",
+								"id": "2664c8dc-7d59-4689-8f06-a535bc319c95",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -95,7 +95,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4c95c628-85d1-45b3-b94c-19e2f5d60de6",
+								"id": "8b880f17-5bcf-41c1-8928-0bb3cd0a0bcc",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -144,7 +144,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f52741e8-0da0-4fca-b8e4-47da720f7c73",
+								"id": "3ca94775-4d53-47fa-9efa-2dcb80736f89",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -205,7 +205,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "16268b83-a2b2-4d34-b422-7fbb280a8552",
+								"id": "71bc64d7-78f0-4e60-a497-32669df8d806",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -246,7 +246,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "78d95277-61d9-4d28-834f-4b52da1d045a",
+								"id": "1ca361d3-7a87-4d0c-8183-e61ed47d1465",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -307,7 +307,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "56a6bf67-f0ea-4764-94e5-7d24f2ed87fd",
+								"id": "25380d9d-26a5-4041-917f-3a4ab7bcaec9",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -352,7 +352,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b817bef9-72d1-4422-a192-64ecf5d1580f",
+								"id": "b81bd54b-0cc2-4a1f-9ad8-6787df7ed3d8",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -441,7 +441,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d2890ffb-adc8-4f7b-a8ce-028b5d5bff2b",
+								"id": "4205265e-691b-4f5a-91ef-7dcd72006c80",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -500,7 +500,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "39705403-8e13-4bf0-8ae2-d9d7dd7f807e",
+								"id": "d25ae904-86fb-4f35-8a9c-03235708b755",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -549,7 +549,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d3490ebe-c1a2-4684-8ee5-decb81efddfb",
+								"id": "c6f6d274-ba46-408f-b4b3-4abe93d91745",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -610,7 +610,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "56ef68a9-040b-488f-a5f3-f4535dd0d2c3",
+								"id": "5b32ff22-6e66-473b-9373-5b8de18526f5",
 								"type": "text/javascript",
 								"exec": [
 									"var ETAG = 'X-Version',",
@@ -668,7 +668,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a7aec2be-e545-49bb-aa94-0c6d079047f9",
+								"id": "bf7505e0-2325-4c26-82b1-f789dcf685c3",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'app-mgr.last-created-'",
@@ -746,7 +746,7 @@
 									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);",
 									"postman.setEnvironmentVariable(ENV_PREFIX + \"ver\", scn_version);"
 								],
-								"id": "3cfa1f3f-d9a4-48eb-aa55-04ae63bee33d"
+								"id": "bd571b89-1ef7-454f-b5cd-ab47237037ea"
 							}
 						}
 					],
@@ -823,7 +823,7 @@
 									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
 									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');"
 								],
-								"id": "0e1466f7-84e1-462c-a20e-ee2714569891"
+								"id": "42b84ebc-6415-47fe-bdc4-50b5b3158336"
 							}
 						}
 					],
@@ -886,7 +886,7 @@
 									"tests[\"Name changed\"] = jsonData.name == \"test_updated\";",
 									""
 								],
-								"id": "09bfa8a7-7ed9-48a8-9f41-e6e29bf8c50b"
+								"id": "2d20f4b9-1fa4-474e-b11d-3ae099bde062"
 							}
 						}
 					],
@@ -929,7 +929,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b544c916-9b13-42b7-9767-ae79a303cf15",
+								"id": "2d5366f0-331d-4085-b928-f8a6250f35a2",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'img-mgr.last-created-'",
@@ -997,7 +997,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e2567710-0164-4706-8d50-afde4ac818d2",
+								"id": "4d808840-2a55-4a3c-8eca-b1a0032af3ec",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1048,7 +1048,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "59a3101e-9b1b-4abf-8b5f-8f511a60c8ee",
+								"id": "07f603fb-14a5-4b16-b9ba-b1ec7ca8e03f",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1099,7 +1099,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "73aa2394-3e41-4b3c-9766-04c3fb640591",
+								"id": "652462e8-b852-4d6d-8955-b7f4dd99741e",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1145,6 +1145,61 @@
 					"response": []
 				},
 				{
+					"name": "sync create workspace Producer ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e345e6f9-19da-4cf8-9f56-29a539181882",
+								"exec": [
+									"var ETAG = 'X-Version',",
+									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
+									"",
+									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Payload has uid\"] = jsonData.uid !== undefined;",
+									"",
+									"postman.setEnvironmentVariable(ENV_PREFIX + \"uid\", jsonData.uid);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"A\",\n\t\n\t\"type\":\"producer\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{http-api}}/workspaces/sync",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"workspaces",
+								"sync"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "delete workspace",
 					"request": {
 						"method": "DELETE",
@@ -1173,7 +1228,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "965e64e3-4235-4add-ab15-4a335f3eba02",
+								"id": "62e362db-7383-4a89-8728-f07112dba5e7",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1457,7 +1512,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f5531068-02e3-48e3-a50f-a19e7f8c9e5d",
+								"id": "3033fd4f-205a-41b9-a819-d4d376af7098",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1488,7 +1543,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n      \"name\": \"A\"\n  },\n  \"resources\": [\n  {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"clss\": \"producer\",\n      \n     \n      \"properties\": {\n        \"uid\": \"\",\n        \"name\": \"abc\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"false|true\"\n      },\n      \"routes\": {       \n        \"outgoing\": [{\"ref\":  \"SomeChannel\"}]\n      }\n    },\n    {\n      \"label\": \"MyNiceWorkspace\",\n      \"clss\": \"workspace\",\n      \n      \n      \"properties\": {\n        \"uid\": \"ad7ecf2baf904f8a994ad9cae0d99b94\",\n        \"name\": \"cba\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"true|false\"\n      },\n      \"routes\": {\n        \"incoming\": [{\"ref\":  \"SomeChannel\"}],\n        \"outgoing\": [{\"ref\":  \"SomeChannel2\"}]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"clss\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name\"\n      }\n      \n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"clss\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n      \n    }\n  ]\n}\n"
+							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n      \"name\": \"A\"\n  },\n  \"resources\": [\n  {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"clss\": \"producer\",      \n     \n      \"properties\": {\n       \n        \"name\": \"abc\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"false|true\"\n      },\n      \"routes\": {       \n        \"outgoing\": [{\"ref\":  \"SomeChannel\"}]\n      }\n    },\n    {\n      \"label\": \"MyNiceWorkspace\",\n      \"clss\": \"workspace\",      \n      \n      \"properties\": {\n        \"uid\": \"123\",\n        \"name\": \"cba\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"true|false\"\n      },\n      \"routes\": {\n        \"incoming\": [{\"ref\":  \"SomeChannel\"}],\n        \"outgoing\": [{\"ref\":  \"SomeChannel2\"}]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"clss\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name\"\n      }\n      \n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"clss\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n      \n    }\n  ]\n}\n"
 						},
 						"url": {
 							"raw": "{{http-api}}/scripts",
@@ -1508,7 +1563,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c8b43ece-492d-43a9-a49b-578b8aae665e",
+								"id": "95061477-c098-4d5d-b7f2-c96229166a00",
 								"exec": [
 									"var ETAG = 'X-Version',",
 									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
@@ -1550,7 +1605,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8508b58b-8bcc-48d2-a39b-ca1e1c921a9a",
+								"id": "d8b21278-f01a-4d1a-9310-7f69bbc6b09e",
 								"exec": [
 									""
 								],
@@ -1592,7 +1647,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b5e380d4-1f0e-42e8-86f0-99307ee0f063",
+								"id": "0cab76b1-5cef-4cc3-b695-64f6964bf667",
 								"exec": [
 									""
 								],
@@ -1633,7 +1688,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "6e180af7-382d-4c15-840c-17f12b1724b6",
+				"id": "7ff777ad-2e06-42d5-a87b-5b84324f7954",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1643,7 +1698,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "7f8d3892-1bad-4cd0-b88a-5777b7d270fa",
+				"id": "4d8ad472-6bd9-4a4c-88cb-3cd3d0fd510c",
 				"type": "text/javascript",
 				"exec": [
 					""
