@@ -63,7 +63,8 @@ class WorkspaceAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
             rpc_expose(self.rpc_delete, name='delete'),
             rpc_expose(self.rpc_async_delete, name='async_delete'),
             rpc_expose(self.manager.reroute, name='reroute'),
-            rpc_expose(self.rpc_health, name='health')
+            rpc_expose(self.rpc_health, name='health'),
+            rpc_expose(self.repository.save, name='save')
         ]
 
     async def _delete(self, stored: entity_type):

@@ -75,7 +75,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"busybox:latest\"\n}"
+							"raw": "{\n\t\"name\":\"test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"busybox:latest\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/applications",
@@ -184,7 +187,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"consul sync test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"buldozer_subordinate:latest\",\n\t\"environment\":{\n\t\t\"LOG_LEVEL\":\"DEBUG\",\n\t\t\"BDZ_PROGRAM\":\"cat\"\n\t}\n}"
+							"raw": "{\n\t\"name\":\"consul sync test\",\n\t\"description\":\"sample app for test\",\n\t\"package\":\"buldozer_subordinate:latest\",\n\t\"environment\":{\n\t\t\"LOG_LEVEL\":\"DEBUG\",\n\t\t\"BDZ_PROGRAM\":\"cat\"\n\t}\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/applications/{{app-mgr.last-created-uid}}",
@@ -285,7 +291,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/applications/{{app-mgr.last-created-uid}}/commit",
@@ -480,7 +489,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\"\n}"
+							"raw": "{\n\t\"name\":\"test\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/models",
@@ -588,7 +600,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/models/{{model-mgr.last-created-uid}}/commit",
@@ -764,7 +779,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\",\n\t\n\t\"description\":\"\",\n\t\"tags\":[\n\t\t\"test_tag_1\",\"test_tag_2\"\n\t\t],\n\t\"params\":[\n\t\t{\n\t\t\t\"name\":\"param1\",\n\t\t\t\"type\":\"type1\",\n\t\t\t\"value\":\"value1\"\n\t\t}\n\t\t]\n}"
+							"raw": "{\n\t\"name\":\"test\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\",\n\t\n\t\"description\":\"\",\n\t\"tags\":[\n\t\t\"test_tag_1\",\"test_tag_2\"\n\t\t],\n\t\"params\":[\n\t\t{\n\t\t\t\"name\":\"param1\",\n\t\t\t\"type\":\"type1\",\n\t\t\t\"value\":\"value1\"\n\t\t}\n\t\t]\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/images",
@@ -794,7 +812,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/images/{{img-mgr.last-created-uid}}",
@@ -908,7 +929,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"test_updated\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\",\n\t\n\t\"description\":\"\",\n\t\"tags\":[\n\t\t\"test_tag_1\",\"test_tag_2\"\n\t\t],\n\t\"params\":[\n\t\t{\n\t\t\t\"name\":\"param1\",\n\t\t\t\"type\":\"type1\",\n\t\t\t\"value\":\"value1\"\n\t\t}\n\t\t]\n}"
+							"raw": "{\n\t\"name\":\"test_updated\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\",\n\t\n\t\"description\":\"\",\n\t\"tags\":[\n\t\t\"test_tag_1\",\"test_tag_2\"\n\t\t],\n\t\"params\":[\n\t\t{\n\t\t\t\"name\":\"param1\",\n\t\t\t\"type\":\"type1\",\n\t\t\t\"value\":\"value1\"\n\t\t}\n\t\t]\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/images/{{img-mgr.last-created-uid}}",
@@ -969,7 +993,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n}"
+							"raw": "{\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/images/{{img-mgr.last-created-uid}}/commit",
@@ -1028,7 +1055,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"A\",\n\t\n\t\"type\":\"producer\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
+							"raw": "{\n\t\"name\":\"A\",\n\t\n\t\"type\":\"producer\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces",
@@ -1079,7 +1109,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"H\",\n\t\n\t\"type\":\"consumer\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
+							"raw": "{\n\t\"name\":\"H\",\n\t\n\t\"type\":\"consumer\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces",
@@ -1130,7 +1163,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\":\"M\",\n\t\n\t\"type\":\"workspace\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}"
+							"raw": "{\n\t\"name\":\"M\",\n\t\n\t\"type\":\"workspace\",\n\t\n\t\"app_id\":\"{{app-mgr.last-created-uid}}\",\n\t\"app_ver\":\"{{app-mgr.last-created-ver}}\",\n\t\n\t\"model_id\":\"{{model-mgr.last-created-uid}}\",\n\t\"model_ver\":\"{{model-mgr.last-created-ver}}\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces",
@@ -1279,7 +1315,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}",
@@ -1309,7 +1348,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}:8102/workspaces/{{wsp-mgr.last-created-uid}}/health",
@@ -1341,7 +1383,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
@@ -1420,7 +1465,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"outgoing_stream\": \"outgoing\",\n\t\"pause_stream\": \"true\"\n}"
+							"raw": "{\n\t\"outgoing_stream\": \"outgoing\",\n\t\"pause_stream\": \"true\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
@@ -1452,7 +1500,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"incoming_stream\": \"incoming\",\n\t\"pause_stream\": \"true\"\n}"
+							"raw": "{\n\t\"incoming_stream\": \"incoming\",\n\t\"pause_stream\": \"true\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
@@ -1484,7 +1535,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"incoming_stream\": \"3\", \n\t\"outgoing_stream\": \"4\",\n\t\"pause_stream\": \"false\"\n}"
+							"raw": "{\n\t\"incoming_stream\": \"3\", \n\t\"outgoing_stream\": \"4\",\n\t\"pause_stream\": \"false\"\n}",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/workspaces/{{wsp-mgr.last-created-uid}}/route",
@@ -1504,10 +1558,10 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "script",
+			"name": "manifest",
 			"item": [
 				{
-					"name": "create chain",
+					"name": "create manifest",
 					"event": [
 						{
 							"listen": "test",
@@ -1543,13 +1597,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n      \"name\": \"A\"\n  },\n  \"resources\": [\n  {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"clss\": \"producer\",      \n     \n      \"properties\": {\n       \n        \"name\": \"abc\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"false|true\"\n      },\n      \"routes\": {       \n        \"outgoing\": [{\"ref\":  \"SomeChannel\"}]\n      }\n    },\n    {\n      \"label\": \"MyNiceWorkspace\",\n      \"clss\": \"workspace\",      \n      \n      \"properties\": {\n        \"uid\": \"123\",\n        \"name\": \"cba\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"true|false\"\n      },\n      \"routes\": {\n        \"incoming\": [{\"ref\":  \"SomeChannel\"}],\n        \"outgoing\": [{\"ref\":  \"SomeChannel2\"}]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"clss\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name\"\n      }\n      \n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"clss\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n      \n    }\n  ]\n}\n"
+							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n      \"name\": \"A\"\n  },\n  \"resources\": [\n  {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"clss\": \"producer\",      \n     \n      \"properties\": {\n        \"uid\": \"1234\",\n        \"name\": \"abc\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"false\"\n      },\n      \"routes\": {       \n        \"outgoing\": [{\"ref\":  \"SomeChannel\"}]\n      }\n    },\n    {\n      \"label\": \"MyNiceWorkspace\",\n      \"clss\": \"workspace\",      \n      \n      \"properties\": {\n        \"uid\": \"123\",\n        \"name\": \"cba\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"true\"\n      },\n      \"routes\": {\n        \"incoming\": [{\"ref\":  \"SomeChannel\"}],\n        \"outgoing\": [{\"ref\":  \"SomeChannel2\"}]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"clss\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name\"\n      }\n      \n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"clss\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n      \n    }\n  ]\n}\n",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
-							"raw": "{{http-api}}/scripts",
+							"raw": "{{http-api}}:8880/scripts",
 							"host": [
 								"{{http-api}}"
 							],
+							"port": "8880",
 							"path": [
 								"scripts"
 							]
@@ -1626,13 +1684,106 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/scripts/f6f96f0656ce4b0e927598d541c85352",
 							"host": [
 								"{{http-api}}"
 							],
+							"path": [
+								"scripts",
+								"f6f96f0656ce4b0e927598d541c85352"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put manifest",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2c60fff3-dd4b-4713-993c-ad59d5e435e6",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n    \"name\": \"A\"\n  },\n  \"resources\": [\n    {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"clss\": \"workspace\",\n      \"properties\": {\n        \"uid\": \"123\",\n        \"name\": \"abc\",\n        \"application\": {\n          \"id\": \"{{app-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"model\": {\n          \"id\": \"{{model-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"pause_stream\": \"true\"\n      },\n      \"routes\": {\n        \"outgoing\": [\n          {\n            \"ref\": \"SomeChannel\"\n          }\n        ],\n        \"incoming\": [\n          {\n            \"ref\":  \"SomeChannel\"\n          }\n          ]\n      }\n    },\n    {\n      \"label\": \"MyNiceWorkspace\",\n      \"clss\": \"workspace\",      \n      \n      \"properties\": {\n        \"uid\": \"1234\",\n        \"name\": \"cba545\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"false\"\n      },\n      \"routes\": {\n        \"incoming\": [{\"ref\":  \"SomeChannel\"}],\n        \"outgoing\": [{\"ref\":  \"SomeChannel2\"}]\n      }\n    },\n    {\n      \"label\": \"NewWorkspace\",\n      \"clss\": \"workspace\",\n      \"properties\": {\n        \"uid\": \"12345\",\n        \"name\": \"cba\",\n        \"application\": {\n          \"id\": \"{{app-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"model\": {\n          \"id\": \"{{model-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"pause_stream\": \"true|falsesdgf\"\n      },\n      \"routes\": {\n        \"incoming\": [\n          {\n            \"ref\": \"SomeChannel\"\n          }\n        ],\n        \"outgoing\": [\n          {\n            \"ref\": \"SomeChannel2\"\n          }\n        ]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"clss\": \"channel\",\n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name hfnjffnfg))\"\n      }\n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"clss\": \"channel\",\n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{http-api}}:8880/scripts/f6f96f0656ce4b0e927598d541c85352",
+							"host": [
+								"{{http-api}}"
+							],
+							"port": "8880",
+							"path": [
+								"scripts",
+								"f6f96f0656ce4b0e927598d541c85352"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put manifest 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0a2277f8-8dc3-48f7-b070-2a4adfd47ce4",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n    \"name\": \"A\"\n  },\n  \"resources\": [\n    {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"clss\": \"producer\",\n      \"properties\": {\n        \"uid\": \"123\",\n        \"name\": \"abcсс\",\n        \"application\": {\n          \"id\": \"{{app-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"model\": {\n          \"id\": \"{{model-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"pause_stream\": \"false|true\"\n      },\n      \"routes\": {\n        \"outgoing\": [\n          {\n            \"ref\": \"SomeChannel\"\n          }\n        ]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"clss\": \"channel\",\n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name\"\n      }\n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"clss\": \"channel\",\n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{http-api}}:8880/scripts/f6f96f0656ce4b0e927598d541c85352",
+							"host": [
+								"{{http-api}}"
+							],
+							"port": "8880",
 							"path": [
 								"scripts",
 								"f6f96f0656ce4b0e927598d541c85352"
@@ -1665,7 +1816,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
 						},
 						"url": {
 							"raw": "{{http-api}}/scripts/f6f96f0656ce4b0e927598d541c85352",
