@@ -1566,10 +1566,10 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3033fd4f-205a-41b9-a819-d4d376af7098",
+								"id": "c29d5d51-ad4c-4c87-a95e-2db79440c895",
 								"exec": [
 									"var ETAG = 'X-Version',",
-									"    ENV_PREFIX = 'wsp-mgr.last-created-'",
+									"    ENV_PREFIX = 'mnft-mgr.last-created-'",
 									"",
 									"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
 									"tests[\"Content-Type is json\"] = (postman.getResponseHeader(\"Content-Type\").split(';')[0] == 'application/json');",
@@ -1597,17 +1597,16 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n      \"name\": \"A\"\n  },\n  \"resources\": [\n  {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"clss\": \"producer\",      \n     \n      \"properties\": {\n        \"uid\": \"1234\",\n        \"name\": \"abc\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"false\"\n      },\n      \"routes\": {       \n        \"outgoing\": [{\"ref\":  \"SomeChannel\"}]\n      }\n    },\n    {\n      \"label\": \"MyNiceWorkspace\",\n      \"clss\": \"workspace\",      \n      \n      \"properties\": {\n        \"uid\": \"123\",\n        \"name\": \"cba\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"true\"\n      },\n      \"routes\": {\n        \"incoming\": [{\"ref\":  \"SomeChannel\"}],\n        \"outgoing\": [{\"ref\":  \"SomeChannel2\"}]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"clss\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name\"\n      }\n      \n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"clss\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n      \n    }\n  ]\n}\n",
+							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n      \n      \"name\": \"A\"\n  },\n  \"resources\": [\n  {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"class_\": \"producer\",      \n      \n      \"properties\": {\n        \n        \"name\": \"abc\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"false\"\n      },\n      \"routes\": {       \n        \"outgoing\": [{\"ref\":  \"SomeChannel\"}]\n      }\n    },\n    {\n      \"label\": \"MyNiceWorkspace\",\n      \"class_\": \"workspace\",      \n      \"uid\": \"1234\",\n      \"properties\": {\n        \n        \"name\": \"cba\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"true\"\n      },\n      \"routes\": {\n        \"incoming\": [{\"ref\":  \"SomeChannel\"}],\n        \"outgoing\": [{\"ref\":  \"SomeChannel2\"}]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"class_\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name\"\n      }\n      \n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"class_\": \"channel\",\n      \n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n      \n    }\n  ]\n}\n",
 							"options": {
 								"raw": {}
 							}
 						},
 						"url": {
-							"raw": "{{http-api}}:8880/scripts",
+							"raw": "{{http-api}}/scripts",
 							"host": [
 								"{{http-api}}"
 							],
-							"port": "8880",
 							"path": [
 								"scripts"
 							]
@@ -1616,7 +1615,7 @@
 					"response": []
 				},
 				{
-					"name": "list chains",
+					"name": "list manifest",
 					"event": [
 						{
 							"listen": "test",
@@ -1690,13 +1689,59 @@
 							}
 						},
 						"url": {
-							"raw": "{{http-api}}/scripts/f6f96f0656ce4b0e927598d541c85352",
+							"raw": "{{http-api}}/scripts/{{mnft-mgr.last-created-uid}}",
 							"host": [
 								"{{http-api}}"
 							],
 							"path": [
 								"scripts",
-								"f6f96f0656ce4b0e927598d541c85352"
+								"{{mnft-mgr.last-created-uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get health",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "55c78e32-a24c-4efe-b134-4cd9c7beeb1d",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-user-id",
+								"value": "{{user-id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{http-api}}/scripts/health/{{mnft-mgr.last-created-uid}}",
+							"host": [
+								"{{http-api}}"
+							],
+							"path": [
+								"scripts",
+								"health",
+								"{{mnft-mgr.last-created-uid}}"
 							]
 						}
 					},
@@ -1726,7 +1771,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n    \"name\": \"A\"\n  },\n  \"resources\": [\n    {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"clss\": \"workspace\",\n      \"properties\": {\n        \"uid\": \"123\",\n        \"name\": \"abc\",\n        \"application\": {\n          \"id\": \"{{app-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"model\": {\n          \"id\": \"{{model-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"pause_stream\": \"true\"\n      },\n      \"routes\": {\n        \"outgoing\": [\n          {\n            \"ref\": \"SomeChannel\"\n          }\n        ],\n        \"incoming\": [\n          {\n            \"ref\":  \"SomeChannel\"\n          }\n          ]\n      }\n    },\n    {\n      \"label\": \"MyNiceWorkspace\",\n      \"clss\": \"workspace\",      \n      \n      \"properties\": {\n        \"uid\": \"1234\",\n        \"name\": \"cba545\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"false\"\n      },\n      \"routes\": {\n        \"incoming\": [{\"ref\":  \"SomeChannel\"}],\n        \"outgoing\": [{\"ref\":  \"SomeChannel2\"}]\n      }\n    },\n    {\n      \"label\": \"NewWorkspace\",\n      \"clss\": \"workspace\",\n      \"properties\": {\n        \"uid\": \"12345\",\n        \"name\": \"cba\",\n        \"application\": {\n          \"id\": \"{{app-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"model\": {\n          \"id\": \"{{model-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"pause_stream\": \"true|falsesdgf\"\n      },\n      \"routes\": {\n        \"incoming\": [\n          {\n            \"ref\": \"SomeChannel\"\n          }\n        ],\n        \"outgoing\": [\n          {\n            \"ref\": \"SomeChannel2\"\n          }\n        ]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"clss\": \"channel\",\n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name hfnjffnfg))\"\n      }\n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"clss\": \"channel\",\n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n    }\n  ]\n}",
+							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n    \"name\": \"A\"\n  },\n  \"resources\": [\n    {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"class_\": \"workspace\",      \n      \"properties\": {       \n        \"name\": \"abc\",\n        \"application\": {\n          \"id\": \"{{app-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"model\": {\n          \"id\": \"{{model-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"pause_stream\": \"true\"\n      },\n      \"routes\": {\n        \"outgoing\": [\n          {\n            \"ref\": \"SomeChannel\"\n          }\n        ],\n        \"incoming\": [\n          {\n            \"ref\":  \"SomeChannel\"\n          }\n          ]\n      }\n    },\n    {\n      \"label\": \"MyNiceWorkspace\",\n      \"class_\": \"workspace\",      \n      \"uid\": \"123\",\n      \"properties\": {\n        \n        \"name\": \"cba545\",\n        \"application\": {\"id\":  \"{{app-mgr.last-created-uid}}\", \"version\": 1},\n        \"model\": {\"id\":  \"{{model-mgr.last-created-uid}}\", \"version\": 1},\n        \"pause_stream\": \"false\"\n      },\n      \"routes\": {\n        \"incoming\": [{\"ref\":  \"SomeChannel\"}],\n        \"outgoing\": [{\"ref\":  \"SomeChannel2\"}]\n      }\n    },\n    {\n      \"label\": \"NewWorkspace\",\n      \"class_\": \"workspace\",\n      \"uid\": \"12345\",\n      \"properties\": {\n        \n        \"name\": \"cba\",\n        \"application\": {\n          \"id\": \"{{app-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"model\": {\n          \"id\": \"{{model-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"pause_stream\": \"true\"\n      },\n      \"routes\": {\n        \"incoming\": [\n          {\n            \"ref\": \"SomeChannel\"\n          }\n        ],\n        \"outgoing\": [\n          {\n            \"ref\": \"SomeChannel2\"\n          }\n        ]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"class_\": \"channel\",\n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name 1122\"\n      }\n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"class_\": \"channel\",\n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1734,14 +1779,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{http-api}}:8880/scripts/f6f96f0656ce4b0e927598d541c85352",
+							"raw": "{{http-api}}/scripts/{{mnft-mgr.last-created-uid}}",
 							"host": [
 								"{{http-api}}"
 							],
-							"port": "8880",
 							"path": [
 								"scripts",
-								"f6f96f0656ce4b0e927598d541c85352"
+								"{{mnft-mgr.last-created-uid}}"
 							]
 						}
 					},
@@ -1771,7 +1815,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n    \"name\": \"A\"\n  },\n  \"resources\": [\n    {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"clss\": \"producer\",\n      \"properties\": {\n        \"uid\": \"123\",\n        \"name\": \"abcсс\",\n        \"application\": {\n          \"id\": \"{{app-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"model\": {\n          \"id\": \"{{model-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"pause_stream\": \"false|true\"\n      },\n      \"routes\": {\n        \"outgoing\": [\n          {\n            \"ref\": \"SomeChannel\"\n          }\n        ]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"clss\": \"channel\",\n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name\"\n      }\n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"clss\": \"channel\",\n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n    }\n  ]\n}",
+							"raw": "{\n  \"uid\": \"f6f96f0656ce4b0e927598d541c85352\",\n  \"properties\": {\n    \"name\": \"A\"\n  },\n  \"resources\": [\n    {\n      \"label\": \"MyAwesomeWorkspace\",\n      \"clss\": \"producer\",\n      \"uid\": \"123\",\n      \"properties\": {\n        \n        \"name\": \"abcсс\",\n        \"application\": {\n          \"id\": \"{{app-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"model\": {\n          \"id\": \"{{model-mgr.last-created-uid}}\",\n          \"version\": 1\n        },\n        \"pause_stream\": \"false|true\"\n      },\n      \"routes\": {\n        \"outgoing\": [\n          {\n            \"ref\": \"SomeChannel\"\n          }\n        ]\n      }\n    },\n    {\n      \"label\": \"SomeChannel\",\n      \"clss\": \"channel\",\n      \"properties\": {\n        \"name\": \"21\",\n        \"kafka_topic\": \"topic-name\"\n      }\n    },\n    {\n      \"label\": \"SomeChannel2\",\n      \"clss\": \"channel\",\n      \"properties\": {\n        \"name\": \"213\",\n        \"kafka_topic\": \"topic-name2\"\n      }\n    }\n  ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1779,14 +1823,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{http-api}}:8880/scripts/f6f96f0656ce4b0e927598d541c85352",
+							"raw": "{{http-api}}/scripts/{{mnft-mgr.last-created-uid}}",
 							"host": [
 								"{{http-api}}"
 							],
-							"port": "8880",
 							"path": [
 								"scripts",
-								"f6f96f0656ce4b0e927598d541c85352"
+								"{{mnft-mgr.last-created-uid}}"
 							]
 						}
 					},
@@ -1822,13 +1865,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{http-api}}/scripts/f6f96f0656ce4b0e927598d541c85352",
+							"raw": "{{http-api}}/scripts/{{mnft-mgr.last-created-uid}}",
 							"host": [
 								"{{http-api}}"
 							],
 							"path": [
 								"scripts",
-								"f6f96f0656ce4b0e927598d541c85352"
+								"{{mnft-mgr.last-created-uid}}"
 							]
 						}
 					},

@@ -167,7 +167,7 @@ class Manifest(ObjectBase, OwnedObject, TrackedObject):
 @attr.s(auto_attribs=True)
 class Resource:
     label: '' = None
-    clss: '' = "Producer"
+    class_: '' = "Producer"
     uid: '' = None
     properties: dict = None
     routes: dict = None

@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Dict
 
 import inject
 from aiohttp import hdrs
@@ -37,7 +37,10 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
 
         root = router.add_resource('/scripts')
         root.add_route(hdrs.METH_GET, self.list_pageable)
-        root.add_route(hdrs.METH_POST, self.post_manifest_new)
+        root.add_route(hdrs.METH_POST, self.post_manifest)
+
+        hlth = router.add_resource('/scripts/health/{id}')
+        hlth.add_route(hdrs.METH_GET, self.get_status)
 
         item = router.add_resource('/scripts/{id}')
         item.add_route(hdrs.METH_GET, self.get_manifest)
@@ -49,45 +52,30 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         ]
 
     @json_response
-    async def post_manifest_new(self, request: Request):
-        manifest = self._decode_payload(await request.json())
-        res = manifest.resources
-        wsps_uid = list()
-        channels = dict()
-        resources = list()
-        for r in res:
-            resourse_entity = self.entity_decode_payload(r, Resource)
-            resources.append(resourse_entity)
-            if resourse_entity.clss == "channel":
-                channels[resourse_entity.label] = resourse_entity.properties
+    async def post_manifest(self, request: Request):
 
-        for resourse_entity in resources:
-            global incoming_key, outgoing_key
-            if resourse_entity.clss == WSP_TYPE_PRODUCER or resourse_entity.clss == WSP_TYPE_WORKSPACE or resourse_entity.clss == WSP_TYPE_CONSUMER:
-                try:
-                    wsp: Workspace = self.extract_workspace(resourse_entity, request)
-                    await self.wsp_manager.post(wsp)
-                    resourse_entity.properties['uid'] = wsp.uid
-                    wsps_uid.append(wsp.uid)
-                except Exception as e:
-                    await self.delete_wsps(wsps_uid, request)
-                    return HTTPBadRequest(reason=e)
-                try:
-                    route_data = self.extract_route(resourse_entity, channels)
-                    await self.wsp_manager.reroute(workspace=wsp, route=route_data)
-                except Exception as e:
-                    await self.delete_wsps(wsps_uid, request, None)
-                    return HTTPBadRequest(reason="invalid link: " + str(e))
-            elif resourse_entity.clss != 'channel':
+        manifest: Manifest = await self.decode_payload_manifest(request)
+        try:
+            await self.repository.load(manifest.uid)
+            return HTTPBadRequest(reason="entity exist")
+        except:
+            pass
+        wsps, wsps_uid, routes = self.extract_workspaces(manifest.resources, request)
+        for uid in wsps_uid:
+            try:
+                await self.wsp_manager.post(wsps[uid])
+            except Exception as e:
                 await self.delete_wsps(wsps_uid, request, None)
-                return HTTPBadRequest(reason="invalid workspace type: " + str(resourse_entity.clss))
-        manifest.resources = resources
+                return HTTPBadRequest(reason=e)
+            try:
+                await self.wsp_manager.reroute(workspace=wsps[uid], route=routes[uid])
+            except Exception as e:
+                await self.delete_wsps(wsps_uid, request, None)
+                return HTTPBadRequest(reason="invalid link: " + str(e))
+
         manifest.set_owner(request[OWNER_ID])
         await self.repository.save(manifest)
-        response = dict()
-        response["uid"] = manifest.uid
-        response['wsps health'] = await self.get_health(wsps_uid)
-        return response
+        return await self.make_status_response(manifest.uid, wsps_uid)
 
     @json_response
     async def get_manifest(self, request: Request):
@@ -98,22 +86,18 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         """This method deletes the manifest, as well as workspaces belonging to this manifest, if they are not involved in other manifests.
 
         """
-        wsps_uid = list()
         try:
             manifest: Manifest = await self.repository.load(request.match_info['id'])
         except DoesNotExist:
             return HTTPNotFound()
-        entitys = manifest.resources
-        for entity in entitys:
-            if entity.clss == WSP_TYPE_WORKSPACE or entity.clss == WSP_TYPE_CONSUMER or entity.clss == WSP_TYPE_PRODUCER:
-                wsps_uid.append(entity.properties['uid'])
+        wsps_uid = self.extract_workspaces(manifest.resources, request)[1]
         await self.repository.delete(request.match_info['id'])
         await self.delete_wsps(wsps_uid, request, None)
         return HTTPNoContent()
 
     @json_response
     async def change_manifest(self, request: Request):
-        """This method makes changes to the manifest.
+        """makes changes to the manifest.
 
         If the value of the fields changes:
             - app_uid
@@ -126,48 +110,19 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         """
 
         try:
-            entity: Manifest = await self.repository.load(request.match_info['id'])
+            local_manifest: Manifest = await self.repository.load(request.match_info['id'])
         except Exception as e:
             return HTTPBadRequest(reason=e)
 
-        request_manifest = self._decode_payload(await request.json())
-
-        request_wsps = dict()
-        request_wsps_uid = list()
-        request_channels = dict()
-
-        manifest_wsps = dict()
-        manifest_wsps_uid = list()
-        manifest_channels = dict()
-
-        resources = list()
-        for r in request_manifest.resources:
-            resourse_entity = self.entity_decode_payload(r, Resource)
-            resources.append(resourse_entity)
-            if resourse_entity.clss == "channel":
-                request_channels[resourse_entity.label] = resourse_entity.properties
-        request_manifest.resources = resources
-
-        for resourse_entity in resources:
-            if resourse_entity.clss == WSP_TYPE_PRODUCER or resourse_entity.clss == WSP_TYPE_WORKSPACE or resourse_entity.clss == WSP_TYPE_CONSUMER:
-                wsp: Workspace = self.extract_workspace(resourse_entity, request)
-                request_wsps[wsp.uid] = wsp
-                request_wsps_uid.append(wsp.uid)
-
-        for resource in entity.resources:
-            if resource.clss == "channel":
-                manifest_channels[resource.label] = resource.properties
-
-            if resource.clss == WSP_TYPE_PRODUCER or resource.clss == WSP_TYPE_WORKSPACE or resource.clss == WSP_TYPE_CONSUMER:
-                wsp: Workspace = self.extract_workspace(resource, request)
-                manifest_wsps[wsp.uid] = wsp
-                manifest_wsps_uid.append(wsp.uid)
+        request_manifest = await self.decode_payload_manifest(request)
+        request_wsps, request_wsps_uid, request_routes = self.extract_workspaces(request_manifest.resources,request)
+        manifest_wsps, manifest_wsps_uid, manifest_routes = self.extract_workspaces(local_manifest.resources,request) # переименовать
 
         deleting_uid = list(set(manifest_wsps_uid) - set(request_wsps_uid))
         try:
             await self.delete_wsps(deleting_uid, request, request.match_info['id'])
         except Exception as e:
-            return HTTPBadRequest(reason=e)
+            pass
 
         creating_uid = list(set(request_wsps_uid) - set(manifest_wsps_uid))
         for wsp_uid in creating_uid:
@@ -182,37 +137,61 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
                     request_wsps[wsp_uid].type != manifest_wsps[wsp_uid].type:
                 await self.wsp_manager.post(request_wsps[wsp_uid])
             else:
-                await self.wsp_manager.save(
-                    request_wsps[wsp_uid])
+                try:
+                    wsp = await self.wsp_manager.get(wsp_uid)
+                    request_wsps[wsp_uid].created = wsp.created
+                except:
+                    pass
+                await self.wsp_manager.save(request_wsps[wsp_uid])
 
-            for resource in request_manifest.resources:
-                if resource.clss == WSP_TYPE_PRODUCER or resource.clss == WSP_TYPE_WORKSPACE or resource.clss == WSP_TYPE_CONSUMER:
-                    try:
-                        route_data = self.extract_route(resource, request_channels)
-                        await self.wsp_manager.reroute(workspace=request_wsps.get(resource.properties['uid']),
-                                                       route=route_data)
-                    except Exception as e:
-                        return HTTPBadRequest(reason=e)
-
+        for uid in request_wsps_uid:
+            try:
+                await self.wsp_manager.reroute(workspace=request_wsps[uid], route=request_routes[uid])
+            except Exception as e:
+                return HTTPBadRequest(reason="invalid link: " + str(e))
+        request_manifest.set_owner(request[OWNER_ID])
         await self.repository.save(request_manifest)
+        return await self.make_status_response(local_manifest.uid, request_wsps_uid)
+
+    @json_response
+    async def get_status(self, request: Request):
+        """returns the health status for each workspace contained in the manifest.
+
+        :returns: a list of workspaces health status
+        """
+
+        try:
+            entity: Manifest = await self.repository.load(request.match_info['id'])
+        except Exception as e:
+            return HTTPBadRequest(reason=e)
 
         response = dict()
         response["uid"] = entity.uid
-        response['wsps health'] = await self.get_health(request_wsps_uid)
+        response["wsps health"] = await self.get_health(self.extract_workspaces(entity.resources, request)[1])
         return response
 
+    def extract_routes(self, resources: Manifest.resources, channels: dict):
+        routes = dict()
+        for resource in resources:
+            if resource.class_ == WSP_TYPE_PRODUCER or resource.class_ == WSP_TYPE_WORKSPACE or resource.class_ == WSP_TYPE_CONSUMER:
+                try:
+                    routes[resource.uid] = self.extract_route(resource, channels)
+                except Exception as e:
+                    return HTTPBadRequest(reason=e)
+        return routes
+
     def extract_route(self, resource_entity: Resource, channels: dict) -> RouteConfig:
-        """Extracting route configuration from Resources
+        """Extracting route configuration from Resource entities
 
         :resource_entity: Resource
-        :channels: dict: dict of Resource.clss == "channel", key - name of entity
+        :channels: dict: dict of Resource.class_ == "channel", key - name of entity
 
         :returns: RouteConfig
         """
         routes = dict()
         routes['pause_stream'] = resource_entity.properties['pause_stream']
-        uid = resource_entity.properties['uid']
-        if resource_entity.clss == WSP_TYPE_CONSUMER:
+        uid = resource_entity.uid
+        if resource_entity.class_ == WSP_TYPE_CONSUMER:
             try:
                 incoming_key = resource_entity.routes.get("incoming")[0].get('ref')
             except:
@@ -223,7 +202,7 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
                 raise Exception(incoming_key)
             route_data: RouteConfig = RouteConfigConsumer(wsp_uid=uid, **routes)
 
-        elif resource_entity.clss == WSP_TYPE_PRODUCER:
+        elif resource_entity.class_ == WSP_TYPE_PRODUCER:
             try:
                 outgoing_key = resource_entity.routes.get("outgoing")[0].get('ref')
             except:
@@ -234,7 +213,7 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
                 raise Exception(outgoing_key)
             route_data: RouteConfig = RouteConfigProducer(wsp_uid=uid, **routes)
 
-        elif resource_entity.clss == WSP_TYPE_WORKSPACE:
+        elif resource_entity.class_ == WSP_TYPE_WORKSPACE:
             try:
                 incoming_key = resource_entity.routes.get("incoming")[0].get('ref')
                 outgoing_key = resource_entity.routes.get("outgoing")[0].get('ref')
@@ -278,16 +257,16 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         busy_wsps_uid = list()
         for manifest in manifests:
             for entity in manifest.resources:
-                if entity.clss == WSP_TYPE_PRODUCER or entity.clss == WSP_TYPE_WORKSPACE or entity.clss == WSP_TYPE_CONSUMER:
-                    busy_wsps_uid.append(entity.properties['uid'])
+                if entity.class_ == WSP_TYPE_PRODUCER or entity.class_ == WSP_TYPE_WORKSPACE or entity.class_ == WSP_TYPE_CONSUMER:
+                    busy_wsps_uid.append(entity.uid)
 
         if manifest_uid is not None:
             owner_manifest: Manifest = await self.repository.load(manifest_uid)
             owner_wpsp_uid = list()
             for entity in owner_manifest.resources:
-                if entity.clss == WSP_TYPE_PRODUCER or entity.clss == WSP_TYPE_WORKSPACE or entity.clss == WSP_TYPE_CONSUMER:
-                    owner_wpsp_uid.append(entity.properties['uid'])
-            busy_wsps_uid = list(set(busy_wsps_uid) & set(owner_wpsp_uid))
+                if entity.class_ == WSP_TYPE_PRODUCER or entity.class_ == WSP_TYPE_WORKSPACE or entity.class_ == WSP_TYPE_CONSUMER:
+                    owner_wpsp_uid.append(entity.uid)
+            busy_wsps_uid = list(set(busy_wsps_uid) - set(owner_wpsp_uid))
 
         for wsp_uid in wsps_uid:
             delete_flag = True
@@ -303,19 +282,19 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
         """
         try:
             json_wrsp = dict()
-            if resourse_entity.properties.get('uid') != None and resourse_entity.properties.get('uid') != '':
-                json_wrsp['uid'] = resourse_entity.properties.get('uid')
+            if resourse_entity.uid != None and resourse_entity.uid != '':
+                json_wrsp['uid'] = resourse_entity.uid
             if resourse_entity.properties.get('name') == '':
                 raise
             else:
                 json_wrsp['name'] = resourse_entity.properties.get('name')
-            json_wrsp['type'] = resourse_entity.properties.get('clss')
+            json_wrsp['type'] = resourse_entity.properties.get('class_')
             json_wrsp['app_id'] = resourse_entity.properties.get('application').get('id')
             json_wrsp['app_ver'] = resourse_entity.properties.get('application').get('version')
             json_wrsp['model_id'] = resourse_entity.properties.get('model').get('id')
             json_wrsp['model_ver'] = resourse_entity.properties.get('model').get('version')
             json_wrsp['owner'] = request["owner_id"]
-            json_wrsp['type'] = resourse_entity.clss
+            json_wrsp['type'] = resourse_entity.class_
         except:
             raise Exception("invalid request struct")
         try:
@@ -337,6 +316,7 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
                 entity = await self.wsp_manager.get(wsp_uid)
             except:
                 result['status'] = "workspace is not exist"
+                healths.append(result)
                 continue
             health = await self.wsp_manager.health(entity)
             if health[0].get("status") == "not running":
@@ -345,3 +325,52 @@ class ScriptAPI(Routable, RPCRoutable, OwnedReadWriteStorageAPI):
                 result['status'] = health[0].get("status")
             healths.append(result)
         return healths
+
+    def extract_workspaces(self, resources: list, request: Request):
+        """Extract workspace entity from Manifest.resources
+
+        return: Dict[uid, Workspace], List[uid]
+        """
+        wsps: Dict[str, Workspace] = dict()
+        wsps_uid: List[str] = list()
+        wsps_routes = dict()#: Dict[uid, Rout]
+        channels = self.extract_channels(resources)
+        for resource_entity in resources:
+            if resource_entity.class_ == WSP_TYPE_PRODUCER or resource_entity.class_ == WSP_TYPE_WORKSPACE or resource_entity.class_ == WSP_TYPE_CONSUMER:
+                wsp: Workspace = self.extract_workspace(resource_entity, request)
+                wsps[wsp.uid] = wsp
+                wsps_routes[wsp.uid] = self.extract_route(resource_entity,channels)
+                wsps_uid.append(wsp.uid)
+                resource_entity.uid = wsp.uid
+        return wsps, wsps_uid, wsps_routes
+
+    def extract_channels(self, resources: list):
+        """Extract channels entity from Manifest.resources
+
+        resources: Manifest.resources
+        return: Dict[label, properties]
+        """
+        request_channels = dict()
+        for resourse_entity in resources:
+            if resourse_entity.class_ == "channel":
+                request_channels[resourse_entity.label] = resourse_entity.properties
+        return request_channels
+
+    async def decode_payload_manifest(self, request: Request):
+        """ decode payload for Manifest entity
+
+        return: Manifest
+        """
+        manifest = self._decode_payload(await request.json())
+        resources = list()
+        for r in manifest.resources:
+            resourse_entity = self.entity_decode_payload(r, Resource)
+            resources.append(resourse_entity)
+        manifest.resources = resources
+        return manifest
+
+    async def make_status_response(self, uid, wsps_uid):
+        response = dict()
+        response["uid"] = uid
+        response['wsps health'] = await self.get_health(wsps_uid)
+        return response
